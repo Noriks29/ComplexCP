@@ -207,14 +207,15 @@ body{
             border-bottom: 2px solid var(--border-bottom-input);
             width: 90%;
             outline: none;
-            background-color: #8a8a8a12;
+            background-color: #8a8a8a14;
             transition: all 0.5s;
             
             &:hover{
-              background-color: #0b0b0bd7;
+              background-color: #0000001a;
             }
             &:focus{
-              background-color: #0101015a;
+              background-color: #0000001a;
+              box-shadow: inset 0px 1px 5px 1px #0000004f;
             }
           }
 
@@ -255,8 +256,8 @@ body{
 }
 
 .login{
-  position: relative;
-  padding-right: 35px;
+  flex: 1;
+  color: var(--color-button);
   img{
     height: 60%;
     position: absolute;
@@ -302,72 +303,24 @@ body{
       background: none;
       color: var(--color-Main);
       pointer-events: all;
-      background-color: var(--background-Button1);
+      background-color: var(--background-Button4);
+      padding: 20px;
+      transition: all 0.2s;
+      border-bottom: 2px solid var(--background-Button1);
         &:hover{
-          background-color: var(--background-Button2);
-          border: 2px solid var(--border-button);
+          background-color: var(--background-Button5);
           transform: translate(4px, -4px);
-          box-shadow: -4px 4px 2px var(--box-shadow-button);
+          box-shadow: -4px 4px 2px var(--background-Button1);
         }
         &:active{
-            background-color: var(--background-Button3);
-            border: 2px solid var(--border-button2);
+            background-color: var(--background-Button6);
             transform: translate(0px, 1px);
             box-shadow: 0px 0px 11px 2px var(--box-shadow-button);
        }
-        &:before {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: var(--backgroung-animatePanel);
-          transition: all 350ms;
-        }
-        &:hover:before {
-          left: 100%;
-        }
   }
   }
   
 }
-
-.idSesion{
-  color: var(--color-Main);
-    position: fixed;
-    right: 10px;
-    top: 6px;
-    border-bottom: 2px solid;
-    box-shadow: 0px 3px 4px -4px var(--box-shadow-Pabel2);
-    transform: translate(0px, -150%);
-    transition: all 0.5s ease-in-out;
-    z-index: 2;
-
-    &.show{
-      transform: translate(0px, 0%);
-    }
-    .flexdiv{
-      display: flex;
-      align-items: center;
-    }
-
-    .Menubutton{
-      background: none;
-      border: none;
-      position: relative;
-      margin: 0px 10px;
-      svg{
-        width: 30px;
-      }
-      transform: translate(0%, -150%);
-      transition: all 0.5s ease-in-out;
-
-      &.show{
-        transform: translate(0%, 0px);
-      }
-    }
-    }
 
 </style>
 

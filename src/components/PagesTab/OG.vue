@@ -18,8 +18,8 @@
           <div  @click="SelectOGFromList(data)" type="type">{{ OGType[data.inputType] }}</div>
           <div class="iconDelete" @click="DeleteRowOG(data)" type="icon"><img  src="@/assets/delete.svg" alt="Удалить"></div>
         </div>
-        <div>
-          <button class="ButtonCommand" :class="!approved? '' : 'disable'"  @click="PageSettings.status=1"><img src="@/assets/add.png" alt="" class="addButtonIcon">Добавить орбитальную группировку</button>
+        <div style="display: flex;justify-content: center;">
+          <button class="ButtonCommand BlockWithIcon" :class="!approved? '' : 'disable'"  @click="PageSettings.status=1"><img src="@/assets/add.png" alt="" class="icon">Добавить орбитальную группировку</button>
         </div>
         <div class="ButtonApprovedDiv" v-if="!modellingStatus">
           <button @click="ChangeApproved(!approved)" class="ButtonCommand" :class="approved? 'green' : 'red'">
@@ -67,7 +67,7 @@
                   <td v-if="abilityEdit" @click="DeleteRow(index)" class="delete"><img class="iconDelete" src="@/assets/delete.svg" alt="Удалить"></td>
                 </tr>
                 <tr v-if="abilityEdit" class="addRowButton">
-                  <td :colspan="9+Number(selectOG.inputType==2)*2 + Number(KaRole.length > 0)"><button @click="AddRow"><img src="@/assets/add.png" alt="" class="addButtonIcon">Добавить КА</button></td>
+                  <td :colspan="9+Number(selectOG.inputType==2)*2 + Number(KaRole.length > 0)"><button @click="AddRow" class="BlockWithIcon"><img src="@/assets/add.png" alt="" class="icon">Добавить КА</button></td>
                 </tr> 
               </tbody>
             </table>
@@ -95,12 +95,12 @@
                   <tr><td>Эксцентриситет</td><td><input v-model="OG_Param.parametersCalculation.eccentricity" type="number"></td></tr>
                   <tr><td>Наклон</td><td><input v-model="OG_Param.parametersCalculation.incline" type="number"></td></tr>
 
-                  <tr><td colspan="2" class="Title">Долгота восходящего узла плоскостей</td></tr>
+                  <tr><th colspan="2">Долгота восходящего узла плоскостей</th></tr>
                   <tr><td>•	Долгота плоскости 1</td><td><input v-model="OG_Param.parametersCalculation.longitudeOfPlane1" type="number"></td></tr>
                   <tr><td>•	Разнесение плоскостей по долготе</td><td><input v-model="OG_Param.parametersCalculation.spacecraftOfLongitude" type="number"></td></tr>
                   <tr><td>•	Аргумент ширины перигея</td><td><input v-model="OG_Param.parametersCalculation.perigeeWidthArgument" type="number"></td></tr>
 
-                  <tr><td colspan="2" class="Title">Истинная аномалия</td></tr>
+                  <tr><th colspan="2">Истинная аномалия</th></tr>
                   <tr><td>•	Позиция 1 в плоскости 1</td><td><input v-model="OG_Param.parametersCalculation.firstPositionInPlane1" type="number"></td></tr>
                   <tr><td>•	Разнесение КА в плоскости по</td><td><input v-model="OG_Param.parametersCalculation.spacecraftSpacing" type="number"></td></tr>
                   <tr><td>•	Фазовый сдвиг КА между плоскостями</td><td><input v-model="OG_Param.parametersCalculation.phaseShift" type="number"></td></tr>

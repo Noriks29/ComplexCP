@@ -10,8 +10,8 @@
         </div>
         <div class="Panel MaxWidth">
           <div>
-            <button class="ButtonCommand rightPadding" @click="StartModelling"><img src="../../assets/start.png" alt="" class="iconButton" >Начать Гордеев</button>
-            <button class="ButtonCommand rightPadding" @click="StartModellingPavlov"><img src="../../assets/start.png" alt="" class="iconButton" >Начать Павлов</button>
+            <button class="ButtonCommand BlockWithIcon" @click="StartModelling"><img src="../../assets/start.png" alt="" class="icon" >Начать Гордеев</button>
+            <button class="ButtonCommand BlockWithIcon" @click="StartModellingPavlov"><img src="../../assets/start.png" alt="" class="icon" >Начать Павлов</button>
             <fieldset style="display: inline-block;">
               <input type="checkbox"  v-model="interSatellite"/><label>interSatellite: {{ interSatellite }}</label>
             </fieldset>

@@ -6,12 +6,11 @@
       <BookmarkTable v-if="ShowBookmarkTable" :dataTable1="modellingRezult.E77" :dataTable2="modellingRezult.E78" @closetable="ShowBookmarkTable = false"/>
       <FlightplanForm v-if="ShowTable=='FlightplanForm'" :dataTable="modellingRezultSelect.E79" @closetable="ShowTable=null"/>
       <div class="ContentDiv">
-        <h1 class="TitleText">Планирование съемок</h1>
         <div class="FlexRow Panel">
           <div class="ButtonModelling">
-            <button v-if="!ExperimentStatus && !modellingSettings.experimentEddit" @click="Experiment(true)" class="ButtonCommand rightPadding"><img src="../../assets/start.png" alt="" class="iconButton">Начать эксперимент</button>
-            <button v-if="ExperimentStatus" @click="StartModelling" class="ButtonCommand rightPadding"><img src="../../assets/start.png" alt="" class="iconButton">Старт моделирования</button>
-            <button v-if="ExperimentStatus" @click="Experiment(false)" class="ButtonCommand rightPadding">Закончить эксперимент</button>
+            <button v-if="!ExperimentStatus && !modellingSettings.experimentEddit" @click="Experiment(true)" class="ButtonCommand BlockWithIcon">Начать эксперимент<img src="../../assets/start.png" alt="" class="icon"></button>
+            <button v-if="ExperimentStatus" @click="StartModelling" class="ButtonCommand BlockWithIcon">Старт моделирования<img src="../../assets/start.png" alt="" class="icon"></button>
+            <button v-if="ExperimentStatus" @click="Experiment(false)" class="ButtonCommand">Закончить эксперимент</button>
           </div>
           <div class="TableSystem">
             <table>
@@ -191,30 +190,7 @@ import { NPList, OGList } from '@/js/GlobalData';
     },
     methods: {
       Experiment(status){
-        if(status){
-          /*
-          if(!this.systemStatus.earthStatus){
-            alert("НП не утверждены")
-            return
-          }
-          if(!this.systemStatus.constellationStatus){
-            alert("КА и ОГ не утверждены")
-            return
-          }
-          if(OGList.length < 1){
-            alert("Нет КА")
-            return
-          }
-          if(NPList.length < 1){
-            alert("Нет НП")
-            return
-          }
-          if(this.purposesJson < 1){
-            alert("Нет заявок")
-            return
-          }*/
-        }
-        else{
+        if(!status){
           this.dataModelling = {
             engineLogResponse: []
           }

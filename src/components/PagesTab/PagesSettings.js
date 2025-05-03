@@ -14,12 +14,6 @@ let PagesSettings = {
               nameComponent: nameComponent
           })
         },
-        ChangeSystemStatus( stat, param ){
-            this.approved = stat
-            let dataSystem = this.systemStatus
-            dataSystem[param] = this.approved
-            this.$emit('ChangeSystemStatus', dataSystem)
-        },
         CreateDateTime(time, mode = 0){
             if(mode == 2){
               let Dtime = UnixToDtime(time-10800)

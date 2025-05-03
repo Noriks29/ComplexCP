@@ -39,8 +39,8 @@
             <td v-if="!approved && !modellingStatus" @click="DeleteRow(index)" class="delete"><img class="iconDelete" src="../../assets/delete.svg" alt="Удалить"></td>
           </tr>
           <tr v-if="!approved && !modellingStatus" class="addRowButton">
-            <td colspan="5"><button @click="AddRow">
-              <img src="../../assets/add.png" alt="" class="addButtonIcon">
+            <td colspan="5"><button @click="AddRow" class="BlockWithIcon">
+              <img src="../../assets/add.png" alt="" class="icon">
               Добавить наземный пункт
             </button></td>
           </tr> 

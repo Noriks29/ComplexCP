@@ -8,6 +8,7 @@
     <div class="SectionMenu" :class="system.typeWorkplace == -1 ? 'hide' : 'show'">
       <transition name="ComponentModelling" mode="out-in" :class="system.typeWorkplace == -1 ? 'hide' : 'show'">
         <div class="ModellingDiv">
+          <h1 class="TitleModelling">Планирование съемок</h1>
           <component :is="ComponentModellingList[system.typeWorkplace]" :systemStatus="system" :reload="reload" :ExperimentStatus="ExperimentStatus" @ChangeExperimentStatus="ChangeExperimentStatus"></component> 
         </div>
       </transition> 
@@ -15,23 +16,22 @@
         <div class="ButtonSection first">
           <h1>КС</h1>
           <div class="ButtonList">
-            <button class="active" @click="SelectComponent('NP')"><div :class="system.earthStatus ? 'approved' : 'Notapproved'"></div>НП</button>
-            <button class="active" @click="SelectComponent('OG')"><div :class="system.constellationStatus ? 'approved' : 'Notapproved'"></div>КА и ОГ</button>
+            <button class="active LIghtPoint" @click="SelectComponent('NP')"><div :class="system.earthStatus ? 'approved' : 'Notapproved'"></div>НП</button>
+            <button class="active LIghtPoint" @click="SelectComponent('OG')"><div :class="system.constellationStatus ? 'approved' : 'Notapproved'"></div>КА и ОГ</button>
             <button :class="!ExperimentStatus > 0 ? 'active' : ''" @click="SelectComponent('TypeKA')">Модели КА</button>
           </div>   
         </div>
         <div class="ButtonSection second">
           <h1>Связь</h1>
           <div class="ButtonList">
-            <button :class="FillingDataStatus && !ExperimentStatus > 0 ? 'active' : ''" @click="SelectComponent('EarthConstellation')"><div :class="system.earthSatStatus ? 'approved' : 'Notapproved'"></div>КА - НП</button>
-            <button v-if="system.typeWorkplace in {4:null, 3:null}" :class="FillingDataStatus && !ExperimentStatus > 0 ? 'active' : ''"  @click="SelectComponent('LeaderConstellationConstellation')"><div :class="system.satSatStatus ? 'approved' : 'Notapproved'"></div>КА - КА Лидеры</button>
-            <button v-else-if="!(system.typeWorkplace in {1:null})" :class="FillingDataStatus && !ExperimentStatus > 0 ? 'active' : ''"  @click="SelectComponent('LeaderConstellationConstellation')"><div :class="system.satSatStatus ? 'approved' : 'Notapproved'"></div>КА - КА</button>
+            <button class="LIghtPoint" :class="FillingDataStatus && !ExperimentStatus > 0 ? 'active' : ''" @click="SelectComponent('EarthConstellation')"><div :class="system.earthSatStatus ? 'approved' : 'Notapproved'"></div>КА - НП</button>
+            <button class="LIghtPoint" v-if="!(system.typeWorkplace in {1:null})" :class="FillingDataStatus && !ExperimentStatus > 0 ? 'active' : ''"  @click="SelectComponent('LeaderConstellationConstellation')"><div :class="system.satSatStatus ? 'approved' : 'Notapproved'"></div>КА - КА</button>
           </div>
         </div>
         <div class="ButtonSection third" >
           <h1>Исходные данные</h1>
           <div class="ButtonList">
-            <button v-if="!(system.typeWorkplace in {5:null})" :class="FillingDataStatus && !ExperimentStatus > 0 ? 'active' : ''" @click="SelectComponent('TargetDZZ')">Заявки</button>
+            <button :class="FillingDataStatus && !ExperimentStatus > 0 ? 'active' : ''" @click="SelectComponent('TargetDZZ')">Заявки</button>
             <button :class="!ExperimentStatus > 0 ? 'active' : ''" @click="SelectComponent('SystemWindow')">Система</button>
           </div>
         </div>
@@ -57,6 +57,7 @@ import { NPList, OGList, SystemObject } from '@/js/GlobalData';
 
 import KA1 from './KA/KA1.vue';
 import KAGordeev from "./KA/KAGordeev.vue";
+import KAPavlov from './KA/KAPavlov.vue';
 
 import NP from "./PagesTab/NP.vue";
 import OG from './PagesTab/OG.vue'
@@ -65,6 +66,7 @@ import SystemWindow from './PagesTab/SystemWindow.vue';
 import TargetDZZ from './PagesTab/TargetDZZ.vue'
 import EarthConstellation from './PagesTab/EarthConstellation.vue'
 import LeaderConstellationConstellation from './PagesTab/LeaderConstellationConstellation.vue';
+
 
 export default {
   name: 'TemplateComponent',
@@ -79,7 +81,8 @@ export default {
     LeaderConstellationConstellation,
 
     KA1,
-    KAGordeev
+    KAGordeev,
+    KAPavlov
   },
   data(){
       return{
@@ -88,7 +91,7 @@ export default {
         system: {typeWorkplace: -1},
         reload: 0,
         ExperimentStatus: false,
-        ComponentModellingList: [null,"KA1","KA1","KA1","KA1","KARealTime","KAGordeev",null]
+        ComponentModellingList: [null,"KA1","KAGordeev","KAPavlov",null]
     }
   },
   methods: {
@@ -253,6 +256,9 @@ export default {
       }
     }
       .ModellingDiv{
+        .TitleModelling{
+          margin: 0;
+        }
       width: 100%;
       height: 62%;
       overflow: auto;
@@ -283,19 +289,17 @@ export default {
       align-items: center;
       flex: 1;
       overflow: hidden;
-
-      &.second, &.third, &.fourth, &.first{
-        .ButtonList{
+      border-radius: 5px;
+      .ButtonList{
           flex-direction: column;
         }
-      }
 
       h1{
         margin: 10px;
         font-size: 25px;
       }
       .ButtonList{
-        width: 95%;
+        width: 98%;
         flex: 1;
         display: flex;
         justify-content: space-evenly;
@@ -306,9 +310,9 @@ export default {
 
       button{
         border: none;
-        color: var(--color-Main);
+        color: var(--color-button);
         flex: 1;
-        
+        border-radius: 5px;
         font-size: 25px;
         overflow: hidden;
         text-decoration: none;
@@ -357,38 +361,10 @@ export default {
           background: none;
           transform: translate(0px, 1000px);
         }
-        div{
-          position: absolute;
-          width: 10px;
-          height: 10px;
-          top: 20%;
-          left: 10px;
-          border-radius: 20px;
-          &.approved{
-            background-color: rgb(0, 139, 0);
-            box-shadow: 0px 0px 5px rgb(11, 167, 11);
-          }
-          &.Notapproved{
-            background-color: red;
-            box-shadow: 0px 0px 5px #fe1a1a;
-          }
-        }
       }
 
       &:hover{
-        &.first {
-            box-shadow: -4px 3px 3px rgba(12, 12, 73, 0.7);
-        }
-        &.second {
-            box-shadow: -4px 3px 3px rgba(35, 12, 73, 0.7);
-        }
-        &.third {
-            box-shadow: -4px 3px 3px rgba(12, 54, 73, 0.7);
-        }
-        &.fourth {
-            box-shadow: -4px 3px 3px rgba(73, 12, 12, 0.7);
-        }
-        border: 2px solid rgba(71, 71, 71, 0.25);
+        box-shadow: -4px 3px 3px rgba(12, 12, 73, 0.7);
       }
     }
   }

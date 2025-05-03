@@ -1,33 +1,29 @@
 :root {
   --font-size: 16px;
-  --box-shadow-defoult: black;
-  --color-Main: rgb(0, 0, 0);
-  --background-Main: #cae9ff;
 
   --background-Table1: #00000054;
-  --border-Table1: #262626;
-  
-  --background-Panel: rgb(255, 255, 255);
-  --background-Panel2: rgb(255, 255, 255);
-  --box-shadow-Panel: rgba(63, 60, 60, 0.35);
-  --box-shadow-Pabel2: black;
-
-  --border-Panel2: #ffffff7d;
-  --border-Panel: rgba(0, 0, 0, 0.25);
-
-  --color-button: white;
-  --background-Button1: #87CEFA;
-  --background-Button2: rgb(0 147 235);
-  --background-Button3: #0D47A1;
-  --background-Button4: white;
-  --background-Button5: rgb(225, 225, 225);
-  --background-Button6: rgb(176, 176, 176);
-  --box-shadow-button: rgb(172, 172, 172);
-  --border-button: none;
-  --border-button2: #31313173;
-  
+  --background-Main: black;
+  --background-Panel: rgba(151, 151, 151, 0.15);
+  --background-Button1: #2b2b2b;
+  --background-Button2: #202020;
+  --background-Button3: #171717;
+  --background-Panel2: linear-gradient(180deg, #88888812, #8c8c8c12, #86868612, #57575705);
   --backgroung-animatePanel: linear-gradient(120deg,transparent,rgba(35, 39, 242, 0.192),transparent);
-  --border-bottom-input: #014F86;
+
+  --color-Main: white;
+
+  --box-shadow-defoult: black;
+  --box-shadow-Panel: rgba(63, 60, 60, 0.35);
+  --box-shadow-Pabel2: white;
+  --box-shadow-button: rgba(0, 0, 0, 0.6);
+
+
+  --border-Table1: #262626;
+  --border-Panel: rgba(0, 0, 0, 0.25);
+  --border-button: black;
+  --border-button2: #31313173;
+  --border-Panel2: #ffffff7d;
+  --border-bottom-input: white;
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -326,13 +322,13 @@ body{
 }
 
 .ButtonCommand{
-  background: var(--background-Button1);
+  background:  var(--background-Button1);
   color: var(--color-Main);
   border: 1px solid var(--border-button);
   padding: 14px;
   font-size: var(--font-size);
   border-radius: 10px;
-  box-shadow: 0px 0px 0px 0px var(--box-shadow-button);
+  box-shadow: -3px 3px 1px var(--box-shadow-defoult);
   margin: 5px;
   transition: all 0.2s;
   position: relative;
@@ -346,7 +342,7 @@ body{
   }
 
   &:hover{
-    box-shadow: -1px 1px 4px var(--box-shadow-button);
+    box-shadow: -1px 1px 2px var(--box-shadow-button);
     background: var(--background-Button2);
   }
   &:active{
