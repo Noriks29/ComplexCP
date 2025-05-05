@@ -46,7 +46,7 @@
 import TemplateComponent from './components/TemplateComponent.vue'
 import {DisplayLoad, FetchPost} from './js/LoadDisplayMetod.js'
 import LoadProcess from './components/LoadProcess.vue'
-import GlobalStyle from './style/GlobalStyle.scss'
+import GlobalStyle from './style/GlobalStyle2.scss'
 import { ClearGlobalData, InitGlobalData, SystemObject } from './js/GlobalData'
 
 export default {
