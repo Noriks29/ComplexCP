@@ -52,12 +52,12 @@
               <table class="TableDefault">
                 <thead><tr><th style="width: 0px;">Использовать</th><th>Прибор</th><th></th></tr></thead>
                 <tbody><tr v-for="data,index in SelectKA.value.devCatalogs" :key="index" :id="data.id">
-                  <td style="text-align: center;"><span class="BlockWithIcon"><img @click="AddRow('devices',data)" src="../../assets/add.png" alt="" class="icon" v-if="data.use < 1"></span></td>
+                  <td><img @click="AddRow('devices',data)" src="../../assets/add.png" alt="" class="addButtonIcon" v-if="data.use < 1"></td>
                   <td><input @change="ChangeValue($event, 'devCatalogs')" v-model="data.nameDevice"></td>
                   <td @click="DeleteRow(index, 'devCatalogs')" class="delete"><img class="iconDelete" src="../../assets/delete.svg" alt="-"></td>
                 </tr>
                 <tr class="addRowButton">
-                  <td colspan="3"><button @click="AddRow('devCatalogs')" class="BlockWithIcon"><img src="../../assets/add.png" alt="" class="icon">Добавить</button></td>
+                  <td colspan="3"><button @click="AddRow('devCatalogs')"><img src="../../assets/add.png" alt="" class="addButtonIcon">Добавить</button></td>
                 </tr></tbody>
               </table>
 

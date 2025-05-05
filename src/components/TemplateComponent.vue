@@ -8,7 +8,7 @@
     <div class="SectionMenu" :class="system.typeWorkplace == -1 ? 'hide' : 'show'">
       <transition name="ComponentModelling" mode="out-in" :class="system.typeWorkplace == -1 ? 'hide' : 'show'">
         <div class="ModellingDiv">
-          <h1 class="TitleModelling">Планирование съемок</h1>
+          <p>{{ TextTitleModellingName }}</p>
           <component :is="ComponentModellingList[system.typeWorkplace]" :systemStatus="system" :reload="reload" :ExperimentStatus="ExperimentStatus" @ChangeExperimentStatus="ChangeExperimentStatus"></component> 
         </div>
       </transition> 
@@ -16,34 +16,25 @@
         <div class="ButtonSection first">
           <h1>КС</h1>
           <div class="ButtonList">
-            <button class="active LIghtPoint" @click="SelectComponent('NP')"><div :class="system.earthStatus ? 'approved' : 'Notapproved'"></div>НП</button>
-            <button class="active LIghtPoint" @click="SelectComponent('OG')"><div :class="system.constellationStatus ? 'approved' : 'Notapproved'"></div>КА и ОГ</button>
+            <button class="active" @click="SelectComponent('NP')"><div :class="system.earthStatus ? 'approved' : 'Notapproved'"></div>НП</button>
+            <button class="active" @click="SelectComponent('OG')"><div :class="system.constellationStatus ? 'approved' : 'Notapproved'"></div>КА и ОГ</button>
             <button :class="!ExperimentStatus > 0 ? 'active' : ''" @click="SelectComponent('TypeKA')">Модели КА</button>
           </div>   
         </div>
         <div class="ButtonSection second">
           <h1>Связь</h1>
           <div class="ButtonList">
-            <button class="LIghtPoint" :class="FillingDataStatus && !ExperimentStatus > 0 ? 'active' : ''" @click="SelectComponent('EarthConstellation')"><div :class="system.earthSatStatus ? 'approved' : 'Notapproved'"></div>КА - НП</button>
-            <button class="LIghtPoint" v-if="!(system.typeWorkplace in {1:null})" :class="FillingDataStatus && !ExperimentStatus > 0 ? 'active' : ''"  @click="SelectComponent('LeaderConstellationConstellation')"><div :class="system.satSatStatus ? 'approved' : 'Notapproved'"></div>КА - КА</button>
+            <button :class="FillingDataStatus && !ExperimentStatus > 0 ? 'active' : ''" @click="SelectComponent('EarthConstellation')"><div :class="system.earthSatStatus ? 'approved' : 'Notapproved'"></div>КА - НП</button>
+            <button :class="FillingDataStatus && !ExperimentStatus > 0 ? 'active' : ''"  @click="SelectComponent('LeaderConstellationConstellation')"><div :class="system.satSatStatus ? 'approved' : 'Notapproved'"></div>КА - КА</button>
           </div>
         </div>
         <div class="ButtonSection third" >
           <h1>Исходные данные</h1>
           <div class="ButtonList">
-            <button :class="FillingDataStatus && !ExperimentStatus > 0 ? 'active' : ''" @click="SelectComponent('TargetDZZ')">Заявки</button>
-            <button :class="!ExperimentStatus > 0 ? 'active' : ''" @click="SelectComponent('SystemWindow')">Система</button>
+            <button  :class="FillingDataStatus && !ExperimentStatus > 0 ? 'active' : ''" @click="SelectComponent('TargetDZZ')">Заявки</button>
           </div>
-        </div>
-      </div>
-      <div class="ContainerSystem">
-          <div class="PanelSystemData" :class="system.typeWorkplace == -1 ? 'hide' : 'show'">
-            <button @click="SaveWorkplace" class="ButtonCommand">Сохранить копию данных</button>
-            <label class="input-file">
-              <input type="file" name="file" id="file-Json" @change="LoadFile" accept="application/json" enctype="multipart/form-data">		
-              <span>Открыть файл</span>
-            </label>
-        </div>
+          <SystemWindow :FillingDataStatus="FillingDataStatuss" :modellingStatus="ExperimentStatus" @updateParentComponent="ChangeComponents" :systemStatus="system" />
+        </div>        
       </div>
     </div>
 </template>
@@ -52,8 +43,6 @@
 import { saveAs } from 'file-saver';
 import {FetchGet, FetchPostFile, DisplayLoad} from '../js/LoadDisplayMetod'
 import { NPList, OGList, SystemObject } from '@/js/GlobalData';
-
-
 
 import KA1 from './KA/KA1.vue';
 import KAGordeev from "./KA/KAGordeev.vue";
@@ -66,7 +55,6 @@ import SystemWindow from './PagesTab/SystemWindow.vue';
 import TargetDZZ from './PagesTab/TargetDZZ.vue'
 import EarthConstellation from './PagesTab/EarthConstellation.vue'
 import LeaderConstellationConstellation from './PagesTab/LeaderConstellationConstellation.vue';
-
 
 export default {
   name: 'TemplateComponent',
@@ -87,11 +75,12 @@ export default {
   data(){
       return{
         activeComponent: "",
+        TextTitleModellingName: '',
         FillingDataStatus: 0,
         system: {typeWorkplace: -1},
         reload: 0,
         ExperimentStatus: false,
-        ComponentModellingList: [null,"KA1","KAGordeev","KAPavlov",null]
+        ComponentModellingList: [null,"KA1","KAPavlov","KAGordeev",null]
     }
   },
   methods: {
@@ -177,6 +166,7 @@ export default {
         }
       },
       ChengeFillingDataStatus(){
+        this.TextTitleModellingName = localStorage.getItem('modname')
       if(this.system.constellationStatus && this.system.earthStatus){
         this.FillingDataStatus = 1
       }
@@ -194,188 +184,36 @@ export default {
 
 </script>
 
-<style lang="scss" scoped>
-
-@keyframes slideInFromBottom {
-  0% {
-    transform: translateY(120%);
-  }
-  100% {
-    transform: translateY(0%);
-  }
-}
-@keyframes slideInFromTop {
-  0% {
-    transform: translateY(-100%);
-  }
-  100% {
-    transform: translateY(0%);
-  }
-}
-
+<style lang="scss">
 .SectionMenu{
-    width: 98%;
-    height: 99%;
-    display: flex;
-    flex-direction: column;
-    margin: 0% 1%;
-    flex-wrap: nowrap;
-    align-items: center;
-    overflow: auto;
-    position: absolute;
-    top: 0px;
-
-    .ContainerSystem{
-      height: 8%;
-      overflow: hidden;
-    }
-
-    &.hide{
-      .ButtonSection{
-        transform: translateY(150%);
-        animation: 0.5s ease-out reverse 0s 1 slideInFromBottom;
-      }
-      .PanelSystemData{
-        transform: translateY(120%);
-        animation: 1.3s ease-out reverse 0s 1 slideInFromBottom;
-      }
-    }
-    &.show{
-      .ModellingDiv{
-        animation: 1s ease-out 0s 1 slideInFromTop;
-      }
-      .ButtonSection{
-        animation: 0.5s ease-out 0s 1 slideInFromBottom;
-        &.hide{
-          position: relative;
-          top: 150%;
+  flex-direction: row-reverse !important;
+  .ModellingDiv{
+    height: 100vh !important;
+    width: 75vw !important;
+    .main_contain{
+      padding: 5px 0px 10px !important;
+      height: calc(100% - 85px) !important;
+      .ContentDiv{
+        display: flex !important;
+        height: 100% !important;
+        align-items: stretch !important;
+        .FlexRow{
+          width: auto !important;
         }
       }
-      .PanelSystemData {
-        animation: 1.3s ease-out  0s 1 slideInFromBottom;
-      }
     }
-      .ModellingDiv{
-        .TitleModelling{
-          margin: 0;
-        }
-      width: 100%;
-      height: 62%;
-      overflow: auto;
-    }
-
-    .FlexMenuSection{
-      display: flex;
-      width: 99%;
-      height: 30%;
-      flex-direction: row;
-      align-items: flex-start;
-      
-      overflow: hidden;
-    }
-
+  }
+  .FlexMenuSection{
+    flex-direction: column !important;
+    height: 100vh !important;
+    width: 25vw !important;
+    align-items: normal !important;
     .ButtonSection{
-      background-color: var(--background-Panel);
-      box-shadow: -4px 3px 1px var(--box-shadow-Panel);
-      border: 2px solid var(--border-Panel);
-      height: 93%;
-      display: flex;
-      flex-direction: column;
-      flex-wrap: nowrap;
-      padding: 0px 10px;
-      margin: 10px;
-      transition: all 0.5s ease-out;
-      position: relative;
-      align-items: center;
-      flex: 1;
-      overflow: hidden;
-      border-radius: 5px;
-      .ButtonList{
-          flex-direction: column;
-        }
-
-      h1{
-        margin: 10px;
-        font-size: 25px;
-      }
-      .ButtonList{
-        width: 98%;
-        flex: 1;
-        display: flex;
-        justify-content: space-evenly;
-        button{
-          margin: 5px;
-        }
-      }
-
-      button{
-        border: none;
-        color: var(--color-button);
-        flex: 1;
-        border-radius: 5px;
-        font-size: 25px;
-        overflow: hidden;
-        text-decoration: none;
-        position: relative;
-
-        border-top: 1px solid var(--border-button);
-        border-right: 1px solid var(--border-button);
-        background-color: rgba(29, 29, 29, 0.4);
-        transform: translate(-1px, 1px);
-        pointer-events: none;
-        transition: all 0.5s ease-out;
-
-        &.active{
-          pointer-events: all;
-          transform: translate(0px, 0px);
-          background-color: var(--background-Button1);
-          &:hover{
-            background-color: var(--background-Button2);
-            border: 2px solid var(--border-button);
-            transform: translate(4px, -4px);
-            box-shadow: -4px 4px 2px var(--box-shadow-button);
-          }
-          &:active{
-            background-color: var(--background-Button3);
-            border: 2px solid var(--border-button2);
-            transform: translate(0px, 1px);
-            box-shadow: 0px 0px 11px 2px var(--box-shadow-button);
-          }
-          &:before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: var(--backgroung-animatePanel);
-            transition: all 350ms;
-          }
-          &:hover:before {
-            left: 100%;
-          }
-        }
-        &.hideElement{
-          border: none;
-          pointer-events: none;
-          background: none;
-          transform: translate(0px, 1000px);
-        }
-      }
-
-      &:hover{
-        box-shadow: -4px 3px 3px rgba(12, 12, 73, 0.7);
+      &.third{
+        height: fit-content;
+        flex: 0 1 auto;
       }
     }
   }
-
-  .ComponentSelect{
-    position: absolute;
-    top: 0px;
-    width: 100vw;
-    height: 100vh;
-    background-color: var(--background-Main);
-    z-index: 5;
-    overflow-x: hidden;
-  }
+}
 </style>

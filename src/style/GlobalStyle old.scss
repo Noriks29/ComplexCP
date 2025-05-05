@@ -1,0 +1,579 @@
+:root {
+  --font-size: 16px;
+  --box-shadow-defoult: black;
+  --color-Main: rgb(0, 0, 0);
+  --background-Main: #cae9ff;
+
+  --background-Table1: #00000054;
+  --border-Table1: #262626;
+  
+  --background-Panel: rgb(255, 255, 255);
+  --background-Panel2: rgb(255, 255, 255);
+  --box-shadow-Panel: rgba(63, 60, 60, 0.35);
+  --box-shadow-Pabel2: black;
+
+  --border-Panel2: #ffffff7d;
+  --border-Panel: rgba(0, 0, 0, 0.25);
+
+  --color-button: white;
+  --background-Button1: #87CEFA;
+  --background-Button2: rgb(0 147 235);
+  --background-Button3: #0D47A1;
+  --background-Button4: white;
+  --background-Button5: rgb(225, 225, 225);
+  --background-Button6: rgb(176, 176, 176);
+  --box-shadow-button: rgb(172, 172, 172);
+  --border-button: none;
+  --border-button2: #31313173;
+  
+  --backgroung-animatePanel: linear-gradient(120deg,transparent,rgba(35, 39, 242, 0.192),transparent);
+  --border-bottom-input: #014F86;
+}
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  height: 100%;
+  color: var(--color-Main);
+  background: var(--background-Main);
+
+
+  &.whiteMode{
+    --background-Main: white;
+    --color-Main: black;
+    --background-Table1: #00000054;
+    --background-Panel: rgba(151, 151, 151, 0.15);
+    --background-Button1: #afafaf;
+    --background-Button2: #9a9a9a;
+    --background-Button3: #636363;
+    --background-Panel2: linear-gradient(180deg, #14141438, #e7e7e712, #2b2b2b2e, #3636364f);
+    --box-shadow-defoult: #d5d5d5;
+    --box-shadow-Panel: rgb(82 82 82 / 35%);
+    --box-shadow-Pabel2: #000000;
+    --border-Table1: #262626;
+    --border-Panel: rgba(0, 0, 0, 0.25);
+    --border-button: #979797;
+    --border-button2: #31313173;
+    --border-Panel2: #000000a6;
+    --border-bottom-input: #000000;
+  }
+}
+
+::-webkit-scrollbar { //скролы
+  width: 10px;
+} 
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 10px rgb(255, 255, 255); 
+} 
+::-webkit-scrollbar-thumb {
+  box-shadow: inset 0 0 10px rgb(0,0,0); 
+}
+
+body{
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  margin: 0px;
+  height: 100vh;
+  position: relative;
+}
+
+
+
+.ChangeViewMode{ // для смены цвета страницы
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  display: flex;
+  z-index: 10;
+  width: 30px;
+}
+
+.idSesion{ //плажка с информацией о пользователе
+  color: var(--color-Main);
+    position: fixed;
+    right: 10px;
+    top: 6px;
+    border-bottom: 2px solid;
+    box-shadow: 0px 3px 4px -4px var(--box-shadow-Pabel2);
+    transform: translate(0px, -150%);
+    transition: all 0.5s ease-in-out;
+    z-index: 2;
+    &.show{
+      transform: translate(0px, 0%);
+    }
+    .flexdiv{
+      display: flex;
+      align-items: center;
+    }
+    svg{
+      fill: var(--color-Main);
+      *{
+        stroke: var(--color-Main);
+      }
+    }
+    .Menubutton{
+    background: none;
+    border: none;
+    position: relative;
+    margin: 0px 10px;
+    svg{
+      width: 30px;
+    }
+    transform: translate(0%, -150%);
+    transition: all 0.5s ease-in-out;
+    &.show{
+      transform: translate(0%, 0px);
+    }
+  }
+}
+.logoutbutton{
+  position: relative;
+    background: none;
+    color: var(--color-Main);
+    border: none;
+    margin: 5px 25px 10px 5px;
+  svg{
+    width: 25px;
+    position: absolute;
+    right: -25px;
+    top: -3px;
+  }
+}
+
+
+
+.FlexRow{ // разметка строчных блоков моделлирования
+  display: flex;
+    align-items: center;
+    width: 95vw;
+    max-width: 95vw;
+    overflow-x: auto;
+    justify-content: space-evenly;
+    padding: 10px;
+    div{
+      
+      margin: 0px 5px;
+      &.ButtonModelling{
+        flex: 0 1 auto;
+        width: fit-content;
+        display: flex;
+        flex-direction: column;
+      }
+      &.TableSystem{
+        flex: 6 0 auto;
+        height: 24vh;
+        overflow-y: auto;
+        background-color: var(--background-Table1);
+        border: 1px solid var(--border-Table1);
+      }
+    }
+}
+
+.main_contain {
+  position: relative;
+  font-size: var(--font-size);
+  padding-top: 15px;
+  height: calc(100% - 25px);
+
+    .ToMenuButtonDiv {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        padding: 0px;
+        border: none;
+        background: none;
+        svg{
+            width: 30px;
+        }
+    }
+    .TitleText{
+      font-size: 25px;
+      margin: 5px;
+    }
+
+    .ContentDiv{
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        overflow-y: auto;
+        overflow-x: hidden;
+        min-width: 60%;
+        
+        .Panel{
+            background-color: var(--background-Panel);
+            box-shadow: -4px 3px 1px var(--box-shadow-Panel);
+            border: 2px solid var(--border-Panel);
+            margin: 3px 0px;
+
+            table{
+                min-width: 100%;
+                
+                tr{
+                    td{
+                        input{
+                          width: 90%;
+                        }
+                    }
+                    &.disable{
+                      input{
+                        pointer-events: none;
+                      }
+                    }
+                }   
+            }
+            &.MaxWidth{
+                min-width: 100%;
+            }
+        }
+    }   
+
+    &.RowSection{
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      align-items: center;
+  
+      .ContentDiv{
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        width: 98%;
+  
+        .Panel{
+          &.RightPanel{
+            flex: 3;
+            overflow-y: auto;
+            padding: 20px;
+          }
+          &.LeftPanel{
+            flex: 1;
+            .SystemInfo{
+                display: flex;
+                flex-wrap: wrap;
+                align-content: center;
+                align-items: center;
+                color: white;
+                text-align: left;
+                padding: 10px;
+                justify-content: space-around;
+                .paddl{
+                    padding-left: 15px;
+                }
+            }
+            .FlexColumn{
+              display: flex;
+              flex-direction: column;
+              align-items: flex-start;
+              div{
+                width: 100%;
+                button{
+                  width: 96%;
+                  text-align: start;
+                }
+              }
+            }
+          }
+          .ButtonApprovedDiv button{
+            display: flex;
+            width: 94%;
+            justify-content: space-between;
+            margin: 3%;
+            align-items: center;
+            transition: box-shadow 1s ;
+          
+            &.red{
+              box-shadow: inset -2px -2px 1px 0px red;
+            }
+            &.green{
+              box-shadow: inset 2px 2px 1px 0px green;
+            }
+          }
+        }
+      }
+
+    }
+}
+
+.iconDelete img{ //в ог 
+  width: 30px;
+}
+
+
+.scroll-table-body {
+	height: 100%;
+	overflow-x: auto;
+	margin-top: 0px;
+	margin-bottom: 20px;
+}
+.scroll-table{
+  table {
+    width:100%;
+    table-layout: fixed;
+  }
+  thead th {
+    font-weight: bold;
+    text-align: left;
+    padding: 10px 15px;
+    font-size: var(--font-size);
+  }
+  tbody td {
+    text-align: left;
+    padding: 10px 15px;
+    font-size: var(--font-size);
+  }
+}
+
+.ButtonCommand{
+  background: var(--background-Button1);
+  color: var(--color-Main);
+  border: 1px solid var(--border-button);
+  padding: 14px;
+  font-size: var(--font-size);
+  border-radius: 10px;
+  box-shadow: 0px 0px 0px 0px var(--box-shadow-button);
+  margin: 5px;
+  transition: all 0.2s;
+  position: relative;
+
+  &.MaxWidth{
+    width: 100%;
+  }
+
+  &.rightPadding{
+    padding-right: 30px;
+  }
+
+  &:hover{
+    box-shadow: -1px 1px 4px var(--box-shadow-button);
+    background: var(--background-Button2);
+  }
+  &:active{
+    border-radius: 5px;
+    background: var(--background-Button3);
+    box-shadow: -3px 3px 10px var(--box-shadow-defoult);
+  }
+  &.small{
+    padding: 5px;
+    font-size: var(--font-size);
+    margin: 3px;
+  }
+  &.disable{
+    pointer-events: none;
+    background: var(--background-Button3);
+    box-shadow: inset -1px 1px 2px var(--box-shadow-defoult);
+    border: 1px solid var(--border-button2);
+  }
+  &.icon{
+    padding: 5px 15px;
+    width: fit-content;
+    img{
+      width: 32px;
+    }
+  }
+}
+
+.leaflet-attribution-flag{
+  width: 0 !important;
+}
+
+
+input{
+  padding: 10px;
+  text-align: center;
+  border: none;
+  background: none;
+  font-size: var(--font-size);
+  color: var(--color-Main);
+  &.disable{
+      pointer-events: none;
+  }
+  &.small{
+      width: 100px;
+  }
+}
+
+.input-file { //чтение файла кнопка
+	background: var(--background-Button1);
+  color: var(--color-Main);
+  border: 1px solid var(---border-button);
+  padding: 14px;
+  font-size: var(--font-size);
+  border-radius: 10px;
+  box-shadow: -3px 3px 1px var(--box-shadow-defoult);
+  margin: 5px;
+  transition: all 0.2s;
+  position: relative;
+  display: inline-block;
+  span {
+    position: relative;
+    cursor: pointer;
+    outline: none;
+    box-sizing: border-box;
+    display: flex;
+    vertical-align: middle;
+    text-align: center;
+    background: none;
+    height: 100%;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    color: var(--color-Main);
+    align-items: center;
+    flex-direction: row;
+  }
+
+  input[type=file] {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+    display: block;
+    width: 0;
+    height: 0;
+  }
+}
+
+.ModellingDiv{ //для моделирования 
+  .Divfieldset{
+    width: fit-content;
+    flex: none;
+    fieldset{
+      text-align: left;
+      width: fit-content;
+  
+      div{
+        width: fit-content;
+      }
+    }
+  }
+  
+  .PanelWork{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  
+    .colum{
+      flex: 1;
+      button{
+        width: 99%;
+      }
+  
+    }
+  
+    .FlexColum{
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 10px;
+  
+      button{
+        margin: 5px;
+      }
+    }
+  }
+  .PanelSettings{
+    display: flex;
+    justify-content: space-around;
+    height: 100%;
+    text-align: left;
+    fieldset{
+      flex: 1;
+    }
+  }
+
+  .SelectMode{
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    height: 45px;
+    font-size: 18px;
+    div{
+      img{
+        width: 40px;
+        &:active{
+          width: 30px;
+        }
+        &.disable{
+          pointer-events: none;
+        }
+      }
+    }
+    
+  }
+}
+
+
+
+.TableDefault{ //дэфолтная таблица
+  filter: drop-shadow(2px 4px 6px black);
+  background-color: #72727226;
+  border-collapse: collapse;
+  border-spacing: 4px !important;
+  padding: 0px !important;
+  tr{
+    background-color: rgba(8, 8, 8, 0.755);
+
+    th{
+      border: 1px solid white;
+      border-top: none;
+      border-bottom: 2px solid white;
+    }
+    input{
+      width: calc(100% - 20px) !important;
+    }
+    td{
+      text-align: left;
+    }
+
+    td, th{
+      &.delete{
+        width: 50px; text-align: center;
+        .iconDelete{
+          width: 25px;
+          height: 25px;
+        }
+      }
+    }
+  }
+}
+.addRowButton button{
+  background: none;
+  border: none;
+  width: 100%;
+  height: 100%;
+  padding: 10px 0px;
+  font-size: var(--font-size);
+  color: var(--color-Main);
+}
+.BlockWithIcon{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .icon{
+    width: 25px;
+    margin: 0px 2px;
+  }
+}
+
+
+.LIghtPoint{ //сигнальная лампа
+  div{
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: 20%;
+    left: 10px;
+    border-radius: 20px;
+  
+    &.approved{
+      background-color: rgb(0, 139, 0);
+      box-shadow: 0px 0px 5px rgb(11, 167, 11);
+    }
+    &.Notapproved{
+      background-color: red;
+      box-shadow: 0px 0px 5px #fe1a1a;
+    }
+  }
+  }

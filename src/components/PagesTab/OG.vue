@@ -18,8 +18,8 @@
           <div  @click="SelectOGFromList(data)" type="type">{{ OGType[data.inputType] }}</div>
           <div class="iconDelete" @click="DeleteRowOG(data)" type="icon"><img  src="@/assets/delete.svg" alt="Удалить"></div>
         </div>
-        <div style="display: flex;justify-content: center;">
-          <button class="ButtonCommand BlockWithIcon" :class="!approved? '' : 'disable'"  @click="PageSettings.status=1"><img src="@/assets/add.png" alt="" class="icon">Добавить орбитальную группировку</button>
+        <div>
+          <button class="ButtonCommand" :class="!approved? '' : 'disable'"  @click="PageSettings.status=1"><img src="@/assets/add.png" alt="" class="addButtonIcon">Добавить орбитальную группировку</button>
         </div>
         <div class="ButtonApprovedDiv" v-if="!modellingStatus">
           <button @click="ChangeApproved(!approved)" class="ButtonCommand" :class="approved? 'green' : 'red'">
@@ -31,9 +31,9 @@
 
 
     <div class="Panel RightPanel">
-          
-          <div v-if="PageSettings.status == 0 && selectOG != null">
+          <div v-if="PageSettings.status == 0 && selectOG != null" style="height: 93%;">
             <h3>{{ selectOG.constellationName }}</h3>
+            <div class="TableDiv" style="max-height: 100%; height: 90%;">
             <table class="TableDefault">
               <thead>
                 <tr><th>Модель КА</th><th>Имя КА</th>
@@ -65,25 +65,25 @@
                   <td><input type="number" v-model="data.perigeeWidthArgument"></td>
                   <td><input type="number" v-model="data.trueAnomaly"></td>
                   <td v-if="abilityEdit" @click="DeleteRow(index)" class="delete"><img class="iconDelete" src="@/assets/delete.svg" alt="Удалить"></td>
-                </tr>
+                </tr></tbody><tfoot>
                 <tr v-if="abilityEdit" class="addRowButton">
-                  <td :colspan="9+Number(selectOG.inputType==2)*2 + Number(KaRole.length > 0)"><button @click="AddRow" class="BlockWithIcon"><img src="@/assets/add.png" alt="" class="icon">Добавить КА</button></td>
+                  <td :colspan="9+Number(selectOG.inputType==2)*2 + Number(KaRole.length > 0)"><button @click="AddRow"><img src="@/assets/add.png" alt="" class="addButtonIcon">Добавить КА</button></td>
                 </tr> 
-              </tbody>
+              </tfoot>
             </table>
+          </div>
           </div>
           <div v-if="PageSettings.status == 1">
             <div class="flexrow">
-              <div class="inputdiv"><input type="text" v-model="OG_Param.constellationName"></div>
+              <div class="inputdiv"><input type="text" v-model="OG_Param.constellationName" placeholder="Введите название"></div>
               <div class="SelectDivInFlex">
                 <SelectDiv  
                     :dataOption="[{value:1,lable: OGType[1]},{value:3,lable: OGType[3]},{value:2,lable: OGType[2]}]" 
                     :valueS="{lable: OGType[1]}"
                     @valueSelect="OG_Param.inputType=$event.value"/>
               </div>
-              {{ OG_Param }}
               <div>
-                <button @click="AddOG" class="ButtonDefault">Создать</button> 
+                <button @click="AddOG" class="ButtonCommand">Создать</button> 
               </div>
             </div>
             <div v-if="OG_Param.inputType === 2">
@@ -95,12 +95,12 @@
                   <tr><td>Эксцентриситет</td><td><input v-model="OG_Param.parametersCalculation.eccentricity" type="number"></td></tr>
                   <tr><td>Наклон</td><td><input v-model="OG_Param.parametersCalculation.incline" type="number"></td></tr>
 
-                  <tr><th colspan="2">Долгота восходящего узла плоскостей</th></tr>
+                  <tr><td colspan="2" class="Title">Долгота восходящего узла плоскостей</td></tr>
                   <tr><td>•	Долгота плоскости 1</td><td><input v-model="OG_Param.parametersCalculation.longitudeOfPlane1" type="number"></td></tr>
                   <tr><td>•	Разнесение плоскостей по долготе</td><td><input v-model="OG_Param.parametersCalculation.spacecraftOfLongitude" type="number"></td></tr>
                   <tr><td>•	Аргумент ширины перигея</td><td><input v-model="OG_Param.parametersCalculation.perigeeWidthArgument" type="number"></td></tr>
 
-                  <tr><th colspan="2">Истинная аномалия</th></tr>
+                  <tr><td colspan="2" class="Title">Истинная аномалия</td></tr>
                   <tr><td>•	Позиция 1 в плоскости 1</td><td><input v-model="OG_Param.parametersCalculation.firstPositionInPlane1" type="number"></td></tr>
                   <tr><td>•	Разнесение КА в плоскости по</td><td><input v-model="OG_Param.parametersCalculation.spacecraftSpacing" type="number"></td></tr>
                   <tr><td>•	Фазовый сдвиг КА между плоскостями</td><td><input v-model="OG_Param.parametersCalculation.phaseShift" type="number"></td></tr>
@@ -275,9 +275,7 @@ import SelectDiv from '../SelectDiv.vue';
       DisplayLoad(true)
       this.approved = SystemObject.constellationStatus
       this.dataJson = OGList
-      if(SystemObject.typeWorkplace in {1:null, 2:null}){
-          this.KaRole = []
-      }
+      this.KaRole = []
       let result = await FetchGet('/api/v1/modelsat/all')
       this.KaModels = []
       for (let index = 0; index < result.length; index++) {
@@ -303,6 +301,15 @@ import SelectDiv from '../SelectDiv.vue';
   transition: all 0.2s;
   div{
     padding: 5px 10px;
+  }
+}
+
+.flexrow{
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  .inputdiv input{
+    border-bottom: 1px solid white;
   }
 }
 

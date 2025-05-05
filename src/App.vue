@@ -46,7 +46,7 @@
 import TemplateComponent from './components/TemplateComponent.vue'
 import {DisplayLoad, FetchPost} from './js/LoadDisplayMetod.js'
 import LoadProcess from './components/LoadProcess.vue'
-import GlobalStyle from './style/GlobalStyle2.scss'
+import GlobalStyle from './style/GlobalStyle.scss'
 import { ClearGlobalData, InitGlobalData, SystemObject } from './js/GlobalData'
 
 export default {
@@ -110,6 +110,7 @@ export default {
         ClearGlobalData()
         DisplayLoad(true)
         await localStorage.setItem('data', data.accessKey)
+        await localStorage.setItem('modname', data.name)
         await InitGlobalData()
         this.systemStatus = SystemObject
         DisplayLoad(false)
