@@ -6,8 +6,7 @@
       </div>
       <div class="Panel MaxWidth">
         <div>
-          <button class="ButtonCommand BlockWithIcon" @click="StartModelling"><img src="../../assets/start.png" alt="" class="icon" >Начать Гордеев</button>
-          <button class="ButtonCommand BlockWithIcon" @click="StartModellingPavlov"><img src="../../assets/start.png" alt="" class="icon" >Начать Павлов</button>
+          <button class="ButtonCommand BlockWithIcon" @click="StartModellingPavlov"><img src="../../assets/start.png" alt="" class="icon" >Начать эксперимент</button>
           <fieldset style="display: inline-block;">
             <input type="checkbox"  v-model="interSatellite"/><label>interSatellite: {{ interSatellite }}</label>
           </fieldset>
@@ -20,12 +19,10 @@
           </fieldset>
           <table class="colum">
             <tr>
-              <td><button class="ButtonCommand LIghtPoint" @click="GetRezultGordeev"><div :class="systemStatus.successRouteModelling ? 'approved' : 'Notapproved'"></div>Результат Гордеев</button></td>
-              <td><button class="ButtonCommand LIghtPoint" @click="GetRezultPavlov"><div :class="systemStatus.successPlannerModelling ? 'approved' : 'Notapproved'"></div>Результат Павлов</button></td>
+              <td><button class="ButtonCommand LIghtPoint" @click="GetRezultPavlov"><div :class="systemStatus.successPlannerModelling ? 'approved' : 'Notapproved'"></div>Результат(подгрузить)</button></td>
             </tr>
             <tr>
-              <td><button class="ButtonCommand" @click="ShowRezult(1)" :class="(modellingRezult.data1.length < 1) ? 'disable' : ''">Результат1</button></td>
-              <td><button class="ButtonCommand" @click="ShowRezult(2)" :class="(modellingRezult.data2.length < 1) ? 'disable' : ''">Результат2</button></td>
+              <td><button class="ButtonCommand" @click="ShowRezult(2)" :class="(modellingRezult.data2.length < 1) ? 'disable' : ''">Результат(отобразить)</button></td>
             </tr>
           </table>
         </div>

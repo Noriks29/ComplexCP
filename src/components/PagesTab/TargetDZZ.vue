@@ -20,9 +20,10 @@
                 </tbody></table>
             </div>
             <div class="FlexColumn">
-              <div v-if="!(systemStatus.typeWorkplace in {4:null,5:null})"><button @click="viewmode=0" class="ButtonCommand">Заявки ДЗЗ</button></div>
-              <div v-if="!(systemStatus.typeWorkplace in {4:null,5:null})"><button @click="viewmode=1" class="ButtonCommand">Каталог целей</button></div>
-              <div v-if="(systemStatus.typeWorkplace in {4:null,5:null})"><button @click="viewmode=2" class="ButtonCommand">Данные по заявкам</button></div>
+              <div v-if="!(systemStatus.typeWorkplace in {4:null})"><button @click="viewmode=0" class="ButtonCommand">Заявки ДЗЗ</button></div>
+              <div v-if="!(systemStatus.typeWorkplace in {4:null})"><button @click="viewmode=1" class="ButtonCommand">Каталог целей</button></div>
+              <div v-if="!(systemStatus.typeWorkplace in {1:null,2:null})"><button @click="GetRequestFromDB(1)" class="ButtonCommand">Мультиагенты</button></div>
+              <div v-if="!(systemStatus.typeWorkplace in {1:null,2:null})"><button @click="GetRequestFromDB(2)" class="ButtonCommand">Оптимизация</button></div>
               <div><button @click="CreateMap" class="ButtonCommand">Карта</button></div>
             </div>
         </div>
@@ -71,29 +72,6 @@
               <td colspan="6"><button @click="AddRow"><img src="../../assets/add.png" alt="" class="addButtonIcon">Добавить</button></td>
             </tr> 
           </tbody></table>
-        </div>
-
-
-        <div v-if="viewmode == 2">
-          <table class="TableDefault">
-            <thead><tr><th>Имя</th><th>МКА</th><th>Объём, Мбайт</th><th>Приоритет</th><th>Время появления</th><th></th></tr></thead>
-            <tbody><tr v-for="data, index in datarequest"
-              :key="index"
-              @change="ChangeParamdatarequest"
-              v-show="!(data.deleted==true)"
-            >
-              <td><input type="text" v-model="data.name"></td>
-              <td><SelectDiv  :dataOption="datarequestКАList" :valueS="{lable: data.satellite.name, value: data.satellite.nodeId}" :id="index" @valueSelect="ChangeKadatarequest"/></td>
-              <td><input type="number" v-model="data.capacity"></td>
-              <td><input type="number" v-model="data.priority"></td>
-              <td><DateTime :valueUnix="data.time" :id="String(index)" :name="'timedatarequest'" @valueSelect="ChangeTimedatarequest"/></td>
-              <td :id="index" @click="DeleteRowdatarequest(index)" class="delete"><img class="iconDelete" src="../../assets/delete.svg" alt="-"></td>
-            </tr></tbody>
-            <tbody><tr class="addRowButton">
-              <td colspan="5"><button @click="CreateNewdatarequest"><img src="../../assets/add.png" alt="" class="addButtonIcon">Добавить</button></td>
-              <td v-if="datarequest.length > 0"><button @click="LoadXLSX('datarequest')" class="LoadExel"><img src="../../assets/excel.png"><span>&#8203;</span></button></td>
-            </tr> 
-            </tbody></table>
         </div>
 
         <div v-if="viewmode == 3">
@@ -157,6 +135,9 @@ import XLSX from 'xlsx-js-style';
       ChangeTime(obgtime){
         this.requestJson[obgtime.id][obgtime.name] = obgtime.time
         this.SatartSave('request')
+      },
+      GetRequestFromDB(){
+        alert("Сделать потом выгрузку из других вкладок")
       },
       SelectChange(e, param){
         this.requestJson[e.id][param] = e.value

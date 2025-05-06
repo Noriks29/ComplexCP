@@ -1,18 +1,24 @@
 <template>
-    <transition name="translate" mode="out-in" v-if="activeComponent != ''">
-      <div class="ComponentSelect">
-        <component :is="activeComponent" :FillingDataStatus="FillingDataStatuss" :modellingStatus="ExperimentStatus" @updateParentComponent="ChangeComponents" :systemStatus="system" ></component> 
-      </div>
-    </transition> 
+    
     
     <div class="SectionMenu" :class="system.typeWorkplace == -1 ? 'hide' : 'show'">
-      <transition name="ComponentModelling" mode="out-in" :class="system.typeWorkplace == -1 ? 'hide' : 'show'">
+      <transition name="ComponentModelling" mode="out-in" :class="system.typeWorkplace == -1 ? 'hide' : 'show'" v-if="activeComponent == ''">
         <div class="ModellingDiv">
-          <p>{{ TextTitleModellingName }}</p>
+          <p class="ModellingTitle">{{ TextTitleModellingName }}</p>
           <component :is="ComponentModellingList[system.typeWorkplace]" :systemStatus="system" :reload="reload" :ExperimentStatus="ExperimentStatus" @ChangeExperimentStatus="ChangeExperimentStatus"></component> 
+          <MapContainer/>
+        </div>
+      </transition> 
+      <transition name="translate" mode="out-in" v-if="activeComponent != ''">
+        <div class="ComponentSelect">
+          <component :is="activeComponent" :FillingDataStatus="FillingDataStatuss" :modellingStatus="ExperimentStatus" @updateParentComponent="ChangeComponents" :systemStatus="system" ></component> 
         </div>
       </transition> 
       <div class="FlexMenuSection">
+        <div class="ButtonSection system" >
+          <h1>Система</h1>
+          <SystemWindow :FillingDataStatus="FillingDataStatuss" :modellingStatus="ExperimentStatus" @updateParentComponent="ChangeComponents" :systemStatus="system" />
+        </div>
         <div class="ButtonSection first">
           <h1>КС</h1>
           <div class="ButtonList">
@@ -33,7 +39,6 @@
           <div class="ButtonList">
             <button  :class="FillingDataStatus && !ExperimentStatus > 0 ? 'active' : ''" @click="SelectComponent('TargetDZZ')">Заявки</button>
           </div>
-          <SystemWindow :FillingDataStatus="FillingDataStatuss" :modellingStatus="ExperimentStatus" @updateParentComponent="ChangeComponents" :systemStatus="system" />
         </div>        
       </div>
     </div>
@@ -55,6 +60,7 @@ import SystemWindow from './PagesTab/SystemWindow.vue';
 import TargetDZZ from './PagesTab/TargetDZZ.vue'
 import EarthConstellation from './PagesTab/EarthConstellation.vue'
 import LeaderConstellationConstellation from './PagesTab/LeaderConstellationConstellation.vue';
+import MapContainer from './MapContainer.vue';
 
 export default {
   name: 'TemplateComponent',
@@ -70,7 +76,8 @@ export default {
 
     KA1,
     KAGordeev,
-    KAPavlov
+    KAPavlov,
+    MapContainer
   },
   data(){
       return{
@@ -80,7 +87,7 @@ export default {
         system: {typeWorkplace: -1},
         reload: 0,
         ExperimentStatus: false,
-        ComponentModellingList: [null,"KA1","KAPavlov","KAGordeev",null]
+        ComponentModellingList: [null,"KA1","KAGordeev","KAPavlov",null]
     }
   },
   methods: {
@@ -190,9 +197,17 @@ export default {
   .ModellingDiv{
     height: 100vh !important;
     width: 75vw !important;
+    overflow-y: auto;
+    .ModellingTitle{
+      font-size: 20px;
+      margin: 10px;
+      font-weight: bold;
+      text-align: left;
+    }
     .main_contain{
       padding: 5px 0px 10px !important;
-      height: calc(100% - 85px) !important;
+      /*height: calc(100% - 85px) !important;*/
+      height: fit-content !important;
       .ContentDiv{
         display: flex !important;
         height: 100% !important;
@@ -203,17 +218,38 @@ export default {
       }
     }
   }
+  .ComponentSelect{
+    position: relative !important;
+    width: 75vw !important;
+    z-index: 1 !important;
+    background: none !important;
+
+    .ToMenuButtonDiv{
+      position: absolute !important;
+    }
+  }
   .FlexMenuSection{
     flex-direction: column !important;
     height: 100vh !important;
     width: 25vw !important;
     align-items: normal !important;
     .ButtonSection{
+      height: auto !important;
       &.third{
-        height: fit-content;
-        flex: 0 1 auto;
+        flex: 2;
+      }
+      &.system{
+        flex: 10;
+        max-height: fit-content;
+      }
+      &.first{
+        flex:4;
+      }
+      &.second{
+        flex:3;
       }
     }
   }
 }
+
 </style>

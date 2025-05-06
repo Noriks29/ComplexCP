@@ -1,6 +1,6 @@
 <template>
   <table class="TableDefault"><tbody>
-    <tr><td>Начальное время расчетов(потом убрать)</td><td>
+    <tr><td>Начальное время расчетов</td><td>
             <DateTime :valueUnix="dataSystem.startTime" :id="'startTime'"  @valueSelect="ChangeTime"/>
           </td></tr>
           <tr><td>Начало горизонта планирования</td><td>

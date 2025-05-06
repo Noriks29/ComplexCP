@@ -7,7 +7,7 @@
             <h1 class="TitleText">Список наземных пунктов</h1>
           </div>
     <div class="ContentDiv">
-    <div class="Panel RightPanel">
+    <div class="Panel LeftPanel">
       <div class="ButtonApprovedDiv" v-if="!modellingStatus">
           <button @click="ChangeApproved(!approved)" class="ButtonCommand" :class="approved? 'green' : 'red'">
           <span v-if="approved"><img src="../../assets/edit.svg"></span>
@@ -15,6 +15,8 @@
           <span>{{ approved ?  'Редактировать' : 'Утвердить'}}</span>
         </button>
       </div>
+    </div>
+    <div class="Panel RightPanel">
       <div class="TableDiv" style="max-height: 75%;">
       <table class="TableDefault">
         <thead>
