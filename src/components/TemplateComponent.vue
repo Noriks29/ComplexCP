@@ -16,7 +16,6 @@
       </transition> 
       <div class="FlexMenuSection">
         <div class="ButtonSection system" >
-          <h1>Система</h1>
           <SystemWindow :FillingDataStatus="FillingDataStatuss" :modellingStatus="ExperimentStatus" @updateParentComponent="ChangeComponents" :systemStatus="system" />
         </div>
         <div class="ButtonSection first">
