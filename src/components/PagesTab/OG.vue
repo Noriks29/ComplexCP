@@ -8,7 +8,7 @@
           </div>
     <div class="ContentDiv">
     <div class="Panel LeftPanel">
-      <div>Список ОГ</div>
+        <div class="OGList">
         <div v-for="data, index in dataJson"
           :key="index"
           v-show="!(data.deleted==true)"
@@ -18,8 +18,12 @@
           <div  @click="SelectOGFromList(data)" type="type">{{ OGType[data.inputType] }}</div>
           <div class="iconDelete" @click="DeleteRowOG(data)" type="icon"><img  src="@/assets/delete.svg" alt="Удалить"></div>
         </div>
+        </div>
+        <div class="FlexColumn">
         <div>
-          <button class="ButtonCommand" :class="!approved? '' : 'disable'"  @click="PageSettings.status=1"><img src="@/assets/add.png" alt="" class="addButtonIcon">Добавить орбитальную группировку</button>
+          <button class="ButtonCommand" :class="!approved? '' : 'disable'"  @click="PageSettings.status=(PageSettings.status+1)%2">
+            <img src="@/assets/add.png" alt="" class="addButtonIcon">{{ (PageSettings.status == 1) ? 'Прекратить' : 'Добавить орбитальную группировку' }}
+          </button>
         </div>
         <div class="ButtonApprovedDiv" v-if="!modellingStatus">
           <button @click="ChangeApproved(!approved)" class="ButtonCommand" :class="approved? 'green' : 'red'">
@@ -27,12 +31,12 @@
           <span v-else><img src="../../assets/approve.svg"></span>
           <span>{{ approved ?  'Редактировать' : 'Утвердить'}}</span>
         </button></div>
+        </div>
     </div>
 
 
     <div class="Panel RightPanel">
           <div v-if="PageSettings.status == 0 && selectOG != null" style="height: 93%;">
-            <h3>{{ selectOG.constellationName }}</h3>
             <div class="TableDiv" style="max-height: 100%; height: 90%;">
             <table class="TableDefault">
               <thead>
@@ -312,6 +316,7 @@ import SelectDiv from '../SelectDiv.vue';
     border-bottom: 1px solid white;
   }
 }
+
 
 
 

@@ -1,10 +1,6 @@
 <template>
     <div class="main_contain">
       <DefaultTable v-if="ShowTable=='DefaultTable'" :dataLableName="dataLableName" :dataTable="dataTable" @closetable="ShowTable=null" :prevrap="PreWrapDefaultTable"/>
-      <E78Table v-if="ShowTable=='E78Table'" :dataTable="modellingRezultSelect.E78" @closetable="ShowTable=null"/>
-      <E77E78 v-if="ShowTable=='E77E78'" :dataTable1="modellingRezult.E77" :dataTable2="modellingRezult.E78" @closetable="ShowTable=null"/>
-      <BookmarkTable v-if="ShowTable=='BookmarkTable'" :dataTable1="modellingRezult.E77" :dataTable2="modellingRezult.E78" @closetable="ShowTable=null"/>
-      <FlightplanForm v-if="ShowTable=='FlightplanForm'" :dataTable="modellingRezultSelect.E79" @closetable="ShowTable=null"/>
       <div class="ContentDiv">
         <div class="FlexRow Panel">
           <div class="ButtonModelling">
@@ -12,75 +8,21 @@
             <button v-if="ExperimentStatus" @click="StartModelling" class="ButtonCommand rightPadding"><img src="../../assets/start.png" alt="" class="iconButton">Старт моделирования</button>
             <button v-if="ExperimentStatus" @click="Experiment(false)" class="ButtonCommand rightPadding">Закончить эксперимент</button>
           </div>
-          <div class="TableSystem" style="flex: 2 0 auto;">
-            <table style="text-align: left;">
-              <tr><td colspan="2">
-                <button v-if="!ExperimentStatus && !modellingSettings.experimentEddit" @click="modellingSettings.experimentEddit=true" class="ButtonCommand MaxWidth" >Настройки</button>
-                <button v-if="!ExperimentStatus && modellingSettings.experimentEddit" @click="modellingSettings.experimentEddit=false" class="ButtonCommand MaxWidth">Закрыть настройки</button></td></tr>
-              <tr v-for="data, index in modellingSettingsLabel" :key="index"
-              ><td>{{ data.name }}:</td><td>{{ data.label[Number(modellingSettings[index])] }}</td></tr>
-            </table>
-          </div>
-        </div>
-        <div class="Panel MaxWidth">
           <div class="PanelWork" v-if="!modellingSettings.experimentEddit">
-            <table class="colum">
+          <table class="colum">
               <tr>
-                <td>Заявки</td>
                 <td class="tdflexRow">
-                  <button v-if="systemStatus.typeWorkplace==2" @click="ShowTable='E77E78'" :class="(modellingRezult.E77.length < 1 || modellingRezult.E78.length < 1 ) ? 'disable' : ''" class="ButtonCommand">План выполнения заявок</button>
-                  <button v-if="systemStatus.typeWorkplace==2" @click="ShowTable='BookmarkTable'" :class="(modellingRezult.E77.length < 1 || modellingRezult.E78.length < 1 ) ? 'disable' : ''" class="ButtonCommand">План закладок</button>
-                  <button v-if="systemStatus.typeWorkplace in {1:null,3:null,4:null}" :class="(modellingRezult.hide.length < 1) ? 'disable' : ''" class="ButtonCommand">Лог выполнения заявок</button>
-                  <button v-if="systemStatus.typeWorkplace in {3:null,4:null}" :class="(modellingRezult.hide.length < 1) ? 'disable' : ''" class="ButtonCommand">Лог загрузки сеансов связи</button>
-                  <button v-if="systemStatus.typeWorkplace in {3:null,4:null}" :class="(modellingRezult.hide.length < 1) ? 'disable' : ''" class="ButtonCommand">Лог передачи данных в сеансе связи</button>
-                  <button v-if="systemStatus.typeWorkplace in {3:null,4:null}" :class="(modellingRezult.hide.length < 1) ? 'disable' : ''" class="ButtonCommand">Сроки доставки данных</button>
-                </td>
-              </tr>
-              <tr>
-                <td><SelectDiv  :dataOption="arr" :valueS="valueSS" :id="'0'"  @valueSelect="SelectChange"/></td>
-                <td class="tdflexRow">
-                  {{ ShowTable  }}
                   <button @click="ShowShootingPlan" :class="(modellingRezultSelect.E77.length < 1) ? 'disable' : ''" class="ButtonCommand">План съёмок</button>
-                  <button v-if="systemStatus.typeWorkplace in {2:null}" @click="ShowTable='E78Table'" :class="(modellingRezultSelect.E78.length < 1) ? 'disable' : ''" class="ButtonCommand">План доставки</button>
-                  <button @click="ShowTable='FlightplanForm'" :class="(modellingRezultSelect.E79.length < 1) ? 'disable' : ''" class="ButtonCommand">План полёта</button>
-                  <button @click="ShowFcLog" :class="(modellingRezultSelect.fcLog.length < 1) ? 'disable' : ''" class="ButtonCommand">Лог полёта</button>
                 </td>
               </tr>
               <tr>
-                <td></td>
                 <td class="tdflexRow">
                   <button @click="ShowLogAll" :class="(modellingRezult.log.length < 1) ? 'disable' : ''" class="ButtonCommand">Лог движка</button>
-                  <button @click="ShowEventsLogResponse" :class="(modellingRezult.events.length < 1) ? 'disable' : ''" class="ButtonCommand">Лог событий</button>
                   <button @click="ShowLogSmao" :class="(modellingRezult.Smao.length < 1) ? 'disable' : ''" class="ButtonCommand icon"><img src="../../assets/instructions.png" alt="smaoResponse"></button>
                 </td>
               </tr>
             </table>
-          </div>
-          <div class="PanelSettings" v-else  @change="ValidateDataPostModellingSettings">
-            <fieldset v-if="systemStatus.typeWorkplace in {1:null, 3:null}">
-              <legend>Тип эксперимента:</legend>
-              <div><input type="radio" :value="0" v-model="modellingSettings.experiment"/><label>планирование съемок</label></div>
-              <div><input type="radio" :value="1" v-model="modellingSettings.experiment"/><label>планирование полёта</label></div>
-              <div><input type="radio" :value="2" v-model="modellingSettings.experiment"/><label>моделирование полёта</label></div>
-            </fieldset>
-            <fieldset v-if="systemStatus.typeWorkplace in {1:null,2:null,3:null} && modellingSettings.flightPlanning == 1">
-                <legend>Прогноз заряда АКБ при планировании:</legend>
-                <div><input type="radio" :value="0" v-model="modellingSettings.chargeForecasting"/><label>не выполняется</label></div>
-                <div><input type="radio" :value="1" v-model="modellingSettings.chargeForecasting"/><label>выполняется, не учитывается</label></div>
-                <div><input type="radio" :value="2" v-model="modellingSettings.chargeForecasting"/><label>выполняется, учитывается</label></div>
-              </fieldset>
-              <fieldset v-if="systemStatus.typeWorkplace in {1:null, 3:null} && modellingSettings.planSimulation == 1">
-                <legend>Моделирование полёта:</legend>
-                <div><input type="checkbox" v-model="modellingSettings.chargeSimulation"/><label>Использование АКБ</label></div>
-                <div><input type="checkbox" v-model="modellingSettings.optionPro42"/><label>Использование Pro</label></div>
-              </fieldset>
-            <fieldset v-if="systemStatus.typeWorkplace in {3:null, 4:null}">
-              <legend>Межспутниковая связь для доставки данных:</legend>
-              <div><input type="radio" :value="0" v-model="modellingSettings.useInteraction" true-value="1" false-value="0"/><label>не используется</label></div>
-              <div><input type="radio" :value="1" v-model="modellingSettings.useInteraction"/><label>используется</label></div>
-            </fieldset>
-          </div>
-        </div>
+        </div></div>
       </div>
     </div>
 </template>
@@ -90,11 +32,6 @@
 import { UnixToDtime } from '@/js/WorkWithDTime';
 import { FetchGet, DisplayLoad, FetchPost } from '@/js/LoadDisplayMetod';
 import DefaultTable from '@/components/DefaultTable.vue'
-import SelectDiv from "../SelectDiv.vue"
-import E78Table from './E78Table.vue';
-import E77E78 from './E77E78.vue';
-import BookmarkTable from './BookmarkComponent.vue';
-import FlightplanForm from './FlightplanForm.vue';
 
 import { KaSettings } from './KaSettings';
 import { NPList, OGList } from '@/js/GlobalData';
@@ -160,12 +97,7 @@ import { NPList, OGList } from '@/js/GlobalData';
       }
     },
     components:{
-      DefaultTable,
-      E78Table,
-      E77E78,
-      SelectDiv,
-      BookmarkTable,
-      FlightplanForm
+      DefaultTable
     },
     methods: {
       Experiment(status){

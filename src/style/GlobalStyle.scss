@@ -482,6 +482,11 @@ body{
       width: 32px;
     }
   }
+  &.Select{
+    background: var(--background-Button2);
+    box-shadow: none;
+    border-radius: 5px;
+  }
 }
 .leaflet-attribution-flag{
   width: 0 !important;

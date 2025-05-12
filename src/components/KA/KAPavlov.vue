@@ -2,27 +2,23 @@
   <div class="main_contain">
     <DefaultTable v-if="ShowDefaultTable" :dataLableName="dataLableName" :dataTable="dataTable" @closetable="ShowDefaultTable = false" :prevrap="PreWrapDefaultTable"/>
     <div class="ContentDiv">
-      <div class="Panel">
-      </div>
-      <div class="Panel MaxWidth">
-        <div>
-          <button class="ButtonCommand BlockWithIcon" @click="StartModellingPavlov"><img src="../../assets/start.png" alt="" class="icon" >Начать эксперимент</button>
+        <div class="FlexRow Panel">
+          <div class="ButtonModelling">
+            <button v-if="!ExperimentStatus && !modellingSettings.experimentEddit" @click="Experiment(true)" class="ButtonCommand rightPadding"><img src="../../assets/start.png" alt="" class="iconButton">Начать эксперимент</button>
+            <button v-if="ExperimentStatus" @click="StartModelling" class="ButtonCommand rightPadding"><img src="../../assets/start.png" alt="" class="iconButton">Старт моделирования</button>
+            <button v-if="ExperimentStatus" @click="Experiment(false)" class="ButtonCommand rightPadding">Закончить эксперимент</button>
+          </div>
           <fieldset style="display: inline-block;">
-            <input type="checkbox"  v-model="interSatellite"/><label>interSatellite: {{ interSatellite }}</label>
+            <div><input type="checkbox"  v-model="PreWrapDefaultTable"/><label>Форматирование вывода: {{ PreWrapDefaultTable }}</label></div>
+            <div><input type="checkbox"  v-model="interSatellite"/><label>interSatellite: {{ interSatellite }}</label></div>
           </fieldset>
-        </div>
-      </div>
-      <div class="Panel MaxWidth" v-if="true">
         <div class="PanelWork">
-          <fieldset>
-            <input type="checkbox"  v-model="PreWrapDefaultTable"/><label>Форматирование вывода: {{ PreWrapDefaultTable }}</label>
-          </fieldset>
           <table class="colum">
             <tr>
               <td><button class="ButtonCommand LIghtPoint" @click="GetRezultPavlov"><div :class="systemStatus.successPlannerModelling ? 'approved' : 'Notapproved'"></div>Результат(подгрузить)</button></td>
             </tr>
             <tr>
-              <td><button class="ButtonCommand" @click="ShowRezult(2)" :class="(modellingRezult.data2.length < 1) ? 'disable' : ''">Результат(отобразить)</button></td>
+              <td><button class="ButtonCommand" @click="ShowRezult()" :class="(modellingRezult.data.length < 1) ? 'disable' : ''">Результат(отобразить)</button></td>
             </tr>
           </table>
         </div>
@@ -44,9 +40,11 @@ export default {
   data(){
     return{
       modellingRezult: {
-        data1: [],
-        data2: []
-      },
+          data: []
+        },
+        modellingSettings:{
+          experimentEddit: false
+        },
       interSatellite: true,
       dataTable: [],
       dataLableName: [],
@@ -58,15 +56,13 @@ export default {
     DefaultTable
   },
   methods: {
+     Experiment(status){
+          this.modellingRezult= {
+            data: [],
+          }
+        this.$emit('ChangeExperimentStatus', {status})
+      },
     async StartModelling(){
-      DisplayLoad(true)
-      this.StartAwait("successRouteModelling")
-      let rezult = await FetchGet("/api/v1/route", true, "Расчёт Route окончен") || []
-      console.log(rezult)
-      
-      DisplayLoad(false)
-    },
-    async StartModellingPavlov(){
       DisplayLoad(true)
       this.StartAwait("successPlannerModelling")
       let rezult = await FetchPost("/api/v1/planner", {"interSatellite": this.interSatellite}, undefined, true, "Расчёт Planner окончен") || []
@@ -88,20 +84,13 @@ export default {
       }, 4000);
     },
     async GetRezultPavlov(){
-      this.modellingRezult.data2 = await FetchGet("/api/v1/planner/all") || []
+      this.modellingRezult.data = await FetchGet("/api/v1/planner/all") || []
     },
-    async GetRezultGordeev(){
-      this.modellingRezult.data1 = await FetchGet("/api/v1/route/all") || []
-    },
-    ShowRezult(numb){
+    ShowRezult(){
       this.dataTable = []
       this.dataLableName = [{label: "data", nameParam: "data"}]
-      let dataT = []
-      if(numb == 1){
-        dataT = this.modellingRezult.data1
-      }else{
-        dataT = this.modellingRezult.data2
-      }
+      let dataT = this.modellingRezult.data
+
       for (let index = 0; index < dataT.length; index++) {
         const element = JSON.stringify(dataT[index], null, 2);
         console.log(element)
@@ -111,13 +100,10 @@ export default {
     },
     async ReLoadComponent(){
       console.log("Перезагрузка")
-
     }
   },
   async mounted(){
     this.ReLoadComponent()
-    
-    
   }
 }
 </script>

@@ -8,13 +8,16 @@
         </div>
       <div class="ContentDiv">
           <div class="Panel Select LeftPanel" >
-              <p>Выбор КА</p>
-              <SelectDiv :dataOption="KatypeList" :valueS="SelectKA"  @valueSelect="ChangeKA"/>
-              <p>Информация</p>
-              <div @click="viewPanel = 1" class="ButtonCommand"  :class="viewPanel==1 ? 'SelectPage': ''">• Режимы функционирования</div>
-              <div @click="viewPanel = 2" class="ButtonCommand" :class="viewPanel==2 ? 'SelectPage': ''">• Устройства</div>
-              <div @click="viewPanel = 3" class="ButtonCommand" :class="viewPanel==3 ? 'SelectPage': ''">• Потребление энергии устройствами</div>
-              <div @click="viewPanel = 4" class="ButtonCommand" :class="viewPanel==4 ? 'SelectPage': ''">• Параметры устройств и функционирования</div>
+              <div style="display: flex; align-items: center;">
+                <label for="">Выбор КА</label>
+                <SelectDiv :dataOption="KatypeList" :valueS="SelectKA" style="flex: 1;"  @valueSelect="ChangeKA"/>
+              </div>
+              <div class="FlexColumn">
+                <div><button @click="viewPanel=1" class="ButtonCommand" :class="viewPanel==1?'Select':''">Режимы функционирования</button></div>
+                <div><button @click="viewPanel=2" class="ButtonCommand" :class="viewPanel==2?'Select':''">Устройства</button></div>
+                <div><button @click="viewPanel=3" class="ButtonCommand" :class="viewPanel==3?'Select':''">Потребление энергии устройствами</button></div>
+                <div><button @click="viewPanel=4" class="ButtonCommand" :class="viewPanel==4?'Select':''">Параметры устройств и функционирования</button></div>
+              </div>
           </div>
           <div class="Panel RightPanel">
           <div v-if="viewPanel == 1">

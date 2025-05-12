@@ -4,28 +4,16 @@
             <button class="ToMenuButtonDiv" @click="SelectComponent('TemplateComponent')">
               <img src="../../assets/exit.svg">
             </button>
-            <div class="TitleText">Заявки</div>
+            <h1 class="TitleText">Заявки</h1>
           </div>
     <div class="ContentDiv">
         <div class="Panel LeftPanel">
-            <div>Парамертры системы</div>
-            <div class="SystemInfo">
-              <table><tbody>
-                <tr><th>Начальное время расчетов:</th></tr>
-                      <tr><td v-html="CreateDateTime(systemStatus.startTime)"></td></tr>
-                  <tr><th>Начало горизонта моделирования:</th></tr>
-                      <tr><td v-html="CreateDateTime(systemStatus.modelingBegin)"></td></tr>
-                  <tr><th>Окончание горизонта моделирования:</th></tr>
-                      <tr><td v-html="CreateDateTime(systemStatus.modelingEnd)"></td></tr>
-                </tbody></table>
-            </div>
             <div class="FlexColumn">
-              <div v-if="!(systemStatus.typeWorkplace in {4:null})"><button @click="viewmode=0" class="ButtonCommand">Заявки ДЗЗ</button></div>
-              <div v-if="!(systemStatus.typeWorkplace in {4:null})"><button @click="viewmode=1" class="ButtonCommand">Каталог целей</button></div>
+              <div v-if="!(systemStatus.typeWorkplace in {3:null})"><button @click="viewmode=0" class="ButtonCommand">Заявки ДЗЗ</button></div>
+              <div v-if="!(systemStatus.typeWorkplace in {3:null})"><button @click="viewmode=1" class="ButtonCommand">Каталог целей</button></div>
               <div v-if="!(systemStatus.typeWorkplace in {4:null})"><button @click="viewmode=2" class="ButtonCommand">Данные по заявкам</button></div>
               <div v-if="!(systemStatus.typeWorkplace in {1:null,2:null})"><button @click="GetRequestFromDB(1)" class="ButtonCommand">Мультиагенты</button></div>
               <div v-if="!(systemStatus.typeWorkplace in {1:null,2:null})"><button @click="GetRequestFromDB(2)" class="ButtonCommand">Оптимизация</button></div>
-              <div><button @click="CreateMap" class="ButtonCommand">Карта</button></div>
             </div>
         </div>
         <div class="Panel RightPanel" >
@@ -120,11 +108,6 @@ import { PagesSettings } from './PagesSettings';
 import { OGList, NPList } from '@/js/GlobalData.js';
 import SelectDiv from '../SelectDiv.vue'
 import DateTime from '../DateTime.vue';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import icon from 'leaflet/dist/images/marker-icon.png';
-import icon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import shadow from 'leaflet/dist/images/marker-shadow.png';
 import XLSX from 'xlsx-js-style';
 
   export default {
@@ -150,7 +133,6 @@ import XLSX from 'xlsx-js-style';
         TypeRequest: [{value: 0, lable: 'в НП'},{value: 1, lable: 'Лидером'}],
         arr: [],
         arrNP: [],
-        map: {},
       }
     },
     methods: {
@@ -166,7 +148,6 @@ import XLSX from 'xlsx-js-style';
           await FetchGet('/api/v1/route/requests')
         }
         await this.ReFetch()
-        alert("Сделать потом выгрузку из других вкладок")
       },
       SelectChange(e, param){
         this.requestJson[e.id][param] = e.value
@@ -260,40 +241,6 @@ import XLSX from 'xlsx-js-style';
         await this.ReFetch()
       },
       
-      async LoadFileKARoad(data){
-        const reader = new FileReader();
-        if (data.target.files[0]) {
-          var file = data.target.files[0];
-          reader.readAsText(file);
-          reader.addEventListener('load', () => {
-            let dataFile = reader.result.split("\n")
-            let dataFormat = [[]]
-            let line_index = 0
-            for (let index = 1; index < dataFile.length; index++) {
-              const element = dataFile[index].split(" ");
-              let lat = Number(element[0])
-              let lng = Number(element[1])
-              if (!isNaN(lat) && !isNaN(lng)) {
-                if (dataFormat[line_index].length > 0) {
-                  if(dataFormat[line_index][dataFormat[line_index].length-1].lng * lng < -6){
-                    line_index++
-                    dataFormat.push([])
-                  }
-                }
-                dataFormat[line_index].push({lat: lat*180/Math.PI, lng: lng*180/Math.PI}) 
-              }
-            }
-            const color = document.getElementById("inputColorKa").value
-            dataFormat.forEach(dataRoad =>{
-              L.polyline(dataRoad, {color: color + "d4", weight: 2}).addTo(this.map);
-            })
-            
-          });
-          reader.addEventListener('error', () => {
-            console.error(`Произошла ошибка при чтении файла`);
-          });
-        }
-      },
       async ReFetch(){
         this.datarequest = await FetchGet('/api/v1/satrequest/data/get/all') || []
         this.catalogJson = await FetchGet('/api/v1/satrequest/catalog/get/all') || []
@@ -311,88 +258,6 @@ import XLSX from 'xlsx-js-style';
           }
         }
         this.CreateSelectArr()
-        },
-        async CreateMap(){
-          this.viewmode = 3
-          this.map = {}
-          console.log(await document.getElementById("map"))
-          this.map = L.map('map').setView(new L.LatLng(59.932936, 30.311349), 2);
-          L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', 
-          {
-            minZoom: 2, 
-            maxZoom: 5,
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          }).addTo(this.map);
-          let DefaultIcon = new L.icon({
-                iconUrl: icon,
-                shadowUrl: shadow,
-                iconRetinaUrl: icon2x
-          });
-          L.Marker.prototype.options.icon = DefaultIcon;
-          for (let i = 0; i < this.requestJson.length; i++) {
-              const element = this.requestJson[i].catalog;
-              L.circle([element.lat, element.lon], 21000, {
-                color: 'blue',
-                fillColor: '#f03',
-                fillOpacity: 0.4
-              }).addTo(this.map)
-          }
-          
-          this.arrNP.forEach(element => {
-              L.circle([element.value.latitude, element.value.longitude], 17000, {
-                color: 'green',
-                fillColor: '#121100',
-                fillOpacity: 0.4
-              }).addTo(this.map)
-          });
-        },
-        ChangeKaDraw(e){
-          this.KatoDraw = e.value
-        },
-        async GetKARoad(){
-          DisplayLoad(true)
-          let color = document.getElementById("inputColorKa")
-          let colors = ['#ff0000','#00ff00','#0000ff','#ffff00','#00ffff','#990000','#009900','#999900','#000099','#ffcc00','#00ffcc','#cc0000','#00cc00','#cccc00','#0000cc','#ee0000','#00ee00','#eeee00','#00eeee','#aaaa00']
-          if (this.KatoDraw == undefined) {
-            let roads = await FetchGet("/api/v1/pro42/gps/all") || []
-            let colorid = 0
-            roads.forEach(road => {
-              let arrayPoint = [[]]
-              let line_index = 0
-              for (let index = 0; index < road.coordinates.length; index+=1) {
-                const element = road.coordinates[index];
-                if (arrayPoint[line_index].length > 0) {
-                  if(arrayPoint[line_index][arrayPoint[line_index].length-1].lng * element.longitude < -1000){
-                    line_index++
-                    arrayPoint.push([])
-                  }
-                }
-                arrayPoint[line_index].push({lat: element.latitude, lng: element.longitude})
-              }
-              arrayPoint.forEach(dataRoad => {
-                L.polyline(dataRoad, {color: colors[colorid] + "d4", weight: 2}).addTo(this.map);
-              })
-              colorid++
-            });
-
-          }
-          else{
-            let road = await FetchPost("/api/v1/pro42/gps/sat", {}, "satelliteId="+this.KatoDraw.satelliteId) || []
-            let arrayPoint = [[]]
-            let line_index = 0
-            for (let index = 0; index < road.length; index+=1) {
-              const element = road[index];
-              if (arrayPoint[line_index].length > 0) {
-                  if(arrayPoint[line_index][arrayPoint[line_index].length-1].lng * element.longitude < -1000){
-                    line_index++
-                    arrayPoint.push([])
-                  }
-                }
-              arrayPoint[line_index].push({lat: element.latitude, lng: element.longitude})
-            }
-            L.polyline(arrayPoint, {color: color.value + "d4", weight: 2}).addTo(this.map);
-          }
-          DisplayLoad(false)
         },
         LoadXLSX(mode='request'){
           const workbook = XLSX.utils.book_new();
@@ -451,17 +316,11 @@ import XLSX from 'xlsx-js-style';
           workbook.Sheets['Data'] = worksheet;
           XLSX.writeFile(workbook, 'dataRequest.xlsx');
         },
-        ReloadMapContainer(){
-          this.map.off();
-          this.map.remove();
-          this.CreateMap()
-        }
-      
     },
     
     async mounted() {
       DisplayLoad(true)
-      if(this.systemStatus.typeWorkplace in {4:null, 5:null}){
+      if(this.systemStatus.typeWorkplace in {3:null}){
         this.viewmode = 2
       }
       NPList.forEach(element => {

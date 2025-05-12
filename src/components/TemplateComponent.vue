@@ -26,7 +26,7 @@
             <button :class="!ExperimentStatus > 0 ? 'active' : ''" @click="SelectComponent('TypeKA')">Модели КА</button>
           </div>   
         </div>
-        <div class="ButtonSection second">
+        <div class="ButtonSection second" v-if="system.typeWorkplace == 3">
           <h1>Связь</h1>
           <div class="ButtonList">
             <button :class="FillingDataStatus && !ExperimentStatus > 0 ? 'active' : ''" @click="SelectComponent('EarthConstellation')"><div :class="system.earthSatStatus ? 'approved' : 'Notapproved'"></div>КА - НП</button>
@@ -197,11 +197,16 @@ export default {
     height: 100vh !important;
     width: 75vw !important;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
     .ModellingTitle{
       font-size: 20px;
       margin: 10px;
       font-weight: bold;
       text-align: left;
+    }
+    .PanelWork{
+      flex:1;
     }
     .main_contain{
       padding: 5px 0px 10px !important;
@@ -222,6 +227,34 @@ export default {
     width: 75vw !important;
     z-index: 1 !important;
     background: none !important;
+    .ContentDiv{
+      flex-direction: column !important;
+      .LeftPanel{
+        flex: none !important;
+        .FlexColumn{
+          display: flex;
+          flex-wrap: wrap;
+          flex-direction: row !important;
+          align-items: center !important;
+          div{
+            width: auto;
+            flex: 1;
+            &.ButtonApprovedDiv button{
+              width: calc(100% - 10px) !important;
+              margin: 5px !important;
+            }
+            .ButtonCommand{
+              white-space: nowrap;
+            }
+          }
+        }
+        .OGList{
+          max-height: 20vh;
+          overflow-y: auto;
+        }
+        
+      }
+    }
 
     .ToMenuButtonDiv{
       position: absolute !important;
@@ -249,6 +282,12 @@ export default {
       }
     }
   }
+  .ButtonSection{
+    h1{
+      margin: 5px !important;
+      font-size: 20px !important;
+    }
+  } 
 }
 
 </style>

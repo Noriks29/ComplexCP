@@ -1,5 +1,5 @@
 <template>
-  <div style="position: relative;">
+  <div class="MapContain">
    <div id="DrawKARoad">
             <SelectDiv  :dataOption="KAArray" :valueS="KatoDraw" :id="'KA'+String(0)" @valueSelect="ChangeKaDraw"/>
             <input type="color" id="inputColorKa" value="#5900ff"><button class="ButtonCommand" @click="GetKARoad">Отрисовать маршрут</button>
@@ -40,9 +40,9 @@ export default {
           this.map = L.map('map').setView(new L.LatLng(59.932936, 30.311349), 2);
           L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', 
           {
-            minZoom: 2, 
+            minZoom: 1, 
             maxZoom: 5,
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution: ''
           }).addTo(this.map);
           let DefaultIcon = new L.icon({
                 iconUrl: icon,
@@ -75,7 +75,7 @@ export default {
           DisplayLoad(true)
           let color = document.getElementById("inputColorKa")
           let colors = ['#ff0000','#00ff00','#0000ff','#ffff00','#00ffff','#990000','#009900','#999900','#000099','#ffcc00','#00ffcc','#cc0000','#00cc00','#cccc00','#0000cc','#ee0000','#00ee00','#eeee00','#00eeee','#aaaa00']
-          if (this.KatoDraw == undefined) {
+          if (this.KatoDraw.value == null) {
             let roads = await FetchGet("/api/v1/pro42/gps/all") || []
             let colorid = 0
             roads.forEach(road => {
@@ -126,7 +126,7 @@ export default {
     async mounted() {
       DisplayLoad(true)
       console.log(NPList)
-      this.KAArray.push({value: undefined, lable: "Все КА" })
+      this.KAArray.push({value: null, lable: "Все КА" })
       OGList.forEach(OG => {
         OG.satellites.forEach(element =>{
           this.KAArray.push({value: element, lable: OG.constellationName + "-" + element.name })
@@ -141,10 +141,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.MapContain{
+  position: relative;
+  flex: 1;
+}
+
 #DrawKARoad{
   position: absolute;
   right: 0;
-  z-index: 401;
+  top: 5px;
+  z-index: 1;
   display: flex;
   align-items: center;
   padding: 5px 20px;
@@ -162,11 +168,17 @@ export default {
 #map{
   background-color: #2b2b2b;
   position: relative;
-    outline-style: none;
-    height: 75vh;
+  outline-style: none;
+  height: calc(100% - 20px);
   margin: 10px;
+  z-index: 0;
   .leaflet-map-pane{
             pointer-events: none;
         }
+  .leaflet-bottom {
+    &.leaflet-right{
+      display: none;
+    }
+  }
 }
 </style>

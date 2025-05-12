@@ -2,24 +2,22 @@
     <div class="main_contain">
       <DefaultTable v-if="ShowDefaultTable" :dataLableName="dataLableName" :dataTable="dataTable" @closetable="ShowDefaultTable = false" :prevrap="PreWrapDefaultTable"/>
       <div class="ContentDiv">
-        <div class="Panel">
-        </div>
-        <div class="Panel MaxWidth">
-          <div>
-            <button class="ButtonCommand BlockWithIcon" @click="StartModelling"><img src="../../assets/start.png" alt="" class="icon" >Начать эксперимент</button>
+        <div class="FlexRow Panel">
+          <div class="ButtonModelling">
+            <button v-if="!ExperimentStatus && !modellingSettings.experimentEddit" @click="Experiment(true)" class="ButtonCommand rightPadding"><img src="../../assets/start.png" alt="" class="iconButton">Начать эксперимент</button>
+            <button v-if="ExperimentStatus" @click="StartModelling" class="ButtonCommand rightPadding"><img src="../../assets/start.png" alt="" class="iconButton">Старт моделирования</button>
+            <button v-if="ExperimentStatus" @click="Experiment(false)" class="ButtonCommand rightPadding">Закончить эксперимент</button>
           </div>
-        </div>
-        <div class="Panel MaxWidth" v-if="true">
-          <div class="PanelWork">
-            <fieldset>
-              <input type="checkbox"  v-model="PreWrapDefaultTable"/><label>Форматирование вывода: {{ PreWrapDefaultTable }}</label>
-            </fieldset>
-            <table class="colum">
+          <fieldset style="display: inline-block;">
+            <div><input type="checkbox"  v-model="PreWrapDefaultTable"/><label>Форматирование вывода: {{ PreWrapDefaultTable }}</label></div>
+          </fieldset>
+          <div class="PanelWork" v-if="!modellingSettings.experimentEddit">
+          <table class="colum">
               <tr>
                 <td><button class="ButtonCommand LIghtPoint" @click="GetRezultGordeev"><div :class="systemStatus.successRouteModelling ? 'approved' : 'Notapproved'"></div>Результат(переделать на разделы)</button></td>
               </tr>
               <tr>
-                <td><button class="ButtonCommand" @click="ShowRezult(1)" :class="(modellingRezult.data1.length < 1) ? 'disable' : ''">Показать Результат(убрать)</button></td>
+                <td><button class="ButtonCommand" @click="ShowRezult()" :class="(modellingRezult.data.length < 1) ? 'disable' : ''">Показать Результат(убрать)</button></td>
               </tr>
             </table>
           </div>
@@ -30,7 +28,7 @@
   
 <script>
 
-import { DisplayLoad, FetchGet, FetchPost } from '@/js/LoadDisplayMetod';
+import { DisplayLoad, FetchGet } from '@/js/LoadDisplayMetod';
 import DefaultTable from '../DefaultTable.vue';
 import { GetSystemObject } from '@/js/GlobalData';
 
@@ -41,8 +39,10 @@ import { KaSettings } from './KaSettings';
     data(){
       return{
         modellingRezult: {
-          data1: [],
-          data2: []
+          data: []
+        },
+        modellingSettings:{
+          experimentEddit: false
         },
         interSatellite: true,
         dataTable: [],
@@ -55,20 +55,17 @@ import { KaSettings } from './KaSettings';
       DefaultTable
     },
     methods: {
+      Experiment(status){
+          this.modellingRezult= {
+            data: [],
+          }
+        this.$emit('ChangeExperimentStatus', {status})
+      },
       async StartModelling(){
         DisplayLoad(true)
         this.StartAwait("successRouteModelling")
         let rezult = await FetchGet("/api/v1/route", true, "Расчёт Route окончен") || []
         console.log(rezult)
-        
-        DisplayLoad(false)
-      },
-      async StartModellingPavlov(){
-        DisplayLoad(true)
-        this.StartAwait("successPlannerModelling")
-        let rezult = await FetchPost("/api/v1/planner", {"interSatellite": this.interSatellite}, undefined, true, "Расчёт Planner окончен") || []
-        console.log(rezult)
-        this.modellingRezult.data = rezult
         DisplayLoad(false)
       },
       StartAwait(param){
@@ -84,21 +81,13 @@ import { KaSettings } from './KaSettings';
           }, 3000);
         }, 4000);
       },
-      async GetRezultPavlov(){
-        this.modellingRezult.data2 = await FetchGet("/api/v1/planner/all") || []
-      },
       async GetRezultGordeev(){
-        this.modellingRezult.data1 = await FetchGet("/api/v1/route/all") || []
+        this.modellingRezult.data = await FetchGet("/api/v1/route/all") || []
       },
-      ShowRezult(numb){
+      ShowRezult(){
         this.dataTable = []
         this.dataLableName = [{label: "data", nameParam: "data"}]
-        let dataT = []
-        if(numb == 1){
-          dataT = this.modellingRezult.data1
-        }else{
-          dataT = this.modellingRezult.data2
-        }
+        let dataT = this.modellingRezult.data
         for (let index = 0; index < dataT.length; index++) {
           const element = JSON.stringify(dataT[index], null, 2);
           console.log(element)
@@ -108,13 +97,10 @@ import { KaSettings } from './KaSettings';
       },
       async ReLoadComponent(){
         console.log("Перезагрузка")
-
       }
     },
     async mounted(){
       this.ReLoadComponent()
-      
-      
     }
   }
   </script>
