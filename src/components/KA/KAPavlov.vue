@@ -1,6 +1,7 @@
 <template>
   <div class="main_contain">
     <DefaultTable v-if="ShowDefaultTable" :dataLableName="dataLableName" :dataTable="dataTable" @closetable="ShowDefaultTable = false" :prevrap="PreWrapDefaultTable"/>
+    <PlanPavlov v-if="modellingSettings.showTable == 'Plan'" :dataTable="modellingRezult.report.plan" @closetable="modellingSettings.showTable = null"/>
     <div class="ContentDiv">
         <div class="FlexRow Panel">
           <div class="ButtonModelling">
@@ -18,7 +19,8 @@
               <td><button class="ButtonCommand LIghtPoint" @click="GetRezultPavlov"><div :class="systemStatus.successPlannerModelling ? 'approved' : 'Notapproved'"></div>Результат(подгрузить)</button></td>
             </tr>
             <tr>
-              <td><button class="ButtonCommand" @click="ShowRezult()" :class="(modellingRezult.data.length < 1) ? 'disable' : ''">Результат(отобразить)</button></td>
+              <td><button class="ButtonCommand" @click="ShowRezult()" :class="(false) ? 'disable' : ''">Результат(отобразить)</button></td>
+              <td><button class="ButtonCommand" @click="ShowPlan" :class="(false) ? 'disable' : ''">План</button></td>
             </tr>
           </table>
         </div>
@@ -32,8 +34,9 @@
 import { DisplayLoad, FetchGet, FetchPost } from '@/js/LoadDisplayMetod';
 import DefaultTable from '../DefaultTable.vue';
 import { GetSystemObject } from '@/js/GlobalData';
-
+import { UnixToDtime } from '@/js/WorkWithDTime';
 import { KaSettings } from './KaSettings';
+import PlanPavlov from './Pavlov/PlanPavlov.vue';
 export default {
   name: 'KA2',
   mixins: [KaSettings],
@@ -43,7 +46,8 @@ export default {
           data: []
         },
         modellingSettings:{
-          experimentEddit: false
+          experimentEddit: false,
+          showTable: null
         },
       interSatellite: true,
       dataTable: [],
@@ -53,7 +57,8 @@ export default {
     }
   },
   components:{
-    DefaultTable
+    DefaultTable,
+    PlanPavlov
   },
   methods: {
      Experiment(status){
@@ -65,11 +70,37 @@ export default {
     async StartModelling(){
       DisplayLoad(true)
       this.StartAwait("successPlannerModelling")
-      let rezult = await FetchPost("/api/v1/planner", {"interSatellite": this.interSatellite}, undefined, true, "Расчёт Planner окончен") || []
+      let rezult = await FetchPost("/api/v1/planner", {"interSatellite": this.interSatellite}, undefined, true, "Расчёт Planner окончен") || null
       console.log(rezult)
-      this.modellingRezult.data = rezult
+      try {
+        this.modellingRezult= rezult.XMLDocument
+      } catch (error) {
+        console.error(error)
+      }
+      await this.ParceRezult()
       DisplayLoad(false)
     },
+    ParceRezult(){
+      console.log(this.modellingRezult, "Обработка результатов")
+      this.modellingRezult.JsonData = JSON.stringify(this.modellingRezult,null,2)
+      let time = 0
+      this.modellingRezult.report.plan.time.sort(function(a, b) { // Обработка времени интервалов
+          return parseFloat(a.interval) - parseFloat(b.interval);
+      });
+      this.modellingRezult.report.plan.time.forEach(element => {
+        element.timeUnixstart = UnixToDtime(time,true)
+        element.timeStart = time
+        time+=element.text
+        element.timeEnd = time
+        element.timeUnixend = UnixToDtime(element.timeEnd,true)
+      });
+
+      console.log(this.modellingRezult, "Обработка результатов финал")
+    },
+    ShowPlan(){
+      this.modellingSettings.showTable = 'Plan'
+    },
+
     StartAwait(param){
       setTimeout(() => {
         let interval = setInterval(async () => {
@@ -84,19 +115,22 @@ export default {
       }, 4000);
     },
     async GetRezultPavlov(){
-      this.modellingRezult.data = await FetchGet("/api/v1/planner/all") || []
+      DisplayLoad(true)
+      let rezult = await FetchGet("/api/v1/planner/all") || null
+      try {
+        this.modellingRezult= rezult.XMLDocument
+      } catch (error) {
+        console.error(error)
+      }
+      await this.ParceRezult()
+      DisplayLoad(false)
     },
     ShowRezult(){
       this.dataTable = []
       this.dataLableName = [{label: "data", nameParam: "data"}]
-      let dataT = this.modellingRezult.data
-
-      for (let index = 0; index < dataT.length; index++) {
-        const element = JSON.stringify(dataT[index], null, 2);
-        console.log(element)
-        this.dataTable.push({data: element}) 
-      }
+      this.dataTable.push({data: this.modellingRezult.JsonData}) 
       this.ShowDefaultTable = true
+
     },
     async ReLoadComponent(){
       console.log("Перезагрузка")

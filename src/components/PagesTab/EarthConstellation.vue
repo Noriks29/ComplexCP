@@ -10,19 +10,6 @@
           
     <div class="ContentDiv">
       <div class="Panel LeftPanel">
-          <div>Парамертры системы</div>
-            <div class="SystemInfo">
-              <table><tbody>
-                <tr><th>Начальное время расчетов:</th></tr>
-                      <tr><td v-html="CreateDateTime(systemStatus.startTime)"></td></tr>
-                  <tr><th>Начало горизонта моделирования:</th></tr>
-                      <tr><td v-html="CreateDateTime(systemStatus.modelingBegin)"></td></tr>
-                  <tr><th>Окончание горизонта моделирования:</th></tr>
-                      <tr><td v-html="CreateDateTime(systemStatus.modelingEnd)"></td></tr>
-                  <tr><th>Шаг моделирования: {{ systemStatus.step }}</th></tr>
-                  <tr><th><div style="width: fit-content;">Фильтр сети:<input type="checkbox" :checked="KAModellingRoleMode" @change="KAModellingRoleMode = $event.target.checked"><label>{{ KAModellingRoleMode ? 'Только Лидеры' : 'Все КА' }}</label></div></th></tr>
-                </tbody></table>
-            </div>
         <div class="FlexColumn">
           <div><button @click="CommandWork(1)" class="ButtonCommand">Рассчитать окна видимости</button></div>
           <div><button @click="CommandWork(2)" class="ButtonCommand">Показать окна видимости / плана контактов</button></div>
