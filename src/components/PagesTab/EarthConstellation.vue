@@ -58,7 +58,6 @@ import Plotly from 'plotly.js-dist'
           SatNp: [], //список контактов сат-нп
         },
         ShowPlotlyContain: false,
-        KAModellingRoleMode: false
       }
     },
     methods: {
@@ -74,7 +73,7 @@ import Plotly from 'plotly.js-dist'
             }
             if(commandId == 1){
               DisplayLoad(true)
-              await FetchPost('/api/v1/pro42/view/earth', {leaderProcessing: this.KAModellingRoleMode})
+              await FetchPost('/api/v1/pro42/view/earth', {leaderProcessing: this.PageSettings.mode})
               this.ReFetch()
               DisplayLoad(false)
             }
@@ -122,9 +121,6 @@ import Plotly from 'plotly.js-dist'
     
     async mounted() {
         DisplayLoad(true)
-        if(this.systemStatus.typeWorkplace in {3:null,4:null}){
-          this.KAModellingRoleMode = true
-        }
         this.ReFetch()
         DisplayLoad(false)
     }
