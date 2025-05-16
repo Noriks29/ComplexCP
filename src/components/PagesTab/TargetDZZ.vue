@@ -52,8 +52,8 @@
               v-show="!(data.deleted==true)">
               <td><input type="text" v-model="data.goalName"></td>
               <td style="display: flex;align-items: center;justify-content: space-around;"><span>{{data.countRequest}}</span><img @click="AddRowRequest(data)" src="../../assets/add.png" alt="" class="addButtonIcon"></td>
-              <td><input type="number" v-model="data.lat"></td>
-              <td><input type="number" v-model="data.lon"></td>
+              <td><input @keydown.ctrl.v="TryParceLatLng(index)" type="number" v-model="data.lat"></td>
+              <td><input @keydown.ctrl.v="TryParceLatLng(index)" type="number" v-model="data.lon"></td>
               <td><input type="number" v-model="data.alt"></td>
               <td :id="index" @click="DeleteRow(index)" class="delete"><img class="iconDelete" src="../../assets/delete.svg" alt="-"></td>
             </tr>
@@ -139,6 +139,22 @@ import XLSX from 'xlsx-js-style';
       ChangeTime(obgtime){
         this.requestJson[obgtime.id][obgtime.name] = obgtime.time
         this.SatartSave('request')
+      },
+      TryParceLatLng(id){
+        console.log(id)
+        try {
+          navigator.clipboard.readText().then(text => {
+            try {
+              let textParce = JSON.parse(text)
+              this.catalogJson[id].lat = textParce.lat
+              this.catalogJson[id].lon = textParce.lng
+            }catch{
+              console.error('')
+            }
+          })
+        }catch{
+          console.error("")
+        }
       },
       async GetRequestFromDB(mode){
         if(mode == 1){

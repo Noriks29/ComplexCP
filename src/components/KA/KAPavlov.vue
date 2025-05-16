@@ -1,26 +1,23 @@
 <template>
   <div class="main_contain">
-    <DefaultTable v-if="ShowDefaultTable" :dataLableName="dataLableName" :dataTable="dataTable" @closetable="ShowDefaultTable = false" :prevrap="PreWrapDefaultTable"/>
-    <PlanPavlov v-if="modellingSettings.showTable == 'Plan'" :dataTable="modellingRezult.report.plan" @closetable="modellingSettings.showTable = null"/>
+    <DefaultTable v-if="ShowDefaultTable" :dataLableName="dataLableName" :dataTable="dataTable" @closetable="ShowDefaultTable = false" :prevrap="false"/>
+    <PlanPavlov v-if="modellingSettings.showTable == 'Plan'" :dataTable="modellingRezult.eventData" @closetable="modellingSettings.showTable = null"/>
+    <NodeLoad v-if="modellingSettings.showTable == 'NodeLoad'" :dataTable="modellingRezult.eventData" @closetable="modellingSettings.showTable = null"/>
     <div class="ContentDiv">
         <div class="FlexRow Panel">
           <div class="ButtonModelling">
-            <button v-if="!ExperimentStatus && !modellingSettings.experimentEddit" @click="Experiment(true)" class="ButtonCommand rightPadding"><img src="../../assets/start.png" alt="" class="iconButton">Начать эксперимент</button>
-            <button v-if="ExperimentStatus" @click="StartModelling" class="ButtonCommand rightPadding"><img src="../../assets/start.png" alt="" class="iconButton">Старт моделирования</button>
-            <button v-if="ExperimentStatus" @click="Experiment(false)" class="ButtonCommand rightPadding">Закончить эксперимент</button>
-          </div>
-          <fieldset style="display: inline-block;">
-            <div><input type="checkbox"  v-model="PreWrapDefaultTable"/><label>Форматирование вывода: {{ PreWrapDefaultTable }}</label></div>
             <div><input type="checkbox"  v-model="interSatellite"/><label>interSatellite: {{ interSatellite }}</label></div>
-          </fieldset>
+            <button @click="StartModelling" class="ButtonCommand rightPadding"><img src="../../assets/start.png" alt="" class="iconButton">Старт моделирования</button>
+          </div>
         <div class="PanelWork">
           <table class="colum">
             <tr>
-              <td><button class="ButtonCommand LIghtPoint" @click="GetRezultPavlov"><div :class="systemStatus.successPlannerModelling ? 'approved' : 'Notapproved'"></div>Результат(подгрузить)</button></td>
+              <td><button class="ButtonCommand" @click="ShowPlan" :class="(modellingRezult.eventData.length < 1) ? 'disable' : ''">План</button></td>
+              <td><button class="ButtonCommand" @click="ShowNodeLoad" :class="(modellingRezult.eventData.length < 1) ? 'disable' : ''">Нагрузка узлов</button></td>
             </tr>
             <tr>
               <td><button class="ButtonCommand" @click="ShowRezult()" :class="(false) ? 'disable' : ''">Результат(отобразить)</button></td>
-              <td><button class="ButtonCommand" @click="ShowPlan" :class="(false) ? 'disable' : ''">План</button></td>
+              
             </tr>
           </table>
         </div>
@@ -37,36 +34,32 @@ import { GetSystemObject } from '@/js/GlobalData';
 import { UnixToDtime } from '@/js/WorkWithDTime';
 import { KaSettings } from './KaSettings';
 import PlanPavlov from './Pavlov/PlanPavlov.vue';
+import NodeLoad from './Pavlov/NodeLoad.vue';
+import { NPList, OGList } from '@/js/GlobalData';
 export default {
   name: 'KA2',
   mixins: [KaSettings],
   data(){
     return{
       modellingRezult: {
-          data: []
+          data: [],
+          eventData: []
         },
         modellingSettings:{
-          experimentEddit: false,
           showTable: null
         },
       interSatellite: true,
       dataTable: [],
       dataLableName: [],
-      PreWrapDefaultTable: false,
       ShowDefaultTable: false
     }
   },
   components:{
     DefaultTable,
-    PlanPavlov
+    PlanPavlov,
+    NodeLoad
   },
   methods: {
-     Experiment(status){
-          this.modellingRezult= {
-            data: [],
-          }
-        this.$emit('ChangeExperimentStatus', {status})
-      },
     async StartModelling(){
       DisplayLoad(true)
       this.StartAwait("successPlannerModelling")
@@ -84,10 +77,11 @@ export default {
       console.log(this.modellingRezult, "Обработка результатов")
       this.modellingRezult.JsonData = JSON.stringify(this.modellingRezult,null,2)
       let time = 0
-      this.modellingRezult.report.plan.time.sort(function(a, b) { // Обработка времени интервалов
+      let plan = this.modellingRezult.report.plan
+      plan.time.sort(function(a, b) { // Обработка времени интервалов
           return parseFloat(a.interval) - parseFloat(b.interval);
       });
-      this.modellingRezult.report.plan.time.forEach(element => {
+      plan.time.forEach(element => {
         element.timeUnixstart = UnixToDtime(time,true)
         element.timeStart = time
         time+=element.text
@@ -95,10 +89,66 @@ export default {
         element.timeUnixend = UnixToDtime(element.timeEnd,true)
       });
 
+      let dataToPrevrap = plan
+      let dataPrevrap = []
+      let objectList = {}
+      
+      NPList.forEach(GS => {
+          objectList[GS.id] = {id: GS.id, name: GS.nameEarthPoint, type: 'GS'}
+      })
+      OGList.forEach(OG => {
+          OG.satellites.forEach(SAT => {
+              objectList[SAT.tleId] = {id: SAT.tleId, name: SAT.name, type: 'SAT'}
+          })
+      })
+      dataToPrevrap.process.forEach(el => {
+          el.typeEl = "Обработка";
+          el.time = el.text
+          for (let i = 0; i < dataToPrevrap.to_process.length; i++) {
+              const element = dataToPrevrap.to_process[i];
+              if(el.interval == element.interval && element.object == el.object){
+                  el.volume = element.text
+                  break
+              }
+          }
+          dataPrevrap.push(el)
+      })
+      try {
+          dataToPrevrap.lost.forEach(el => {
+              el.typeEl='Потери';el.volume=el.text; dataPrevrap.push(el);
+          })
+      } catch (error) {
+          console.log("Потерь нет")//Переделать это под не возможность потерь и отображение
+      }
+      dataToPrevrap.storage.forEach(el => {
+         el.typeEl='Хранение'; el.volume = el.text;dataPrevrap.push(el);
+      })
+      dataToPrevrap.transport.forEach(el => {
+         el.typeEl='Передача'; 
+         el.time = el.text
+         for (let i = 0; i < dataToPrevrap.to_transport.length; i++) {
+              const element = dataToPrevrap.to_transport[i];
+              if(el.interval == element.interval && element.object == el.object){
+                  el.volume = element.text
+                  break
+              }
+          }
+         dataPrevrap.push(el);
+      })
+      dataPrevrap.sort((a,b) => {return a.interval - b.interval})
+      dataPrevrap.forEach(event => {
+        event.intervalTime = dataToPrevrap.time[event.interval]
+        event.objectName = objectList[event.object]
+        event.to_objectName = objectList[event.to_object] || {name : ''}
+      })
+      this.modellingRezult.eventData=dataPrevrap
       console.log(this.modellingRezult, "Обработка результатов финал")
     },
     ShowPlan(){
       this.modellingSettings.showTable = 'Plan'
+    },
+    ShowNodeLoad(){
+      this.modellingSettings.showTable = 'NodeLoad'
     },
 
     StartAwait(param){
@@ -133,7 +183,7 @@ export default {
 
     },
     async ReLoadComponent(){
-      console.log("Перезагрузка")
+      this.GetRezultPavlov()
     }
   },
   async mounted(){

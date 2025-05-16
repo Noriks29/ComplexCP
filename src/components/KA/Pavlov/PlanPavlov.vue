@@ -13,20 +13,25 @@
         <div class="TableDiv">
           <table class="TableDefault">
           <thead>
-            <tr><th>Тип события</th><th>interval</th><th>Интервал</th><th>Тип узла</th><th>Узел</th><th>Узел получатель</th><th>text</th><th>to_text</th><th>Поток</th><th>Технология</th></tr>
+            <tr><th>Тип события</th><th>№ Интервала</th><th>Интервал</th><th>Тип узла</th><th>Узел</th><th>Узел получатель</th><th>Обьём</th><th>Время</th><th>Поток</th><th>Технология</th></tr>
           </thead>
           <tbody>
             <tr v-for="data, index in dataPrevrap" :key="index">
                 <td>{{ data.typeEl }}</td><td>{{ data.interval }}</td>
-                <td>{{ dataTable.time[data.interval].timeUnixstart.time+' - '+dataTable.time[data.interval].timeUnixend.time}}</td>
-                <td>{{ (data.object != undefined) ? objectList[data.object].type : ''}}</td>
-                <td>{{ (data.object != undefined) ? objectList[data.object].name : ''}}</td>
-                <td>{{ (data.to_object != undefined) ? objectList[data.to_object].name : ''}}</td>
-                <td>{{ data.text }}</td><td>{{ data.to_text }}</td>
+                <td>{{ data.intervalTime.timeUnixstart.time+' - '+data.intervalTime.timeUnixend.time}}</td>
+                <td>{{ data.objectName.type }}</td>
+                <td>{{ data.objectName.name}}</td>
+                <td>{{ data.to_objectName.name}}</td>
+                <td>{{ data.volume }}</td><td>{{ (data.time != undefined ? this.TimeFormat(data.time) : '')}}</td>
                 <td>{{ data.flow }}</td><td>{{ data.tech }}</td>
             </tr>
           </tbody>
           </table>
+        </div>
+        <div class="GrafDiv">
+          <div id="plotlydiv">
+            <!--Карта-->
+          </div>
         </div>
         
       </div>
@@ -34,9 +39,9 @@
 </template>
   
   <script>
-
-import { NPList } from '@/js/GlobalData'
-import { OGList } from '@/js/GlobalData'
+import Plotly from 'plotly.js-dist'
+import { CreateDateTime, UnixToDtime } from '@/js/WorkWithDTime'
+import XLSX from 'xlsx-js-style';
 
     export default {
       name: 'TableData',
@@ -48,7 +53,6 @@ import { OGList } from '@/js/GlobalData'
       data() {
         return {
             dataPrevrap: [],
-            objectList: {},
         }
       },
       methods:
@@ -56,65 +60,99 @@ import { OGList } from '@/js/GlobalData'
           CloseTable(){
             this.$emit('closetable', true)
           },
-          PrevrapData(){
-            console.log(this.dataTable, NPList,OGList)
-            NPList.forEach(GS => {
-                this.objectList[GS.id] = {id: GS.id, name: GS.nameEarthPoint, type: 'GS'}
-            })
-            OGList.forEach(OG => {
-                OG.satellites.forEach(SAT => {
-                    this.objectList[SAT.tleId] = {id: SAT.tleId, name: SAT.name, type: 'SAT'}
-                })
-            })
-            
-            console.log(this.objectList)
-            let process = this.dataTable.process
-            let toprocess = this.dataTable.to_process
-            process.forEach(el => {
-                el.typeEl = "Обработка";
-                for (let i = 0; i < toprocess.length; i++) {
-                    const element = toprocess[i];
-                    if(el.interval == element.interval && element.object == el.object){
-                        el.to_text = element.text
-                        break
-                    }
+          LoadXLSX(){
+            const workbook = XLSX.utils.book_new();
+            let data = [["Тип события","Интервал","Тип узла","Узел","Узел получатель","Обьём","Время","Поток","Технология"]]
+            this.dataPrevrap.forEach(element => {
+                let row = [element.typeEl,element.intervalTime.timeUnixstart.time+' - '+element.intervalTime.timeUnixend.time,element.objectName.type,
+                   element.objectName.name,element.to_objectName.name,element.volume,(element.time != undefined ? this.TimeFormat(element.time) : ''),element.flow,element.tech
+                ]
+                data.push(row)
+            });
+            let worksheet = XLSX.utils.aoa_to_sheet(data); // Создаем таблицу в файле с данными из массива
+            workbook.SheetNames.push('PlanPavlov'); // Добавляем лист с названием First list
+            let style = {
+                font: {
+                name: 'Calibri',
+                sz: 12,
+                bold: true,
+                    color: {rgb: '000000'} // red font
+                },
+                border: {
+                bottom: { style: 'thin', color: { rgb: '000000' } }
+                }}
+            let keylist = Object.keys(worksheet)
+            for (let keyid = 0; keyid < keylist.length; keyid++) {
+                const key = keylist[keyid];
+                console.log(worksheet[key].v, keylist, data[0])
+                try {
+                if (data[0].indexOf(worksheet[key].v) != -1) {
+                    worksheet[key].s = style
                 }
-                this.dataPrevrap.push(el)
-            })
-            try {
-                let lost = this.dataTable.lost
-                lost.forEach(el => {
-                    el.typeEl='Потери'; this.dataPrevrap.push(el);
-                })
-            } catch (error) {
-                console.log("Потерь нет")//Переделать это под не возможность потерь и отображение
+                } catch (error) {
+                console.log(error)
+                }
             }
-            this.dataTable.storage.forEach(el => {
-               el.typeEl='Хранение';this.dataPrevrap.push(el);
-            })
-            let transport = this.dataTable.transport
-            let to_transport = this.dataTable.to_transport
-            transport.forEach(el => {
-               el.typeEl='Передача'; 
-               for (let i = 0; i < to_transport.length; i++) {
-                    const element = to_transport[i];
-                    if(el.interval == element.interval && element.object == el.object){
-                        el.to_text = element.text
-                        break
+            workbook.Sheets['PlanPavlov'] = worksheet;
+            XLSX.writeFile(workbook, 'PlanPavlov.xlsx');
+          },
+          TimeFormat(time){
+            console.log(time)
+            let data = UnixToDtime(time,true)
+            return data.time
+          },
+          CreatePlot(){
+                document.getElementById("plotlydiv").innerHTML=''
+                if(this.dataPrevrap.length < 1 ) return
+                let dataPlotly = [
+                      {
+                        type: 'bar',name: "Хранение",y: [],x: [],
+                        orientation: 'h',base: [],text:[],
+                        marker: {
+                          opacity: 0.3,color: "green",line: {width: 1}
+                        }
+                      },
+                      {
+                        type: 'bar',name: "Обработка",y: [],x: [],
+                        orientation: 'h',base: [],text:[],
+                        marker: {
+                          opacity: 0.6,color: "orange",line: {width: 1}
+                        }
+                      },
+                      {
+                        type: 'bar',name: "Передача",y: [],x: [],
+                        orientation: 'h',base: [],text:[],
+                        marker: {
+                          opacity: 0.6,color: "purple",line: {width: 1}
+                        }
+                      },
+                      {
+                        type: 'bar',name: "Потери",y: [],x: [],
+                        orientation: 'h',base: [],text:[],
+                        marker: {
+                          opacity: 0.6,color: "rad",line: {width: 1}
+                        }
+                      },
+                    ]
+                this.dataPrevrap.forEach(event => {
+                    for (let i = 0; i < dataPlotly.length; i++) {
+                      const plot = dataPlotly[i];
+                      if(plot.name == event.typeEl){
+                        if(event.time != undefined){plot.x.push(CreateDateTime(event.time, 2))}
+                        else{plot.x.push(CreateDateTime(event.intervalTime.text, 2))}
+                        plot.base.push(CreateDateTime(event.intervalTime.timeStart, 1))
+                        plot.y.push(event.objectName.name)
+                        plot.text.push(event.volume)
+                      }
                     }
-                }
-               
-               this.dataPrevrap.push(el);
-            })
-
-
-
-
-            this.dataPrevrap.sort((a,b) => {return a.interval - b.interval})
+                })
+                let annotations = []
+                Plotly.newPlot("plotlydiv", dataPlotly, {annotations:annotations, showlegend: true,height:150+(dataPlotly.length*40), margin:{l:100,t:40,b:40,r:40}})
           },
       },
       mounted() {
-        this.PrevrapData()
+        this.dataPrevrap = this.dataTable
+        this.CreatePlot()
       }
     }
   </script>

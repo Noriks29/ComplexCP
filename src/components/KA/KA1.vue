@@ -1,18 +1,17 @@
 <template>
     <div class="main_contain">
       <DefaultTable v-if="ShowTable=='DefaultTable'" :dataLableName="dataLableName" :dataTable="dataTable" @closetable="ShowTable=null" :prevrap="PreWrapDefaultTable"/>
+      <ShootingPlan v-if="ShowTable=='ShootingPlan'" :dataTable="dataTable" @closetable="ShowTable=null"/>
       <div class="ContentDiv">
         <div class="FlexRow Panel">
           <div class="ButtonModelling">
-            <button v-if="!ExperimentStatus && !modellingSettings.experimentEddit" @click="Experiment(true)" class="ButtonCommand rightPadding"><img src="../../assets/start.png" alt="" class="iconButton">Начать эксперимент</button>
-            <button v-if="ExperimentStatus" @click="StartModelling" class="ButtonCommand rightPadding"><img src="../../assets/start.png" alt="" class="iconButton">Старт моделирования</button>
-            <button v-if="ExperimentStatus" @click="Experiment(false)" class="ButtonCommand rightPadding">Закончить эксперимент</button>
+            <button  @click="StartModelling" class="ButtonCommand rightPadding"><img src="../../assets/start.png" alt="" class="iconButton">Старт моделирования</button>
           </div>
           <div class="PanelWork" v-if="!modellingSettings.experimentEddit">
           <table class="colum">
               <tr>
                 <td class="tdflexRow">
-                  <button @click="ShowShootingPlan" :class="(modellingRezultSelect.E77.length < 1) ? 'disable' : ''" class="ButtonCommand">План съёмок</button>
+                  <button @click="ShowShootingPlan" :class="(modellingRezult.E77.length < 1) ? 'disable' : ''" class="ButtonCommand">План съёмок</button>
                 </td>
               </tr>
               <tr>
@@ -32,6 +31,7 @@
 import { UnixToDtime } from '@/js/WorkWithDTime';
 import { FetchGet, DisplayLoad, FetchPost } from '@/js/LoadDisplayMetod';
 import DefaultTable from '@/components/DefaultTable.vue'
+import ShootingPlan from './ShootingPlan.vue';
 
 import { KaSettings } from './KaSettings';
 import { NPList, OGList } from '@/js/GlobalData';
@@ -83,13 +83,6 @@ import { NPList, OGList } from '@/js/GlobalData';
           events: [],
           fcLog:[]
         },
-        modellingRezultSelect:{
-          E77: [],
-          E78: [],
-          E79: [],
-          fcLog:[],
-          selectKA: undefined
-        },
 
         arr: [],
         valueSS: {},
@@ -97,51 +90,10 @@ import { NPList, OGList } from '@/js/GlobalData';
       }
     },
     components:{
-      DefaultTable
+      DefaultTable,
+      ShootingPlan
     },
     methods: {
-      Experiment(status){
-          this.dataModelling = {
-            engineLogResponse: []
-          }
-          this.modellingRezult= {
-            log: [],
-            E77: [],
-            E78: [],
-            hide: [],
-            E79: [],
-            Smao: [],
-            events: [],
-            fcLog: []
-          }
-          this.modellingRezultSelect = {
-            E77: [],
-            E78: [],
-            E79: [],
-            fcLog: [],
-            selectKA: undefined
-          }
-        this.$emit('ChangeExperimentStatus', {status})
-      },
-      ValidateDataPostModellingSettings(){
-        console.log(this.modellingSettings)
-        if(this.modellingSettings.experiment < 1){
-          this.modellingSettings.chargeForecasting = 0
-          this.modellingSettings.flightPlanning = 0
-        }
-        if(this.modellingSettings.experiment < 2){
-          this.modellingSettings.chargeSimulation = 0
-          this.modellingSettings.planSimulation = 0
-          this.modellingSettings.optionPro42 = 0
-        }
-        if(this.modellingSettings.experiment >= 1) this.modellingSettings.flightPlanning = 1
-        if(this.modellingSettings.experiment >= 2) this.modellingSettings.planSimulation = 1
-
-      },
-      
-      ChangeInputRadio(target){
-        this.modellingSettings[target.target.name] = Number(target.target.value)
-      },
       async StartModelling(){
         DisplayLoad(true)
         let dataPost = Object.assign(this.modellingSettings)
@@ -238,31 +190,20 @@ import { NPList, OGList } from '@/js/GlobalData';
             this.modellingRezult.log.push("-!-!-!-!-ОШИБКА обработки на строке - " + element)
           }
         });
-        this.modellingRezultSelect_FillById(this.modellingRezultSelect.selectKA)
-        console.log("Результат моделлирования и обработки", this.modellingRezult, this.modellingRezultSelect)
+        console.log("Результат моделлирования и обработки", this.modellingRezult)
       },
       ShowShootingPlan(){ // E77 план съёмок
-        this.dataTable = this.modellingRezultSelect.E77
-        this.dataLableName = [
-          {lable: "Заявка", nameParam: "orderId"},
-          {lable: "Цель", nameParam: "targetName"},
-          {lable: "Начало видимости", nameParam: "wsUnix"},
-          {lable: "Окончание видимости", nameParam: "weUnix"},
-          {lable: "Разворот", nameParam: "transition"},
-          {lable: "Начало съёмки", nameParam: "tsUnix"},
-          {lable: "Окончаниие съёмки", nameParam: "teUnix"},
-          {lable: "Тангаж", nameParam: "pitch"},
-          {lable: "Крен", nameParam: "roll"}
-        ]
-        this.PreWrapDefaultTable = false
-        this.ShowTable='DefaultTable'
+        this.dataTable = this.modellingRezult.E77
+        this.ShowTable='ShootingPlan'
       },
       ShowLogAll(){
         this.dataTable = []
         this.modellingRezult.log.forEach(element =>{
           const e = Object.assign({}, element)
-          delete e['time']
-          delete e['type']
+          let deleteName = ['time','type','idReceiver','receiverName','idSender','senderName']
+          for (let i = 0; i < deleteName.length; i++) {
+            delete e[deleteName[i]]
+          }
           this.dataTable.push({
             time: element.time,
             type: element.type,
@@ -305,40 +246,6 @@ import { NPList, OGList } from '@/js/GlobalData';
         this.PreWrapDefaultTable = false
         this.ShowTable='DefaultTable'
       },
-      ShowFcLog(){
-        this.dataTable = this.modellingRezultSelect.fcLog
-        this.dataLableName = [{lable:"Начало",nameParam:'timeBegin'},{lable:"Конец",nameParam:'timeEnd'},{lable:"С/Т",nameParam:'light'},
-          {lable:"Режим",nameParam:'mode'},{lable:"Цель",nameParam:'orderName'},{lable:"Нацеливание",nameParam:'timeTarget'},
-          {lable:"Связь с НП",nameParam:'timeGs'},{lable:"Межспутниковая связь",nameParam:'timeIs'},{lable:"АКБ",nameParam:'charge'}
-        ]
-        this.PreWrapDefaultTable = false
-        this.ShowTable='DefaultTable'
-      },
-      SelectChange(target){
-          this.modellingRezultSelect_FillById(target.value)
-        },
-      modellingRezultSelect_FillById(id){ //выбор данных под ка
-        this.modellingRezultSelect = {
-          E77: [],
-          E78: [],
-          E79: [],
-          fcLog: [],
-          selectKA: id
-        }
-        this.modellingRezult.E77.forEach(E77 =>{
-          if (E77.idSender == id) {this.modellingRezultSelect.E77 = E77.data}
-        })
-        this.modellingRezult.E78.forEach(E78 =>{
-          if (E78.idSender == id) {this.modellingRezultSelect.E78 = E78.dataDownPlan.partsPlan}
-        })
-        this.modellingRezult.E79.forEach(E79 =>{
-          if (E79.idSender == id) {this.modellingRezultSelect.E79 = E79.data}
-        })
-        this.modellingRezult.fcLog.forEach(fcLog =>{
-          if (fcLog.idSender == id) {this.modellingRezultSelect.fcLog = fcLog.data}
-        })
-        console.log(this.modellingRezultSelect)
-      },
       async ReLoadComponent(){
         this.earthList = NPList
         this.ConstellationJson = OGList
@@ -359,15 +266,6 @@ import { NPList, OGList } from '@/js/GlobalData';
     },
     async mounted(){
       this.ReLoadComponent()
-      if (this.systemStatus.typeWorkplace in {2:null}) {
-        this.modellingSettings.experiment = 1
-      }
-      if (this.systemStatus.typeWorkplace in {4:null}) {
-        this.modellingSettings.experiment = 2
-        this.modellingSettings.chargeForecasting = 2
-        this.modellingSettings.chargeSimulation = 1
-      }
-      this.ValidateDataPostModellingSettings()
       document.addEventListener('keydown', (event) => {
             if (event.code == 'Escape') {
                 this.ShowTable = null

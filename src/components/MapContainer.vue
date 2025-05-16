@@ -1,6 +1,7 @@
 <template>
   <div class="MapContain">
    <div id="DrawKARoad">
+            <div class="LatLng"><span>Точка: {{ LastLatLng.lat+', '+LastLatLng.lng }}</span><button @click="CopyLatLng"><img src="@/assets/copy.png" alt="Копировать"></button></div>
             <SelectDiv  :dataOption="KAArray" :valueS="KatoDraw" :id="'KA'+String(0)" @valueSelect="ChangeKaDraw"/>
             <input type="color" id="inputColorKa" value="#5900ff"><button class="ButtonCommand" @click="GetKARoad">Отрисовать маршрут</button>
             <button class="ButtonCommand" @click="ReloadMapContainer">Обновить карту</button>
@@ -28,6 +29,8 @@ export default {
         map: {},
         KatoDraw: {},
         KAArray: [],
+        LastLatLng: {lat: 0, lng:0},
+        requestJson: []
     }
   },
   components:{
@@ -37,7 +40,7 @@ export default {
       async CreateMap(){
           this.map = {}
           console.log(await document.getElementById("map"))
-          this.map = L.map('map').setView(new L.LatLng(59.932936, 30.311349), 2);
+          this.map = L.map('map', {zoomAnimation: true}).setView(new L.LatLng(59.932936, 30.311349), 2);
           L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', 
           {
             minZoom: 1, 
@@ -50,26 +53,35 @@ export default {
                 iconRetinaUrl: icon2x
           });
           L.Marker.prototype.options.icon = DefaultIcon;
-          /*
           for (let i = 0; i < this.requestJson.length; i++) {
               const element = this.requestJson[i].catalog;
               L.circle([element.lat, element.lon], 21000, {
-                color: 'blue',
+                color: 'red',
                 fillColor: '#f03',
                 fillOpacity: 0.4
               }).addTo(this.map)
-          }*/
+          }
           console.log(NPList)
           NPList.forEach(element => {
-              L.circle([element.latitude, element.longitude], 17000, {
+              L.circle([element.latitude, element.longitude], 30000, {
                 color: 'green',
                 fillColor: '#121100',
                 fillOpacity: 0.4
               }).addTo(this.map)
           });
+          this.map.on('click', (e) => {
+              const { lat, lng } = e.latlng;
+              this.LastLatLng = {lat: lat.toFixed(2), lng: lng.toFixed(2)}
+              console.log(`Широта: ${lat}, Долгота: ${lng}`);
+          });
+
         },
         ChangeKaDraw(e){
           this.KatoDraw = e.value
+        },
+        CopyLatLng(){
+          navigator.clipboard.writeText(JSON.stringify(this.LastLatLng))
+          alert("Скопировано")
         },
         async GetKARoad(){
           DisplayLoad(true)
@@ -133,6 +145,8 @@ export default {
         })
       });
       this.KatoDraw = this.KAArray[0]
+      this.requestJson = await FetchGet('/api/v1/satrequest/request/get/all') || []
+
       this.CreateMap()
       DisplayLoad(false)
     },
@@ -180,5 +194,21 @@ export default {
       display: none;
     }
   }
+}
+.LatLng{
+    display: flex;
+    align-items: center;
+    background-color: var(--background-Button1);
+    padding: 5px;
+    border-radius: 10px;
+    margin-right: 5px;
+    span{
+      white-space: nowrap;
+      color: var(--color-Main);
+    }
+    button{
+      border: none;
+      background: none;
+    }
 }
 </style>

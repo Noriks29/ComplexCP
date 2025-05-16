@@ -7,7 +7,7 @@ function UnixToDtime(time,duration=false){
     let timeToUnix = time
     if(duration) timeToUnix = timeToUnix - 3600*3
     const timeL = new Date(timeToUnix * 1000)
-    let time1 = ((timeL.getHours() < 10)?"0":"") + timeL.getHours() +":"+ ((timeL.getMinutes() < 10)?"0":"") + timeL.getMinutes() +":"+ ((timeL.getSeconds() < 10)?"0":"") + timeL.getSeconds();
+    let time1 = ((timeL.getHours() < 10)?"0":"") + timeL.getHours() +":"+ ((timeL.getMinutes() < 10)?"0":"") + timeL.getMinutes() +":"+ ((timeL.getSeconds() < 10)?"0":"") + timeL.getSeconds()+(timeL.getMilliseconds()>0 ? '.'+timeL.getMilliseconds() : '');
     let time2 = timeL.getFullYear() + "-" + (((timeL.getMonth()+1) < 10)?"0":"") + (timeL.getMonth()+1) +"-"+((timeL.getDate() < 10)?"0":"") + timeL.getDate();
     return {time: time1, date: time2}
 }

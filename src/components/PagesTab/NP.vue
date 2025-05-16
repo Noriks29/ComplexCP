@@ -36,17 +36,18 @@
             :key="index"
             :class="approved || modellingStatus ? 'disable' :''"
             @change="ChangeParam(index)"
+            @keydown.ctrl.v="TryParceLatLng(index)"
           >
             <td>{{ index+1 }}</td>
             <td><input v-model="data.nameEarthPoint"></td>
-            <td><input type="number"  v-model="data.latitude"></td>
-            <td><input type="number"  v-model="data.longitude" ></td>
+            <td><input @keydown.ctrl.v="TryParceLatLng(index)" type="number"  v-model="data.latitude"></td>
+            <td><input @keydown.ctrl.v="TryParceLatLng(index)" type="number"  v-model="data.longitude" ></td>
             <td v-if="!approved && !modellingStatus" @click="DeleteRow(index)" class="delete"><img class="iconDelete" src="../../assets/delete.svg" alt="Удалить"></td>
           </tr>
         </tbody>
         <tfoot>
           <tr v-if="!approved && !modellingStatus" class="addRowButton">
-            <td colspan="5"><button @click="AddRow">
+            <td colspan="5"><button @click="AddRow(0,0)">
               <img src="../../assets/add.png" alt="" class="addButtonIcon">
               Добавить наземный пункт
             </button></td>
@@ -74,9 +75,25 @@ import { PagesSettings } from './PagesSettings.js';
       }
     },
     methods: {
-        async AddRow(){
-          this.dataJson.push({'nameEarthPoint' : "", 'longitude' : 0, 'latitude' : 0, 'deleted': false});   
+        async AddRow(lng=0,lat=0){
+          this.dataJson.push({'nameEarthPoint' : "", 'longitude' : lng, 'latitude' : lat, 'deleted': false});   
           this.dataJson = await ChangeNP(this.dataJson)
+        },
+        TryParceLatLng(id){
+          console.log(id)
+          try {
+            navigator.clipboard.readText().then(text => {
+              try {
+                let textParce = JSON.parse(text)
+                this.dataJson[id].latitude = textParce.lat
+                this.dataJson[id].longitude = textParce.lng
+              }catch{
+                console.error('')
+              }
+            })
+          }catch{
+            console.error("")
+          }
         },
         async ChangeParam(id){
           this.dataJson[id]
@@ -105,6 +122,7 @@ import { PagesSettings } from './PagesSettings.js';
       DisplayLoad(true)
       this.dataJson = await NPList
       this.approved = SystemObject.earthStatus
+
       DisplayLoad(false)
     }
   }
