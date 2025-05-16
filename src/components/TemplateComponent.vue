@@ -20,6 +20,13 @@
         </div>
         <div class="ButtonSection first">
           <h1>КС</h1>
+          <!--
+          <span @click="this.$showToast('This is a global success message!','info', 'TestTitle');">-1-</span>
+          <span @click="this.$showToast('This is a global success message!','warning', 'TestTitle');">-1-</span>
+          <span @click="this.$showToast('This is a global success message!','error', 'TestTitle');">-1-</span>
+          <span @click="this.$showToast('This is a global success message!','success', 'TestTitle');">-1-</span>
+          <span @click="this.$showToast('This is a global success message!','process', 'TestTitle');">-1-</span>
+          <span @click="this.$showToast('This is a global success message!','test', 'TestTitle');">-1-</span>-->
           <div class="ButtonList">
             <button class="active" @click="SelectComponent('NP')"><div :class="system.earthStatus ? 'approved' : 'Notapproved'"></div>НП</button>
             <button class="active" @click="SelectComponent('OG')"><div :class="system.constellationStatus ? 'approved' : 'Notapproved'"></div>КА и ОГ</button>

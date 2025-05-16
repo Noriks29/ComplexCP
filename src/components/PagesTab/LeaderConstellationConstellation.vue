@@ -126,7 +126,6 @@ import Plotly from 'plotly.js-dist'
                   dataPlotly.forEach(plot => {
                     if(plot.name == element.satellite2){
                       plot.y.push(element.satellite1+"-"+element.satellite2)
-                      plot.text.push(element.end-element.begin)
                       plot.x.push(this.CreateDateTime(element.end - element.begin, 2))
                       plot.base.push(this.CreateDateTime(element.begin, 1))
                       flagadd = true
@@ -140,7 +139,6 @@ import Plotly from 'plotly.js-dist'
                       x: [this.CreateDateTime(element.end - element.begin, 2)],
                       orientation: 'h',
                       base: [this.CreateDateTime(element.begin, 1)],
-                      text: [element.end - element.begin],
                       textfont: {
                         size: 16,
                         color: '#000000'

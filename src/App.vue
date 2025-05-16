@@ -1,5 +1,6 @@
 
 <template>
+    <AlertToast />
     <div class="headerSelectMode" :class="login !== undefined && systemStatus.typeWorkplace == -1 ? 'show' : ''">
       <div v-for="data, index in workplaceList" :key="index"
         class="SelectMode"
@@ -48,6 +49,7 @@ import {DisplayLoad, FetchPost} from './js/LoadDisplayMetod.js'
 import LoadProcess from './components/LoadProcess.vue'
 import GlobalStyle from './style/GlobalStyle.scss'
 import { ClearGlobalData, InitGlobalData, SystemObject } from './js/GlobalData'
+import AlertToast from './components/AlertToast.vue'
 
 export default {
   name: 'App',
@@ -62,7 +64,7 @@ export default {
       experimentStatus: false,
       workplaceList: [],
       SystemObject: null
-    };
+    }
   },
   methods: {
       ChangeExperimentStatus(status){
@@ -158,7 +160,8 @@ export default {
   },
   components: {
     TemplateComponent,
-    LoadProcess
+    LoadProcess,
+    AlertToast
   }
 }
 </script>
