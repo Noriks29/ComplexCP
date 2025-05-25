@@ -1,0 +1,73 @@
+.inputType1{
+    text-align: left;
+    border: none;
+    border-bottom: 2px solid var(--border-bottom-input);
+    outline: none;
+    background-color: #8a8a8a14;
+    transition: all 0.5s;
+    font-size: var(--font-size);
+    color: var(--color-Main);
+    &:hover{
+        background-color: #0000001a;
+    }
+    &:focus{
+        background-color: #0000001a;
+        box-shadow: inset 0px 1px 5px 1px #0000004f;
+    }
+}
+
+.ButtonCommand{
+  background:  var(--background-Button1);
+  color: var(--color-Main);
+  border: 1px solid var(--border-button);
+  padding: 14px;
+  font-size: var(--font-size);
+  border-radius: 10px;
+  box-shadow: -3px 3px 1px var(--box-shadow-defoult);
+  margin: 5px;
+  transition: all 0.2s;
+  position: relative;
+
+  &.MaxWidth{
+    width: 100%;
+  }
+
+  &.rightPadding{
+    padding-right: 30px;
+  }
+
+  &:hover{
+    box-shadow: -1px 1px 2px var(--box-shadow-button);
+    background: var(--background-Button2);
+  }
+  &:active{
+    border-radius: 5px;
+    background: var(--background-Button3);
+    box-shadow: -3px 3px 10px var(--box-shadow-defoult);
+  }
+  &.small{
+    padding: 5px;
+    font-size: var(--font-size);
+    margin: 3px;
+  }
+  &.disable{
+    pointer-events: none;
+    background: var(--background-Button3);
+    box-shadow: inset -1px 1px 2px var(--box-shadow-defoult);
+    border: 1px solid var(--border-button2);
+  }
+  &.icon{
+    padding: 5px 15px;
+    width: fit-content;
+    img{
+      width: 32px;
+    }
+  }
+  &.Select{
+    background: var(--background-Button2);
+    box-shadow: none;
+    border-radius: 5px;
+  }
+}
+
+

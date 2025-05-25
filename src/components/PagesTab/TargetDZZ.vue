@@ -11,7 +11,7 @@
             <div class="FlexColumn">
               <div v-if="!(systemStatus.typeWorkplace in {3:null})"><button @click="viewmode=0" class="ButtonCommand">Заявки ДЗЗ</button></div>
               <div v-if="!(systemStatus.typeWorkplace in {3:null})"><button @click="viewmode=1" class="ButtonCommand">Каталог целей</button></div>
-              <div v-if="!(systemStatus.typeWorkplace in {4:null})"><button @click="viewmode=2" class="ButtonCommand">Данные по заявкам</button></div>
+              <div v-if="!(systemStatus.typeWorkplace in {3:null})"><button @click="viewmode=2" class="ButtonCommand">Данные по заявкам</button></div>
               <div v-if="!(systemStatus.typeWorkplace in {1:null,2:null})"><button @click="GetRequestFromDB(1)" class="ButtonCommand">Мультиагенты</button></div>
               <div v-if="!(systemStatus.typeWorkplace in {1:null,2:null})"><button @click="GetRequestFromDB(2)" class="ButtonCommand">Оптимизация</button></div>
             </div>
@@ -84,18 +84,6 @@
             </tfoot></table>
         </div>
 
-        <div v-if="viewmode == 3">
-          <div id="DrawKARoad">
-            <SelectDiv  :dataOption="KAArray" :valueS="SelectKa" :id="'KA'+String(0)" @valueSelect="ChangeKaDraw"/>
-            <input type="color" id="inputColorKa" value="#5900ff"><button class="ButtonCommand" @click="GetKARoad">Отрисовать маршрут</button>
-            <label class="input-file">
-              <input type="file" name="file" id="file" @change="LoadFileKARoad" enctype="multipart/form-data">		
-              <span>Отрисовать из файла</span>
-            </label>
-            <button class="ButtonCommand" @click="ReloadMapContainer">Обновить карту</button>
-          </div>
-          <div id="map"></div>
-        </div>
         </div>  
     </div>
   </div>
@@ -126,9 +114,6 @@ import XLSX from 'xlsx-js-style';
         datarequest: [],
         datarequestКАList: [],
         requestJson: [],
-        KAArray: [],
-        SelectKa: {},
-        KatoDraw: {},
         choiceCriteriaArr: [{value: 1, lable: 'Время'},{value: 2, lable: 'Разворот'},{value: 3, lable: 'Качество'}],
         TypeRequest: [{value: 0, lable: 'в НП'},{value: 1, lable: 'Лидером'}],
         arr: [],
@@ -141,7 +126,6 @@ import XLSX from 'xlsx-js-style';
         this.SatartSave('request')
       },
       TryParceLatLng(id){
-        console.log(id)
         try {
           navigator.clipboard.readText().then(text => {
             try {
@@ -217,7 +201,6 @@ import XLSX from 'xlsx-js-style';
                 };
         this.datarequest.push(addedRow)
         this.SatartSave('datarequest')
-        console.log(addedRow)
       },
       DeleteRowdatarequest(index){ //удаление из данные по заявкам
         this.datarequest[index].deleted = true
@@ -303,7 +286,6 @@ import XLSX from 'xlsx-js-style';
               data.push([element.name,element.satellite.name,element.capacity,element.priority,this.CreateDateTime(element.time)])
             });
           }
-          console.log(data)
           let worksheet = XLSX.utils.aoa_to_sheet(data); // Создаем таблицу в файле с данными из массива
           workbook.SheetNames.push('Data'); // Добавляем лист с названием First list
           let style = {
@@ -319,7 +301,6 @@ import XLSX from 'xlsx-js-style';
           let keylist = Object.keys(worksheet)
           for (let keyid = 0; keyid < keylist.length; keyid++) {
             const key = keylist[keyid];
-            console.log(worksheet[key].v, keylist, data[0])
             try {
               if (data[0].indexOf(worksheet[key].v) != -1) {
                 worksheet[key].s = style
@@ -328,7 +309,6 @@ import XLSX from 'xlsx-js-style';
               console.log(error)
             }
           }
-          console.log(worksheet)
           workbook.Sheets['Data'] = worksheet;
           XLSX.writeFile(workbook, 'dataRequest.xlsx');
         },
@@ -343,17 +323,12 @@ import XLSX from 'xlsx-js-style';
         this.arrNP.push({value: element, lable: element.nameEarthPoint })
       })
       await this.ReFetch()
-      //далее всё для карты
-      this.KAArray.push({value: undefined, lable: "Все КА" })
       this.datarequestКАList = []
       OGList.forEach(OG => {
         OG.satellites.forEach(element =>{
-          this.KAArray.push({value: element, lable: OG.constellationName + "-" + element.name })
           this.datarequestКАList.push({value: element.satelliteId, lable: element.name })
         })
       });
-      this.SelectKa = this.KAArray[0]
-      this.KatoDraw = this.SelectKa.value
       DisplayLoad(false)
     },
   }

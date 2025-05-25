@@ -135,6 +135,7 @@ import XLSX from 'xlsx-js-style';
                       },
                     ]
                 this.dataPrevrap.forEach(event => {
+                  console.log(event)
                     for (let i = 0; i < dataPlotly.length; i++) {
                       const plot = dataPlotly[i];
                       if(plot.name == event.typeEl){

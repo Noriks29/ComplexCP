@@ -22,14 +22,13 @@
         <div class="ModalLoginForm">
           <div>
             <label for="login">Логин: </label>
-            <input type="text" id="login">
+            <input type="text" id="login" class="inputType1" placeholder="Введите логин...">
           </div>
           <div>
             <label for="password">Пароль: </label>
-            <input type="password" id="password">
+            <input type="password" id="password" class="inputType1" placeholder="Введите пароль...">
           </div>
           <div class="FormSubmit">
-            <div :class="errorLogin ? '' : 'none'">Неверные данные!</div>
             <button @click="StartLogin" class="ButtonCommand login">Войти <img src="./assets/arrow2.png" alt=""></button>
           </div>
         </div>
@@ -48,13 +47,15 @@ import TemplateComponent from './components/TemplateComponent.vue'
 import {DisplayLoad, FetchPost} from './js/LoadDisplayMetod.js'
 import LoadProcess from './components/LoadProcess.vue'
 import GlobalStyle from './style/GlobalStyle.scss'
+import GlobalElementStyle from '@/style/GlobalElementStyle.scss'
 import { ClearGlobalData, InitGlobalData, SystemObject } from './js/GlobalData'
 import AlertToast from './components/AlertToast.vue'
 
 export default {
   name: 'App',
   css:{
-    GlobalStyle
+    GlobalStyle,
+    GlobalElementStyle
   },
   data() {
     return{
@@ -86,6 +87,7 @@ export default {
         let result = await FetchPost("/api/v1/authentication/user/login",data)
         if(result == undefined){
           this.errorLogin = true
+          this.$showToast('Неудачная попытка входа','warning', 'Login');
         }
         else if(result.length > 0){
           result.sort((a,b) => {return a.type - b.type})
@@ -166,8 +168,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
-body{
+<style lang="scss" scoped>
   .ModalLoginBack{
     position: relative;
     z-index: 3;
@@ -183,73 +184,35 @@ body{
     &.show{
       transform: translate(0%, 0px);
     }
-
     .ModalLoginPanel{
-      padding: 20px;
       font-size: var(--font-size);
+      padding: 20px;
+      
 
       .ModalLoginForm{
-
-        h1{
-          margin: 0px;
-        }
-
         div{
           padding: 10px 5px;
           display: flex;
           flex-direction: column;
           align-items: flex-start;
-
           label{
             margin: 5px;
           }
-
           input{
             padding: 15px;
-            text-align: left;
-            border: none;
-            border-bottom: 2px solid var(--border-bottom-input);
             width: 90%;
-            outline: none;
-            background-color: #8a8a8a14;
-            transition: all 0.5s;
-            
-            &:hover{
-              background-color: #0000001a;
-            }
-            &:focus{
-              background-color: #0000001a;
-              box-shadow: inset 0px 1px 5px 1px #0000004f;
-            }
           }
-
-          input:-webkit-autofill,
-          input:-webkit-autofill:hover, 
-          input:-webkit-autofill:focus,
-          textarea:-webkit-autofill,
-          textarea:-webkit-autofill:hover,
-          textarea:-webkit-autofill:focus,
-          select:-webkit-autofill,
-          select:-webkit-autofill:hover,
-          select:-webkit-autofill:focus {
-            -webkit-text-fill-color: rgb(0, 0, 0);
-            -webkit-box-shadow: 0 0 0px 1000px #00000000 inset;
-            transition: background-color 0.5s ease-in-out 0s;
-          }
-
           &.FormSubmit{
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
             padding: 15px;
-
-            div{
-              font-size: 20px;
-              font-weight: bold;
-              color: #ff8e8e;
-              transition: all 1s;
-              &.none{
-                color: #ff8e8e00;
+            align-items: flex-end;
+            button{
+              padding-right: 40px;
+              img{
+                height: 60%;
+                position: absolute;
+                top: 20%;
+                right: 0px;
+                bottom: 20%;
               }
             }
           }
@@ -257,74 +220,72 @@ body{
       }
     }
   }
-}
 
-.login{
-  flex: 1;
-  color: var(--color-button);
-  img{
-    height: 60%;
-    position: absolute;
-    top: 20%;
-    right: 0px;
-    bottom: 20%;
-  }
-}
-
-.headerSelectMode{
+.ChangeViewMode{
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
   display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    position: fixed;
-    width: 35%;
-    z-index: 1;
-    flex-direction: column;
-    height: 90vh;
-    margin-left: 65%;
-    padding: 5vh 0px;
-
-
-  background: var(--background-Panel2);
-  border-left: 2px solid var(--border-Panel2);
-  box-shadow: 8px 0px 15px 1px var(--box-shadow-Pabel2);
-  transform: translate(100%, 0px);
-  transition: all 0.5s ease-in-out;
-
-  &.show{
-    transform: translate(0%, 0px);
-  }
-
-  .SelectMode{
-    flex: 1;
-    width: 100%;
-    .ButtonSelectMode{
-      overflow: hidden;
-      position: relative;
-      font-size: 20px;
-      width: 100%;
-      height: 100%;
-      border: none;
-      background: none;
-      color: var(--color-Main);
-      pointer-events: all;
-      background-color: var(--background-Button4);
-      padding: 20px;
-      transition: all 0.2s;
-      border-bottom: 2px solid var(--background-Button1);
-        &:hover{
-          background-color: var(--background-Button5);
-          transform: translate(4px, -4px);
-          box-shadow: -4px 4px 2px var(--background-Button1);
-        }
-        &:active{
-            background-color: var(--background-Button6);
-            transform: translate(0px, 1px);
-            box-shadow: 0px 0px 11px 2px var(--box-shadow-button);
-       }
-  }
-  }
-  
+  z-index: 10;
+  width: 30px;
 }
+
+
+.idSesion{
+  color: var(--color-Main);
+  position: fixed;
+  right: 10px;
+  top: 6px;
+  border-bottom: 2px solid;
+  box-shadow: 0px 3px 4px -4px var(--box-shadow-Pabel2);
+  transform: translate(0px, -150%);
+  transition: all 0.5s ease-in-out;
+  z-index: 2;
+
+    &.show{
+      transform: translate(0px, 0%);
+    }
+    .flexdiv{
+      display: flex;
+      align-items: center;
+    }
+    svg{
+      fill: var(--color-Main);
+      *{
+        stroke: var(--color-Main);
+      }
+    }
+    .Menubutton{
+      background: none;
+      border: none;
+      position: relative;
+      margin: 0px 10px;
+      transform: translate(0%, -150%);
+      transition: all 0.5s ease-in-out;
+      &.show{
+        transform: translate(0%, 0px);
+      }
+      svg{
+        width: 30px;
+      }
+    }
+
+    .logoutbutton{
+      position: relative;
+        background: none;
+        color: var(--color-Main);
+        border: none;
+        margin: 5px 25px 10px 5px;
+        svg{
+          width: 25px;
+          position: absolute;
+          right: -25px;
+          top: -3px;
+        }
+    }
+}
+
+
 
 </style>
 

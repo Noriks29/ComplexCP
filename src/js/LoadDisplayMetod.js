@@ -1,4 +1,4 @@
-import { adress, adressDEV  } from "./config_server";
+import { adress  } from "./config_server";
 
 const ShowFetchData = true
 
@@ -13,10 +13,7 @@ function DisplayLoad(status){
 }
 async function FetchGet(http, AlertError = true, massage=null){
     let AcsessKey = localStorage.data
-    let MODE = window.location.search
     let add = adress
-    if(MODE == "?DEV")
-        add = adressDEV
     try {
         const response = await fetch('http://'+add+http+'?accessKey='+AcsessKey);
         if (!response.ok) {
@@ -41,10 +38,7 @@ async function FetchGet(http, AlertError = true, massage=null){
 async function FetchPost(http,datapost,dopparamhttp, AlertError = true, massage=null){
     if(ShowFetchData) console.log(JSON.stringify(datapost))
     let AcsessKey = localStorage.data
-    let MODE = window.location.search
     let add = adress
-    if(MODE == "?DEV")
-        add = adressDEV
     if(dopparamhttp != undefined){
         AcsessKey = AcsessKey +"&"+dopparamhttp
     }

@@ -2,51 +2,55 @@
     
     
     <div class="SectionMenu" :class="system.typeWorkplace == -1 ? 'hide' : 'show'">
-      <transition name="ComponentModelling" mode="out-in" :class="system.typeWorkplace == -1 ? 'hide' : 'show'" v-if="activeComponent == ''">
-        <div class="ModellingDiv">
-          <p class="ModellingTitle">{{ TextTitleModellingName }}</p>
-          <component :is="ComponentModellingList[system.typeWorkplace]" :systemStatus="system" :reload="reload" :ExperimentStatus="ExperimentStatus" @ChangeExperimentStatus="ChangeExperimentStatus"></component> 
-          <MapContainer/>
-        </div>
-      </transition> 
-      <transition name="translate" mode="out-in" v-if="activeComponent != ''">
-        <div class="ComponentSelect">
-          <component :is="activeComponent" :FillingDataStatus="FillingDataStatuss" :modellingStatus="ExperimentStatus" @updateParentComponent="ChangeComponents" :systemStatus="system" ></component> 
-        </div>
-      </transition> 
-      <div class="FlexMenuSection">
-        <div class="ButtonSection system" >
-          <SystemWindow :FillingDataStatus="FillingDataStatuss" :modellingStatus="ExperimentStatus" @updateParentComponent="ChangeComponents" :systemStatus="system" />
-        </div>
-        <div class="ButtonSection first">
-          <h1>КС</h1>
-          <!--
-          <span @click="this.$showToast('This is a global success message!','info', 'TestTitle');">-1-</span>
-          <span @click="this.$showToast('This is a global success message!','warning', 'TestTitle');">-1-</span>
-          <span @click="this.$showToast('This is a global success message!','error', 'TestTitle');">-1-</span>
-          <span @click="this.$showToast('This is a global success message!','success', 'TestTitle');">-1-</span>
-          <span @click="this.$showToast('This is a global success message!','process', 'TestTitle');">-1-</span>
-          <span @click="this.$showToast('This is a global success message!','test', 'TestTitle');">-1-</span>-->
-          <div class="ButtonList">
-            <button class="active" @click="SelectComponent('NP')"><div :class="system.earthStatus ? 'approved' : 'Notapproved'"></div>НП</button>
-            <button class="active" @click="SelectComponent('OG')"><div :class="system.constellationStatus ? 'approved' : 'Notapproved'"></div>КА и ОГ</button>
-            <button :class="!ExperimentStatus > 0 ? 'active' : ''" @click="SelectComponent('TypeKA')">Модели КА</button>
-          </div>   
-        </div>
-        <div class="ButtonSection second" v-if="system.typeWorkplace == 3">
-          <h1>Связь</h1>
-          <div class="ButtonList">
-            <button :class="FillingDataStatus && !ExperimentStatus > 0 ? 'active' : ''" @click="SelectComponent('EarthConstellation')"><div :class="system.earthSatStatus ? 'approved' : 'Notapproved'"></div>КА - НП</button>
-            <button :class="FillingDataStatus && !ExperimentStatus > 0 ? 'active' : ''"  @click="SelectComponent('LeaderConstellationConstellation')"><div :class="system.satSatStatus ? 'approved' : 'Notapproved'"></div>КА - КА</button>
+      <div class="HeadersSction">
+        <SystemWindow :FillingDataStatus="FillingDataStatuss" :modellingStatus="ExperimentStatus" @updateParentComponent="ChangeComponents" :systemStatus="system" />
+        <transition name="ComponentModelling" mode="out-in">
+          <div class="ModellingDiv">
+            <p class="ModellingTitle">{{ TextTitleModellingName }}</p>
+            <component :is="ComponentModellingList[system.typeWorkplace]" :systemStatus="system" :reload="reload" :ExperimentStatus="ExperimentStatus" @ChangeExperimentStatus="ChangeExperimentStatus"></component>  
           </div>
-        </div>
-        <div class="ButtonSection third" >
-          <h1>Исходные данные</h1>
-          <div class="ButtonList">
-            <button  :class="FillingDataStatus && !ExperimentStatus > 0 ? 'active' : ''" @click="SelectComponent('TargetDZZ')">Заявки</button>
-          </div>
-        </div>        
+        </transition> 
       </div>
+      <div class="FooterSection">
+        <MapContainer v-if="activeComponent == ''"/>
+        <transition name="translate" mode="out-in" v-if="activeComponent != ''">
+          <div class="ComponentSelect">
+            <component :is="activeComponent" :FillingDataStatus="FillingDataStatuss" :modellingStatus="ExperimentStatus" @updateParentComponent="ChangeComponents" :systemStatus="system" ></component> 
+          </div>
+        </transition>
+
+        <div class="FlexMenuSection">
+          <div class="ButtonSection first">
+            <h1>КС</h1>
+            <!--
+            <span @click="this.$showToast('This is a global success message!','info', 'TestTitle');">-1-</span>
+            <span @click="this.$showToast('This is a global success message!','warning', 'TestTitle');">-1-</span>
+            <span @click="this.$showToast('This is a global success message!','error', 'TestTitle');">-1-</span>
+            <span @click="this.$showToast('This is a global success message!','success', 'TestTitle');">-1-</span>
+            <span @click="this.$showToast('This is a global success message!','process', 'TestTitle');">-1-</span>
+            <span @click="this.$showToast('This is a global success message!','test', 'TestTitle');">-1-</span>-->
+            <div class="ButtonList">
+              <button class="active" @click="SelectComponent('NP')"><div :class="system.earthStatus ? 'approved' : 'Notapproved'"></div>НП</button>
+              <button class="active" @click="SelectComponent('OG')"><div :class="system.constellationStatus ? 'approved' : 'Notapproved'"></div>КА и ОГ</button>
+              <button :class="!ExperimentStatus > 0 ? 'active' : ''" @click="SelectComponent('TypeKA')">Модели КА</button>
+            </div>   
+          </div>
+          <div class="ButtonSection second" v-if="system.typeWorkplace == 3">
+            <h1>Связь</h1>
+            <div class="ButtonList">
+              <button :class="FillingDataStatus && !ExperimentStatus > 0 ? 'active' : ''" @click="SelectComponent('EarthConstellation')"><div :class="system.earthSatStatus ? 'approved' : 'Notapproved'"></div>КА - НП</button>
+              <button :class="FillingDataStatus && !ExperimentStatus > 0 ? 'active' : ''"  @click="SelectComponent('LeaderConstellationConstellation')"><div :class="system.satSatStatus ? 'approved' : 'Notapproved'"></div>КА - КА</button>
+            </div>
+          </div>
+          <div class="ButtonSection third" >
+            <h1>Исходные данные</h1>
+            <div class="ButtonList">
+              <button  :class="FillingDataStatus && !ExperimentStatus > 0 ? 'active' : ''" @click="SelectComponent('TargetDZZ')">Заявки</button>
+            </div>
+          </div>        
+        </div>
+      </div>
+      
     </div>
 </template>
 
@@ -199,10 +203,10 @@ export default {
 
 <style lang="scss">
 .SectionMenu{
-  flex-direction: row-reverse !important;
+  align-items: normal !important;
   .ModellingDiv{
-    height: 100vh !important;
-    width: 75vw !important;
+    height: fit-content !important;
+    flex: 1;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -231,8 +235,9 @@ export default {
   }
   .ComponentSelect{
     position: relative !important;
-    width: 75vw !important;
+    flex: 1;
     z-index: 1 !important;
+    height: auto !important;
     background: none !important;
     .ContentDiv{
       flex-direction: column !important;
@@ -269,17 +274,13 @@ export default {
   }
   .FlexMenuSection{
     flex-direction: column !important;
-    height: 100vh !important;
-    width: 25vw !important;
+    height: auto !important;
+    width: fit-content !important;
     align-items: normal !important;
     .ButtonSection{
       height: auto !important;
       &.third{
         flex: 2;
-      }
-      &.system{
-        flex: 10;
-        max-height: fit-content;
       }
       &.first{
         flex:4;
@@ -295,6 +296,15 @@ export default {
       font-size: 20px !important;
     }
   } 
+}
+
+.HeadersSction{
+  display: flex;
+}
+.FooterSection{
+    display: flex;
+    flex: 1;
+    flex-direction: row-reverse;
 }
 
 </style>

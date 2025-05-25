@@ -13,12 +13,14 @@
           </fieldset>
           <div class="PanelWork" v-if="!modellingSettings.experimentEddit">
           <table class="colum">
+            <tbody>
               <tr>
                 <td><button class="ButtonCommand LIghtPoint" @click="GetRezultGordeev"><div :class="systemStatus.successRouteModelling ? 'approved' : 'Notapproved'"></div>Результат(переделать на разделы)</button></td>
               </tr>
               <tr>
                 <td><button class="ButtonCommand" @click="ShowRezult()" :class="(modellingRezult.data.length < 1) ? 'disable' : ''">Показать Результат(убрать)</button></td>
               </tr>
+              </tbody>
             </table>
           </div>
         </div>

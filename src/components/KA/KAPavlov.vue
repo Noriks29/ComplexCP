@@ -11,14 +11,15 @@
           </div>
         <div class="PanelWork">
           <table class="colum">
+            <tbody>
             <tr>
               <td><button class="ButtonCommand" @click="ShowPlan" :class="(modellingRezult.eventData.length < 1) ? 'disable' : ''">План</button></td>
               <td><button class="ButtonCommand" @click="ShowNodeLoad" :class="(modellingRezult.eventData.length < 1) ? 'disable' : ''">Нагрузка узлов</button></td>
             </tr>
             <tr>
               <td><button class="ButtonCommand" @click="ShowRezult()" :class="(false) ? 'disable' : ''">Результат(отобразить)</button></td>
-              
             </tr>
+            </tbody>
           </table>
         </div>
       </div>

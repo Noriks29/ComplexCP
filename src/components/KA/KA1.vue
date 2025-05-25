@@ -9,6 +9,7 @@
           </div>
           <div class="PanelWork" v-if="!modellingSettings.experimentEddit">
           <table class="colum">
+            <tbody>
               <tr>
                 <td class="tdflexRow">
                   <button @click="ShowShootingPlan" :class="(modellingRezult.E77.length < 1) ? 'disable' : ''" class="ButtonCommand">План съёмок</button>
@@ -20,6 +21,7 @@
                   <button @click="ShowLogSmao" :class="(modellingRezult.Smao.length < 1) ? 'disable' : ''" class="ButtonCommand icon"><img src="../../assets/instructions.png" alt="smaoResponse"></button>
                 </td>
               </tr>
+              </tbody>
             </table>
         </div></div>
       </div>
