@@ -102,6 +102,18 @@ export default {
               objectList[SAT.tleId] = {id: SAT.tleId, name: SAT.name, type: 'SAT'}
           })
       })
+      dataToPrevrap.transport.forEach(el => {
+         el.typeEl='Передача'; 
+         el.time = el.text
+         for (let i = 0; i < dataToPrevrap.to_transport.length; i++) {
+              const element = dataToPrevrap.to_transport[i];
+              if(el.interval == element.interval && element.object == el.object){
+                  el.volume = element.text
+                  break
+              }
+          }
+         dataPrevrap.push(el);
+      })
       dataToPrevrap.process.forEach(el => {
           el.typeEl = "Обработка";
           el.time = el.text
@@ -124,21 +136,10 @@ export default {
       dataToPrevrap.storage.forEach(el => {
          el.typeEl='Хранение'; el.volume = el.text;dataPrevrap.push(el);
       })
-      dataToPrevrap.transport.forEach(el => {
-         el.typeEl='Передача'; 
-         el.time = el.text
-         for (let i = 0; i < dataToPrevrap.to_transport.length; i++) {
-              const element = dataToPrevrap.to_transport[i];
-              if(el.interval == element.interval && element.object == el.object){
-                  el.volume = element.text
-                  break
-              }
-          }
-         dataPrevrap.push(el);
-      })
+      
       dataPrevrap.sort((a,b) => {return a.interval - b.interval})
       dataPrevrap.forEach(event => {
-        event.intervalTime = dataToPrevrap.time[event.interval]
+        event.intervalTime = dataToPrevrap.time[event.interval-1]
         event.objectName = objectList[event.object]
         event.to_objectName = objectList[event.to_object] || {name : ''}
       })

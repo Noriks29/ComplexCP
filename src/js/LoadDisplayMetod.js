@@ -1,5 +1,4 @@
 import { adress  } from "./config_server";
-
 const ShowFetchData = true
 
 function DisplayLoad(status){
@@ -30,6 +29,7 @@ async function FetchGet(http, AlertError = true, massage=null){
     } catch (error) {
         console.log('Error during fetch:', error);
         if(AlertError) alert("Ошибка запроса, дальнейшая работа может быть некорректной!" + error)
+        //if(AlertError) this.$showToast(error,'error', 'TestTitle');
         return undefined
     }
 
@@ -64,6 +64,7 @@ async function FetchPost(http,datapost,dopparamhttp, AlertError = true, massage=
         } catch (error) {
             console.log('Error save:', error);
             if(AlertError) alert("ОШИБКА ОТПРАВКИ  " + error)
+            //if(AlertError) this.$showToast(error,'error', 'ОШИБКА ОТПРАВКИ');
             return undefined;
         }
 }
@@ -94,7 +95,6 @@ async function FetchPostFile(http,formData){
         }
         } catch (error) {
             console.log('Error save:', error);
-            alert("ОШИБКА ОТПРАВКИ  " + error)
             DisplayLoad(false)
             return undefined;
         }

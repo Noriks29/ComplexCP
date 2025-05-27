@@ -180,7 +180,7 @@ export default {
   }
 }
 #map{
-  background-color: #2b2b2b;
+  background-color: var(--color-bg-panel);
   position: relative;
   outline-style: none;
   height: calc(100% - 20px);

@@ -13,7 +13,7 @@
         <div class="TableDiv">
           <table class="TableDefault">
           <thead>
-            <tr><th>Тип события</th><th>№ Интервала</th><th>Интервал</th><th>Тип узла</th><th>Узел</th><th>Узел получатель</th><th>Обьём</th><th>Время</th><th>Поток</th><th>Технология</th></tr>
+            <tr><th>Тип события</th><th>№ Интервала</th><th>Интервал</th><th>Тип узла</th><th>Узел</th><th>Узел получатель</th><th>Обьём</th><th>Длительность</th><th>Поток</th><th>Технология</th></tr>
           </thead>
           <tbody>
             <tr v-for="data, index in dataPrevrap" :key="index">
@@ -62,7 +62,7 @@ import XLSX from 'xlsx-js-style';
           },
           LoadXLSX(){
             const workbook = XLSX.utils.book_new();
-            let data = [["Тип события","Интервал","Тип узла","Узел","Узел получатель","Обьём","Время","Поток","Технология"]]
+            let data = [["Тип события","Интервал","Тип узла","Узел","Узел получатель","Обьём","Длительность","Поток","Технология"]]
             this.dataPrevrap.forEach(element => {
                 let row = [element.typeEl,element.intervalTime.timeUnixstart.time+' - '+element.intervalTime.timeUnixend.time,element.objectName.type,
                    element.objectName.name,element.to_objectName.name,element.volume,(element.time != undefined ? this.TimeFormat(element.time) : ''),element.flow,element.tech

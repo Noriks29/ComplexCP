@@ -9,7 +9,7 @@
           <tr><td>Окончание горизонта планирования</td><td>
             <DateTime :valueUnix="dataSystem.modelingEnd" :id="'modelingEnd'" @valueSelect="ChangeTime"/>
           </td></tr>
-          <tr><td>Шаг интегрирования баллистики</td><td><input id="step" @change="ChangeParam" type="number" min="0" :value="dataSystem.step"><label for="step"></label></td></tr>
+          <tr><td>Шаг интегрирования баллистики</td><td><input placeholder="Введите шаг" class="inputType2" id="step" @change="ChangeParam" type="number" min="0" :value="dataSystem.step"></td></tr>
         </tbody></table>
   </template>
   <script>
@@ -41,3 +41,14 @@ import { SystemObject, ChangeSystemObject } from '@/js/GlobalData';
     },
   }
   </script>
+
+<style lang="scss" scoped>
+.TableDefault{
+  background: none;
+  text-align: left;
+  filter: none;
+  tr{
+    background: none;
+  }
+}
+</style>

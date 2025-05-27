@@ -2,27 +2,28 @@
     
     
     <div class="SectionMenu" :class="system.typeWorkplace == -1 ? 'hide' : 'show'">
+      <p class="ModellingTitle">{{ TextTitleModellingName }}</p>
       <div class="HeadersSction">
         <SystemWindow :FillingDataStatus="FillingDataStatuss" :modellingStatus="ExperimentStatus" @updateParentComponent="ChangeComponents" :systemStatus="system" />
         <transition name="ComponentModelling" mode="out-in">
           <div class="ModellingDiv">
-            <p class="ModellingTitle">{{ TextTitleModellingName }}</p>
             <component :is="ComponentModellingList[system.typeWorkplace]" :systemStatus="system" :reload="reload" :ExperimentStatus="ExperimentStatus" @ChangeExperimentStatus="ChangeExperimentStatus"></component>  
           </div>
         </transition> 
       </div>
       <div class="FooterSection">
-        <MapContainer v-if="activeComponent == ''"/>
-        <transition name="translate" mode="out-in" v-if="activeComponent != ''">
-          <div class="ComponentSelect">
-            <component :is="activeComponent" :FillingDataStatus="FillingDataStatuss" :modellingStatus="ExperimentStatus" @updateParentComponent="ChangeComponents" :systemStatus="system" ></component> 
-          </div>
-        </transition>
-
+        <div class="workpage">
+          <MapContainer v-if="activeComponent == ''"/>
+          <transition name="translate" mode="out-in" v-if="activeComponent != ''">
+            <div class="ComponentSelect">
+              <component :is="activeComponent" :FillingDataStatus="FillingDataStatuss" :modellingStatus="ExperimentStatus" @updateParentComponent="ChangeComponents" :systemStatus="system" ></component> 
+            </div>
+          </transition>
+        </div>
         <div class="FlexMenuSection">
           <div class="ButtonSection first">
             <h1>КС</h1>
-            <!--
+            <!--rgb(0 34 108)
             <span @click="this.$showToast('This is a global success message!','info', 'TestTitle');">-1-</span>
             <span @click="this.$showToast('This is a global success message!','warning', 'TestTitle');">-1-</span>
             <span @click="this.$showToast('This is a global success message!','error', 'TestTitle');">-1-</span>
@@ -30,22 +31,22 @@
             <span @click="this.$showToast('This is a global success message!','process', 'TestTitle');">-1-</span>
             <span @click="this.$showToast('This is a global success message!','test', 'TestTitle');">-1-</span>-->
             <div class="ButtonList">
-              <button class="active" @click="SelectComponent('NP')"><div :class="system.earthStatus ? 'approved' : 'Notapproved'"></div>НП</button>
-              <button class="active" @click="SelectComponent('OG')"><div :class="system.constellationStatus ? 'approved' : 'Notapproved'"></div>КА и ОГ</button>
-              <button :class="!ExperimentStatus > 0 ? 'active' : ''" @click="SelectComponent('TypeKA')">Модели КА</button>
+              <button class="buttonType1" :class="activeComponent=='NP'? 'select':''" @click="SelectComponent('NP')"><div :class="system.earthStatus ? 'approved' : 'Notapproved'"></div><span>НП</span></button>
+              <button class="buttonType1" :class="activeComponent=='OG'? 'select':''" @click="SelectComponent('OG')"><div :class="system.constellationStatus ? 'approved' : 'Notapproved'"></div><span>КА и ОГ</span></button>
+              <button class="buttonType1" :class="activeComponent=='TypeKA'? 'select':''" @click="SelectComponent('TypeKA')"><span>Модели КА</span></button>
             </div>   
           </div>
-          <div class="ButtonSection second" v-if="system.typeWorkplace == 3">
+          <div class="ButtonSection second" v-if="system.typeWorkplace in {2:null,3:null}">
             <h1>Связь</h1>
             <div class="ButtonList">
-              <button :class="FillingDataStatus && !ExperimentStatus > 0 ? 'active' : ''" @click="SelectComponent('EarthConstellation')"><div :class="system.earthSatStatus ? 'approved' : 'Notapproved'"></div>КА - НП</button>
-              <button :class="FillingDataStatus && !ExperimentStatus > 0 ? 'active' : ''"  @click="SelectComponent('LeaderConstellationConstellation')"><div :class="system.satSatStatus ? 'approved' : 'Notapproved'"></div>КА - КА</button>
+              <button class="buttonType1" :class="activeComponent=='EarthConstellation'? 'select':''" :disabled="!FillingDataStatus" @click="SelectComponent('EarthConstellation')"><div :class="system.earthSatStatus ? 'approved' : 'Notapproved'"></div><span>КА - НП</span></button>
+              <button v-if="system.typeWorkplace in {3:null}" class="buttonType1" :class="activeComponent=='LeaderConstellationConstellation'? 'select':''" :disabled="!FillingDataStatus"  @click="SelectComponent('LeaderConstellationConstellation')"><div :class="system.satSatStatus ? 'approved' : 'Notapproved'"></div><span>КА - КА</span></button>
             </div>
           </div>
           <div class="ButtonSection third" >
             <h1>Исходные данные</h1>
             <div class="ButtonList">
-              <button  :class="FillingDataStatus && !ExperimentStatus > 0 ? 'active' : ''" @click="SelectComponent('TargetDZZ')">Заявки</button>
+              <button class="buttonType1" :class="activeComponent=='TargetDZZ'? 'select':''" :disabled="!FillingDataStatus" @click="SelectComponent('TargetDZZ')"><span>Заявки</span></button>
             </div>
           </div>        
         </div>
@@ -102,6 +103,10 @@ export default {
   },
   methods: {
     SelectComponent(nameComponent) {
+        if(this.activeComponent == nameComponent){
+          this.activeComponent = ''
+          return
+        }
         this.activeComponent = nameComponent
       },
       ChangeExperimentStatus(status){
@@ -202,6 +207,12 @@ export default {
 </script>
 
 <style lang="scss">
+.ModellingTitle{
+      font-size: 20px;
+      margin: 10px;
+      font-weight: bold;
+      text-align: left;
+    }
 .SectionMenu{
   align-items: normal !important;
   .ModellingDiv{
@@ -210,12 +221,7 @@ export default {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    .ModellingTitle{
-      font-size: 20px;
-      margin: 10px;
-      font-weight: bold;
-      text-align: left;
-    }
+    
     .PanelWork{
       flex:1;
     }
@@ -273,29 +279,59 @@ export default {
     }
   }
   .FlexMenuSection{
-    flex-direction: column !important;
-    height: auto !important;
-    width: fit-content !important;
-    align-items: normal !important;
+    flex-direction: column;
+    height: auto ;
+    width: fit-content ;
+    align-items: normal ;
+    display: flex;
     .ButtonSection{
-      height: auto !important;
-      &.third{
-        flex: 2;
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      transition: all 0.5s ease-out;
+      position: relative;
+
+
+      h1{
+        margin: 5px;
+        font-size: 20px;
+        text-align: left;
       }
-      &.first{
-        flex:4;
+      .ButtonList{
+        flex: 1;
+        display: flex;
+        justify-content: space-evenly;
+        flex-direction: column;
       }
-      &.second{
-        flex:3;
+
+      button{
+        flex: 1;
+        margin: 3px 0px 3px 10px;
+        padding: 10px 0px 10px 5px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        z-index: 2;
+        span{
+          padding-left: 15px;
+        }
+        div{
+          position: absolute;
+          width: 10px;
+          height: 10px;
+          border-radius: 20px;
+          &.approved{
+            background-color: rgb(0, 139, 0);
+            box-shadow: inset 0px 0px 6px rgb(0 239 0);
+          }
+          &.Notapproved{
+            background-color: red;
+            box-shadow: inset 0px 0px 6px #fe1a1a;
+          }
+        }
       }
     }
   }
-  .ButtonSection{
-    h1{
-      margin: 5px !important;
-      font-size: 20px !important;
-    }
-  } 
 }
 
 .HeadersSction{
@@ -305,6 +341,17 @@ export default {
     display: flex;
     flex: 1;
     flex-direction: row-reverse;
+    overflow: hidden;
+    
+    .workpage{
+      flex: 1;
+      background-color: var(--color-bg-panel);
+      border: 3px solid var(--color-border1);
+      display: flex;
+      border-top-left-radius: 10px;
+      border-bottom: none;
+      border-right: none;
+    }
 }
 
 </style>

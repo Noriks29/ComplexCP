@@ -15,6 +15,81 @@
         box-shadow: inset 0px 1px 5px 1px #0000004f;
     }
 }
+.inputType2{
+  text-align: center;
+  border: none;
+  background: none;
+  font-size: var(--font-size);
+  color: var(--color-Main);
+  border-bottom: 1px solid #7b7b7b00;
+  &:hover{
+    border-bottom: 1px solid #7b7b7bc9;
+  }
+  &:focus{
+    border-bottom: 1px solid #ffffffd6;
+  }
+}
+
+
+
+.buttonType1{
+    border: none;
+    color: var(--color-Main);
+    font-size: 18px;
+    text-decoration: none;
+    position: relative;
+    transition: all 0.5s linear;
+    transform: translate(0px, 0px);
+    background-color: #00000000;
+    pointer-events: all;
+    border: 3px solid rgba(0, 34, 108, 0);
+    border-right: none;
+    border-radius: 10px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+
+    &:disabled{
+      background-color: rgba(29, 29, 29, 0.4);
+      pointer-events: none;
+    }
+    &:hover{
+      background-color: var(--color-bg-panel);
+      transform: translate(0px, -2px);
+      box-shadow: -4px 4px 2px var(--box-shadow-button);
+    }
+    &:active{
+      background-color: var(--color-bg-panel);
+      transform: translate(0px, 1px);
+      box-shadow: 0px 0px 11px 2px var(--box-shadow-button);
+    }
+    &.select{
+      
+      border: 3px solid var(--color-border1);
+      border-right: none;
+      
+      background-color: var(--color-bg-panel);;
+      &::after{
+        border-top: 3px solid var(--color-border1);
+        border-bottom: 3px solid var(--color-border1);
+        background-color: var(--color-bg-panel);
+        right: -3px;
+      }
+    }
+    &::after {
+          transition: all 0.2s linear;
+          content: "";
+          height: 100%;
+          width: 3px;
+          position: fixed;
+          right: 0px;
+          border-top: 3px solid rgba(0, 34, 108, 0);
+          border-bottom: 3px solid rgba(0, 34, 108, 0);
+          background-color: #00000000;
+          z-index: 2;
+          display: block;
+        }
+}
+
 
 .ButtonCommand{
   background:  var(--background-Button1);
