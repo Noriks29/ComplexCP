@@ -4,10 +4,7 @@
             <button class="ToMenuButtonDiv" @click="SelectComponent('TemplateComponent')">
               <img src="../../assets/exit.svg">
             </button>
-            <div class="TitleText">План контактов НП – ОГ</div>
-          </div>
-          
-          
+          </div>   
     <div class="ContentDiv">
       <div class="Panel LeftPanel">
         <div class="FlexColumn">

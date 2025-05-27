@@ -4,7 +4,6 @@
             <button class="ToMenuButtonDiv" @click="SelectComponent('TemplateComponent')">
               <img src="../../assets/exit.svg">
             </button>
-            <h1 class="TitleText">Список наземных пунктов</h1>
           </div>
     <div class="ContentDiv">
     <div class="Panel LeftPanel">
@@ -19,7 +18,7 @@
       </div>
     </div>
     <div class="Panel RightPanel">
-      <div class="TableDiv" style="max-height: 75%;">
+      <div class="TableDiv" style="height: 98%;">
       <table class="TableDefault">
         <thead>
           <tr>
@@ -27,7 +26,7 @@
             <th>Название</th>
             <th>Широта</th>
             <th>Долгота</th>
-            <th v-if="!approved && !modellingStatus" class="delete"></th>
+            <th class="delete"></th>
           </tr>
         </thead>
         <tbody>
@@ -42,7 +41,7 @@
             <td><input v-model="data.nameEarthPoint"></td>
             <td><input @keydown.ctrl.v="TryParceLatLng(index)" type="number"  v-model="data.latitude"></td>
             <td><input @keydown.ctrl.v="TryParceLatLng(index)" type="number"  v-model="data.longitude" ></td>
-            <td v-if="!approved && !modellingStatus" @click="DeleteRow(index)" class="delete"><img class="iconDelete" src="../../assets/delete.svg" alt="Удалить"></td>
+            <td @click="DeleteRow(index)" class="delete" :class="!approved && !modellingStatus?'':'disable'"><img class="iconDelete" src="../../assets/delete.svg" alt="Удалить"></td>
           </tr>
         </tbody>
         <tfoot>
@@ -127,3 +126,12 @@ import { PagesSettings } from './PagesSettings.js';
     }
   }
   </script>
+
+<style lang="scss" scoped>
+.delete{
+  &.disable{
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+</style>

@@ -4,7 +4,6 @@
             <button class="ToMenuButtonDiv" @click="SelectComponent('TemplateComponent')">
               <img src="../../assets/exit.svg">
             </button>
-            <h1 class="TitleText">Заявки</h1>
           </div>
     <div class="ContentDiv">
         <div class="Panel LeftPanel">

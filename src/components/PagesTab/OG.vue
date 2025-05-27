@@ -4,10 +4,22 @@
             <button class="ToMenuButtonDiv" @click="SelectComponent('TemplateComponent')">
               <img src="@/assets/exit.svg"><span>&#8203;</span>
             </button>
-            <h1 class="TitleText">Орбитальные группировки и космические аппараты</h1>
           </div>
     <div class="ContentDiv">
     <div class="Panel LeftPanel">
+        <div class="FlexColumn">
+          <div class="ButtonApprovedDiv" v-if="!modellingStatus">
+          <button @click="ChangeApproved(!approved)" class="ButtonCommand" :class="approved? 'green' : 'red'">
+          <span v-if="approved"><img src="../../assets/edit.svg"></span>
+          <span v-else><img src="../../assets/approve.svg"></span>
+          <span>{{ approved ?  'Редактировать' : 'Утвердить'}}</span>
+          </button></div>
+          <div>
+            <button class="ButtonCommand" :class="!approved? '' : 'disable'"  @click="PageSettings.status=(PageSettings.status+1)%2">
+              <img src="@/assets/add.png" alt="" class="addButtonIcon">{{ (PageSettings.status == 1) ? 'Прекратить' : 'Добавить орбитальную группировку' }}
+            </button>
+          </div>
+        </div>
         <div class="OGList">
         <div v-for="data, index in dataJson"
           :key="index"
@@ -18,19 +30,6 @@
           <div  @click="SelectOGFromList(data)" type="type">{{ OGType[data.inputType] }}</div>
           <div class="iconDelete" @click="DeleteRowOG(data)" type="icon"><img  src="@/assets/delete.svg" alt="Удалить"></div>
         </div>
-        </div>
-        <div class="FlexColumn">
-        <div>
-          <button class="ButtonCommand" :class="!approved? '' : 'disable'"  @click="PageSettings.status=(PageSettings.status+1)%2">
-            <img src="@/assets/add.png" alt="" class="addButtonIcon">{{ (PageSettings.status == 1) ? 'Прекратить' : 'Добавить орбитальную группировку' }}
-          </button>
-        </div>
-        <div class="ButtonApprovedDiv" v-if="!modellingStatus">
-          <button @click="ChangeApproved(!approved)" class="ButtonCommand" :class="approved? 'green' : 'red'">
-          <span v-if="approved"><img src="../../assets/edit.svg"></span>
-          <span v-else><img src="../../assets/approve.svg"></span>
-          <span>{{ approved ?  'Редактировать' : 'Утвердить'}}</span>
-        </button></div>
         </div>
     </div>
 

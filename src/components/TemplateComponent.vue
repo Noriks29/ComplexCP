@@ -4,7 +4,7 @@
     <div class="SectionMenu" :class="system.typeWorkplace == -1 ? 'hide' : 'show'">
       <p class="ModellingTitle">{{ TextTitleModellingName }}</p>
       <div class="HeadersSction">
-        <SystemWindow :FillingDataStatus="FillingDataStatuss" :modellingStatus="ExperimentStatus" @updateParentComponent="ChangeComponents" :systemStatus="system" />
+        <div class="systemDiv"><SystemWindow :FillingDataStatus="FillingDataStatuss" :modellingStatus="ExperimentStatus" @updateParentComponent="ChangeComponents" :systemStatus="system" /></div>
         <transition name="ComponentModelling" mode="out-in">
           <div class="ModellingDiv">
             <component :is="ComponentModellingList[system.typeWorkplace]" :systemStatus="system" :reload="reload" :ExperimentStatus="ExperimentStatus" @ChangeExperimentStatus="ChangeExperimentStatus"></component>  
@@ -249,17 +249,18 @@ export default {
       flex-direction: column !important;
       .LeftPanel{
         flex: none !important;
+        margin-left: 60px;
         .FlexColumn{
           display: flex;
           flex-wrap: wrap;
           flex-direction: row !important;
-          align-items: center !important;
           div{
             width: auto;
             flex: 1;
             &.ButtonApprovedDiv button{
-              width: calc(100% - 10px) !important;
-              margin: 5px !important;
+              width: 160px !important;
+              margin: 0px !important;
+              padding: 5px;
             }
             .ButtonCommand{
               white-space: nowrap;
@@ -294,8 +295,9 @@ export default {
 
       h1{
         margin: 5px;
-        font-size: 20px;
+        font-size: 18px;
         text-align: left;
+        color: #777777;
       }
       .ButtonList{
         flex: 1;
@@ -332,6 +334,13 @@ export default {
       }
     }
   }
+}
+.systemDiv{
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid gray;
+  border-radius: 15px;
+  background-color: var(--color-bg-panel);
 }
 
 .HeadersSction{

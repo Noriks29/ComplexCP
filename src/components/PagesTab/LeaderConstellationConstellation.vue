@@ -4,12 +4,11 @@
             <button class="ToMenuButtonDiv" @click="SelectComponent('TemplateComponent')">
               <img src="../../assets/exit.svg">
             </button>
-            <div class="TitleText">План контактов КА – КА</div>
           </div>
     <div class="ContentDiv">
       <div class="Panel LeftPanel">
             <div class="FlexColumn">
-              <div style="display: flex;align-items: center;">Минимальный угол <input type="number" :value="experimentObject.angle" @change="experimentObject.angle=Number($event.target.value)"></div>
+              <div style="display: flex;align-items: center; white-space: nowrap; margin: 5px;">Минимальный угол <input type="number" :value="experimentObject.angle" @change="experimentObject.angle=Number($event.target.value)"></div>
               <div><button @click="CommandWork(1)" class="ButtonCommand">Рассчитать окна видимости</button></div>
               <div><button @click="CommandWork(2)" class="ButtonCommand">Расчёт плана контактов</button></div>
               <div><button @click="CommandWork(3)" class="ButtonCommand">Показать окна видимости / плана контактов</button></div>
