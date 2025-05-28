@@ -41,8 +41,7 @@
               <thead>
                 <tr><th>Модель КА</th><th>Имя КА</th>
                   <th v-if="KaRole.length">Роль</th>
-                  <th v-if="selectOG.inputType === 2">Плосколсть</th>
-                  <th v-if="selectOG.inputType === 2">Позиция</th>
+                  <th>Расчёт TLE</th>
                   <th>Большая полуось</th>
                   <th>Эксцентриситет</th><th>Наклон</th><th>Долгота восходящего узла</th><th>Аргумент широты перигея</th>
                   <th>Истинная аномалия</th>
@@ -59,8 +58,7 @@
                   <td :class="!abilityEdit ? 'disable' : ''"><SelectDiv  :dataOption="KaModels" :valueS="{lable: KaLableId[data.modelSat.id], value: data.modelSat}" :id="String(index)" @valueSelect="SelectChangeKA" /></td>
                   <td><input type="text" v-model="data.name"></td>
                   <td v-if="KaRole.length" :class="!abilityEdit ? 'disable' : ''"><SelectDiv  :dataOption="KaRole" :valueS="KaRole[data.role]" :id="String(index)" @valueSelect="SelectRole" /></td>
-                  <td v-if="selectOG.inputType === 2">{{ data.plane }}</td>
-                  <td v-if="selectOG.inputType === 2">{{ data.position }}</td>
+                  <td>{{ CreateDateTime(data.tleTime) }}</td>
                   <td><input type="number" v-model="data.altitude"></td>
                   <td><input type="number" v-model="data.eccentricity"></td>
                   <td><input type="number" v-model="data.incline"></td>
@@ -127,6 +125,7 @@ import {DisplayLoad, FetchGet, FetchPost, FetchPostFile} from '@/js/LoadDisplayM
 import { PagesSettings } from './PagesSettings.js';
 import { OGList, ChangeOG, SystemObject, ChangeSystemObject} from '@/js/GlobalData';
 import SelectDiv from '../SelectDiv.vue';
+import { CreateDateTime } from '@/js/WorkWithDTime';
 
 
   export default {
@@ -166,6 +165,9 @@ import SelectDiv from '../SelectDiv.vue';
       SelectDiv
     },
     methods: {
+      CreateDateTime(time){
+        return CreateDateTime(time)
+      },
       SelectOGFromList(data){
         this.selectOG = data
         if(this.selectOG.inputType in {1:null, 2:null} && !this.approved){
