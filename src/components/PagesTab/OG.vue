@@ -40,12 +40,10 @@
             <table class="TableDefault">
               <thead>
                 <tr><th>Модель КА</th><th>Имя КА</th>
-                  <th v-if="KaRole.length">Роль</th>
                   <th>Расчёт TLE</th>
                   <th>Большая полуось</th>
                   <th>Эксцентриситет</th><th>Наклон</th><th>Долгота восходящего узла</th><th>Аргумент широты перигея</th>
                   <th>Истинная аномалия</th>
-                  <th v-if="abilityEdit" class="delete"></th>
                 </tr>
               </thead>
               <tbody>
@@ -57,7 +55,6 @@
                 >
                   <td :class="!abilityEdit ? 'disable' : ''"><SelectDiv  :dataOption="KaModels" :valueS="{lable: KaLableId[data.modelSat.id], value: data.modelSat}" :id="String(index)" @valueSelect="SelectChangeKA" /></td>
                   <td><input type="text" v-model="data.name"></td>
-                  <td v-if="KaRole.length" :class="!abilityEdit ? 'disable' : ''"><SelectDiv  :dataOption="KaRole" :valueS="KaRole[data.role]" :id="String(index)" @valueSelect="SelectRole" /></td>
                   <td>{{ CreateDateTime(data.tleTime) }}</td>
                   <td><input type="number" v-model="data.altitude"></td>
                   <td><input type="number" v-model="data.eccentricity"></td>
@@ -65,55 +62,33 @@
                   <td><input type="number" v-model="data.longitudeAscendingNode"></td>
                   <td><input type="number" v-model="data.perigeeWidthArgument"></td>
                   <td><input type="number" v-model="data.trueAnomaly"></td>
-                  <td v-if="abilityEdit" @click="DeleteRow(index)" class="delete"><img class="iconDelete" src="@/assets/delete.svg" alt="Удалить"></td>
                 </tr></tbody><tfoot>
-                <tr v-if="abilityEdit" class="addRowButton">
-                  <td :colspan="9+Number(selectOG.inputType==2)*2 + Number(KaRole.length > 0)"><button @click="AddRow"><img src="@/assets/add.png" alt="" class="addButtonIcon">Добавить КА</button></td>
-                </tr> 
               </tfoot>
             </table>
           </div>
           </div>
           <div v-if="PageSettings.status == 1">
             <div class="flexrow">
-              <div class="inputdiv"><input type="text" v-model="OG_Param.constellationName" placeholder="Введите название"></div>
               <div class="SelectDivInFlex">
                 <SelectDiv  
-                    :dataOption="[{value:1,lable: OGType[1]},{value:3,lable: OGType[3]},{value:2,lable: OGType[2]}]" 
-                    :valueS="{lable: OGType[1]}"
+                    :dataOption="[]" 
+                    :valueS="{lable: OGType[OG_Param.inputType]}"
                     @valueSelect="OG_Param.inputType=$event.value"/>
+              </div>
+              <div class="inputdiv"><input type="text" v-model="OG_Param.constellationName" placeholder="Введите название"></div>
+
+              <div v-if="OG_Param.inputType == 3">
+                <label class="input-file">
+                    <input type="file" name="file" id="file-Json" @change="LoadFile" enctype="multipart/form-data">		
+                    <span>Загрузить файл</span>
+                </label>
+                Файл: {{ (OG_Param.file !== undefined) ? OG_Param.file.name : "Не выбран" }}
               </div>
               <div>
                 <button @click="AddOG" class="ButtonCommand">Создать</button> 
               </div>
             </div>
-            <div v-if="OG_Param.inputType === 2">
-              <table class="TableDefault"><tbody>
-                  <tr><td>Модель КА</td><td><SelectDiv  :dataOption="KaModels" :valueS="KaModels[0]" :id="index" @valueSelect="OG_Param.parametersCalculation.modelSat={id: $event.value}"/></td></tr>
-                  <tr><td>Количество плоскостей</td><td><input type="number" v-model="OG_Param.parametersCalculation.numberOfPlane"></td></tr>
-                  <tr><td>Количество позиций в плоскости</td><td><input v-model="OG_Param.parametersCalculation.positionPlane" type="number"></td></tr>
-                  <tr><td>Большая полуось</td><td><input v-model="OG_Param.parametersCalculation.altitude" type="number"></td></tr>
-                  <tr><td>Эксцентриситет</td><td><input v-model="OG_Param.parametersCalculation.eccentricity" type="number"></td></tr>
-                  <tr><td>Наклон</td><td><input v-model="OG_Param.parametersCalculation.incline" type="number"></td></tr>
-
-                  <tr><td colspan="2" class="Title">Долгота восходящего узла плоскостей</td></tr>
-                  <tr><td>•	Долгота плоскости 1</td><td><input v-model="OG_Param.parametersCalculation.longitudeOfPlane1" type="number"></td></tr>
-                  <tr><td>•	Разнесение плоскостей по долготе</td><td><input v-model="OG_Param.parametersCalculation.spacecraftOfLongitude" type="number"></td></tr>
-                  <tr><td>•	Аргумент ширины перигея</td><td><input v-model="OG_Param.parametersCalculation.perigeeWidthArgument" type="number"></td></tr>
-
-                  <tr><td colspan="2" class="Title">Истинная аномалия</td></tr>
-                  <tr><td>•	Позиция 1 в плоскости 1</td><td><input v-model="OG_Param.parametersCalculation.firstPositionInPlane1" type="number"></td></tr>
-                  <tr><td>•	Разнесение КА в плоскости по</td><td><input v-model="OG_Param.parametersCalculation.spacecraftSpacing" type="number"></td></tr>
-                  <tr><td>•	Фазовый сдвиг КА между плоскостями</td><td><input v-model="OG_Param.parametersCalculation.phaseShift" type="number"></td></tr>
-                </tbody></table>
-            </div>
-            <div v-if="OG_Param.inputType == 3">
-              <label class="input-file">
-                  <input type="file" name="file" id="file-Json" @change="LoadFile" enctype="multipart/form-data">		
-                  <span>Загрузить файл</span>
-              </label>
-              Файл: {{ (OG_Param.file !== undefined) ? OG_Param.file.name : "Не выбран" }}
-            </div>
+            
           </div>
     </div>
 </div>
@@ -150,7 +125,7 @@ import { CreateDateTime } from '@/js/WorkWithDTime';
         //далее для добавления ог
         OG_Param:{
           constellationName: undefined,
-          inputType: 1,
+          inputType: 3,
           arbitraryFormation: true,
           communicationsFormation: null,
           parametersCalculation: {

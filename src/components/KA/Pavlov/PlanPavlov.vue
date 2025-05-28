@@ -8,9 +8,9 @@
           </button>
         </div>
         
-        <div class="DataBody">
+        <div class="DataBody" style="max-height: none;">
           
-        <div class="TableDiv">
+        <div class="TableDiv" style="max-height: 50vh;">
           <table class="TableDefault">
           <thead>
             <tr><th>Тип события</th><th>№ Интервала</th><th>Интервал</th><th>Тип узла</th><th>Узел</th><th>Узел получатель</th><th>Обьём</th><th>Длительность</th><th>Поток</th><th>Технология</th></tr>
@@ -148,7 +148,7 @@ import XLSX from 'xlsx-js-style';
                     }
                 })
                 let annotations = []
-                Plotly.newPlot("plotlydiv", dataPlotly, {annotations:annotations, showlegend: true,height:150+(dataPlotly.length*40), margin:{l:100,t:40,b:40,r:40}})
+                Plotly.newPlot("plotlydiv", dataPlotly, {annotations:annotations, showlegend: true,height:150+(500), margin:{l:100,t:40,b:40,r:40}})
           },
       },
       mounted() {

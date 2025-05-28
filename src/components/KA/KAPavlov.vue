@@ -31,12 +31,11 @@
 
 import { DisplayLoad, FetchGet, FetchPost } from '@/js/LoadDisplayMetod';
 import DefaultTable from '../DefaultTable.vue';
-import { GetSystemObject } from '@/js/GlobalData';
 import { UnixToDtime } from '@/js/WorkWithDTime';
 import { KaSettings } from './KaSettings';
 import PlanPavlov from './Pavlov/PlanPavlov.vue';
 import NodeLoad from './Pavlov/NodeLoad.vue';
-import { NPList, OGList } from '@/js/GlobalData';
+import { NPList, OGList, GetSystemObject, SystemObject } from '@/js/GlobalData';
 export default {
   name: 'KA2',
   mixins: [KaSettings],
@@ -77,18 +76,20 @@ export default {
     ParceRezult(){
       console.log(this.modellingRezult, "Обработка результатов")
       this.modellingRezult.JsonData = JSON.stringify(this.modellingRezult,null,2)
-      let time = 0
+      let time = SystemObject.modelingBegin
+      console.log(SystemObject.modelingBegin)
       let plan = this.modellingRezult.report.plan
       plan.time.sort(function(a, b) { // Обработка времени интервалов
           return parseFloat(a.interval) - parseFloat(b.interval);
       });
       plan.time.forEach(element => {
-        element.timeUnixstart = UnixToDtime(time,true)
+        element.timeUnixstart = UnixToDtime(time,false)
         element.timeStart = time
         time+=element.text
         element.timeEnd = time
-        element.timeUnixend = UnixToDtime(element.timeEnd,true)
+        element.timeUnixend = UnixToDtime(element.timeEnd,false)
       });
+
 
       let dataToPrevrap = plan
       let dataPrevrap = []
@@ -102,7 +103,8 @@ export default {
               objectList[SAT.tleId] = {id: SAT.tleId, name: SAT.name, type: 'SAT'}
           })
       })
-      dataToPrevrap.transport.forEach(el => {
+      try {
+        dataToPrevrap.transport.forEach(el => {
          el.typeEl='Передача'; 
          el.time = el.text
          for (let i = 0; i < dataToPrevrap.to_transport.length; i++) {
@@ -113,7 +115,12 @@ export default {
               }
           }
          dataPrevrap.push(el);
-      })
+        })
+      } catch (error) {
+        if(dataToPrevrap.transport==undefined) dataPrevrap.transport = []
+        this.$showToast('Проблемы с операциями передачи','warning', 'Обработка');
+      }
+      try{
       dataToPrevrap.process.forEach(el => {
           el.typeEl = "Обработка";
           el.time = el.text
@@ -126,16 +133,27 @@ export default {
           }
           dataPrevrap.push(el)
       })
+      } catch (error) {
+        if(dataToPrevrap.process==undefined) dataPrevrap.process = []
+        this.$showToast('Проблемы с операциями обработки','warning', 'Обработка');
+      }
       try {
           dataToPrevrap.lost.forEach(el => {
               el.typeEl='Потери';el.volume=el.text; dataPrevrap.push(el);
           })
       } catch (error) {
           console.log("Потерь нет")//Переделать это под не возможность потерь и отображение
+          if(dataToPrevrap.lost==undefined) dataPrevrap.lost = []
       }
-      dataToPrevrap.storage.forEach(el => {
-         el.typeEl='Хранение'; el.volume = el.text;dataPrevrap.push(el);
-      })
+      try{
+        dataToPrevrap.storage.forEach(el => {
+          el.typeEl='Хранение'; el.volume = el.text;dataPrevrap.push(el);
+        })
+      } catch (error) {
+          console.log("Потерь нет")//Переделать это под не возможность потерь и отображение
+          if(dataToPrevrap.storage==undefined) dataPrevrap.storage = []
+          this.$showToast('Проблемы с операциями Хранения','warning', 'Обработка');
+      }
       
       dataPrevrap.sort((a,b) => {return a.interval - b.interval})
       dataPrevrap.forEach(event => {
