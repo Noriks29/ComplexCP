@@ -18,51 +18,16 @@
       </div>
     </div>
     <div class="Panel RightPanel">
-      <div class="TableDiv" style="height: 98%;">
-      <table class="TableDefault">
-        <thead>
-          <tr>
-            <th></th>
-            <th>Название</th>
-            <th>Широта</th>
-            <th>Долгота</th>
-            <th class="delete"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="(data, index) in dataJson"
-            :key="index"
-            :class="approved || modellingStatus ? 'disable' :''"
-            @change="ChangeParam(index)"
-            @keydown.ctrl.v="TryParceLatLng(index)"
-          >
-            <td>{{ index+1 }}</td>
-            <td><input v-model="data.nameEarthPoint"></td>
-            <td><input @keydown.ctrl.v="TryParceLatLng(index)" type="number"  v-model="data.latitude"></td>
-            <td><input @keydown.ctrl.v="TryParceLatLng(index)" type="number"  v-model="data.longitude" ></td>
-            <td @click="DeleteRow(index)" class="delete" :class="!approved && !modellingStatus?'':'disable'"><img class="iconDelete" src="../../assets/delete.svg" alt="Удалить"></td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr v-if="!approved && !modellingStatus" class="addRowButton">
-            <td colspan="5"><button @click="AddRow(0,0)">
-              <img src="../../assets/add.png" alt="" class="addButtonIcon">
-              Добавить наземный пункт
-            </button></td>
-          </tr> 
-        </tfoot>
-      </table>
-    </div>
+      <DefaultTable2  :dataTable="dataTable" :settings="{showIndex:true,deleteMode: true,editAccess:!approved}" @changeT="ChangeParamTable" @addRow="AddRow(0,0)" @DeletedRow="DeleteRow"/>
    </div> 
   </div>
   </div>
 </template>
   
 <script>
-import {DisplayLoad} from '../../js/LoadDisplayMetod.js'
 import { NPList, ChangeNP, SystemObject, ChangeSystemObject} from '@/js/GlobalData.js'; 
 import { PagesSettings } from './PagesSettings.js';
+import DefaultTable2 from '../DefaultTable2.vue';
 
   export default {
     name: 'NP',
@@ -71,12 +36,21 @@ import { PagesSettings } from './PagesSettings.js';
       return{
         dataJson: [], // локальное хранилище нп
         approved: true,
+        dataTable: {label:[
+          {param: 'nameEarthPoint', name: 'Название', tag: {name: "input"}},
+          {param: 'latitude', name: 'Широта', tag: {name: "input", type: "number"}},
+          {param: 'longitude', name: 'Долгота', tag: {name: "input", type: "number"}},
+        ],data:[]}
       }
+    },
+    components:{
+      DefaultTable2
     },
     methods: {
         async AddRow(lng=0,lat=0){
           this.dataJson.push({'nameEarthPoint' : "", 'longitude' : lng, 'latitude' : lat, 'deleted': false});   
           this.dataJson = await ChangeNP(this.dataJson)
+          this.ShowTable()
         },
         TryParceLatLng(id){
           console.log(id)
@@ -93,6 +67,10 @@ import { PagesSettings } from './PagesSettings.js';
           }catch{
             console.error("")
           }
+        },
+        ChangeParamTable(data){
+          this.dataJson[data.id][data.param] = data.value
+          this.ChangeParam(data.id)
         },
         async ChangeParam(id){
           this.dataJson[id]
@@ -111,27 +89,23 @@ import { PagesSettings } from './PagesSettings.js';
         async DeleteRow(index){
             this.dataJson[index].deleted = true
             this.dataJson = await ChangeNP(this.dataJson)
+            this.ShowTable()
         },
         async ChangeApproved(status){
           await ChangeSystemObject('earthStatus', status)
           this.approved = status
-        }
+        },
+        ShowTable(){
+          this.dataTable.data = this.dataJson
+        },
     },
     async mounted() {
-      DisplayLoad(true)
       this.dataJson = await NPList
       this.approved = SystemObject.earthStatus
-
-      DisplayLoad(false)
+      this.ShowTable()
     }
   }
   </script>
 
 <style lang="scss" scoped>
-.delete{
-  &.disable{
-    opacity: 0;
-    pointer-events: none;
-  }
-}
 </style>

@@ -80,6 +80,7 @@ export default {
           this.KatoDraw = e.value
         },
         CopyLatLng(){
+          console.log(this.LastLatLng, typeof this.LastLatLng)
           navigator.clipboard.writeText(JSON.stringify(this.LastLatLng))
           alert("Скопировано")
         },

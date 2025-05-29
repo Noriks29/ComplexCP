@@ -838,8 +838,21 @@ div.TableDiv{
           }
           tr{
             background-color: black;
-            td,th{
-              padding: 5px;
+            td, th{
+              padding: 2px;
+              &.disable{
+                pointer-events: none;
+              }
+              &.delete{
+                width: 50px; text-align: center;
+                .iconDelete{
+                  width: 25px;
+                  height: 25px;
+                  &.hide{
+                    opacity: 0;
+                  }
+                }
+              }
             }
           }
 

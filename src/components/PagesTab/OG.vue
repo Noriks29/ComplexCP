@@ -35,6 +35,7 @@
 
 
     <div class="Panel RightPanel">
+      <DefaultTable2 :dataTable="dataTable" :settings="{showIndex:true}" @changeT="ChangeParamTable" @addRow="AddRow(0,0)" @DeletedRow="DeleteRow"/>
           <div v-if="PageSettings.status == 0 && selectOG != null" style="height: 93%;">
             <div class="TableDiv" style="max-height: 100%; height: 90%;">
             <table class="TableDefault">
@@ -101,7 +102,7 @@ import { PagesSettings } from './PagesSettings.js';
 import { OGList, ChangeOG, SystemObject, ChangeSystemObject} from '@/js/GlobalData';
 import SelectDiv from '../SelectDiv.vue';
 import { CreateDateTime } from '@/js/WorkWithDTime';
-
+import DefaultTable2 from '../DefaultTable2.vue';
 
   export default {
     name: 'OG',
@@ -113,8 +114,18 @@ import { CreateDateTime } from '@/js/WorkWithDTime';
         PageSettings:{
           status: 0
         },
+        dataTable: {label:[
+          {param: 'modelSat', name: 'Модель КА', tag: {name: "SelectDiv", dataOption:null,valueS:"modelName"}},
+          {param: 'name', name: 'Имя КА', tag: {name: "span"}},
+          {param: 'timeTLE', name: 'Дата расчёта', tag: {name: "span"}},
+          {param: 'altitude', name: 'Большая полуось', tag: {name: "input"}},
+          {param: 'eccentricity', name: 'Эксцентриситет', tag: {name: "input"}},
+          {param: 'incline', name: 'Наклон', tag: {name: "input"}},
+          {param: 'longitudeAscendingNode', name: 'Долгота восходящего узла', tag: {name: "input"}},
+          {param: 'perigeeWidthArgument', name: 'Аргумент широты перигея', tag: {name: "input"}},
+          {param: 'trueAnomaly', name: 'Истинная аномалия', tag: {name: "input"}},
+        ],data:[]},
 
-        KaRole: [{lable:'Нет',value:0},{lable:'Ведомый',value:1},{lable:'Лидер',value:2}], // для редактора ог
         KaModels: [], //список моделей ка
         KaLableId: {}, // чисто для базового вывода имени ка
         selectOG: undefined, //выбранная группировка ог
@@ -128,16 +139,15 @@ import { CreateDateTime } from '@/js/WorkWithDTime';
           inputType: 3,
           arbitraryFormation: true,
           communicationsFormation: null,
-          parametersCalculation: {
-                  numberOfPlane: 0, positionPlane: 0, altitude: 0, eccentricity: 0, incline: 0, longitudeOfPlane1: 0, spacecraftOfLongitude: 0, perigeeWidthArgument: 0, firstPositionInPlane1: 0, spacecraftSpacing: 0, phaseShift: 0, modelSat:{id:1}
-          },
+          parametersCalculation: {},
           file: undefined
         },
       }
     },
     components:
     {
-      SelectDiv
+      SelectDiv,
+      DefaultTable2
     },
     methods: {
       CreateDateTime(time){
@@ -145,9 +155,16 @@ import { CreateDateTime } from '@/js/WorkWithDTime';
       },
       SelectOGFromList(data){
         this.selectOG = data
+        this.dataTable.data = data.satellites
         if(this.selectOG.inputType in {1:null, 2:null} && !this.approved){
           this.abilityEdit = true
         }
+        this.OGTimePrevrap()
+      },
+      OGTimePrevrap(){
+        this.selectOG.satellites.forEach(element => {
+          element.timeTLE = CreateDateTime(element.tleTime)
+        });
       },
       async DeleteRowOG(data){
         if(!this.approved){
@@ -186,19 +203,9 @@ import { CreateDateTime } from '@/js/WorkWithDTime';
         ChangeParam(){
             this.SaveOGChange()
           },
-          SelectRole(data){
-            this.selectOG.satellites[data.id].role = data.value
-            this.SaveOGChange()
-          },
           SelectChangeKA(data){
             this.selectOG.satellites[data.id].modelSat.id = data.value
             this.SaveOGChange()
-          },
-          DeleteRow(index){ // ка из ог
-              if (this.selectOG.satellites[index].satelliteId === undefined) {
-                this.selectOG.satellites.splice(index,1)}
-              else{this.selectOG.satellites[index].deleted = true}
-              this.SaveOGChange()
           },
           async SaveOGChange() { //сохранение изменения ог
             await FetchPost('/api/v1/constellation/update',this.selectOG)
@@ -207,6 +214,7 @@ import { CreateDateTime } from '@/js/WorkWithDTime';
               const element = this.dataJson[i];
               if(element.id == this.selectOG.id){
                 this.selectOG = element
+                this.OGTimePrevrap()
                 break
               }              
             }
@@ -262,7 +270,7 @@ import { CreateDateTime } from '@/js/WorkWithDTime';
         this.KaModels.push({value:result[index].id, lable: result[index].modelName})
         this.KaLableId[result[index].id] = result[index].modelName
       }
-      this.OG_Param.parametersCalculation.modelSat={id:this.KaModels[0].value}
+      this.dataTable.label[0].tag.dataOption = this.KaModels
       DisplayLoad(false)
     },
   }

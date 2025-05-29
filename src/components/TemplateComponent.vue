@@ -7,7 +7,7 @@
         <div class="PanelMenu"><SystemWindow :FillingDataStatus="FillingDataStatuss" :modellingStatus="ExperimentStatus" @updateParentComponent="ChangeComponents" :systemStatus="system" /></div>
         <transition name="ComponentModelling" mode="out-in">
           <div class="ModellingDiv PanelMenu">
-            <component :is="ComponentModellingList[system.typeWorkplace]" :systemStatus="system" :reload="reload" :ExperimentStatus="ExperimentStatus" @ChangeExperimentStatus="ChangeExperimentStatus"></component>  
+            <component :is="ComponentModellingList[system.typeWorkplace]" :systemStatus="system" :ExperimentStatus="ExperimentStatus" @ChangeExperimentStatus="ChangeExperimentStatus"></component>  
           </div>
         </transition> 
       </div>
@@ -96,7 +96,6 @@ export default {
         TextTitleModellingName: '',
         FillingDataStatus: 0,
         system: {typeWorkplace: -1},
-        reload: 0,
         ExperimentStatus: false,
         ComponentModellingList: [null,"KA1","KAGordeev","KAPavlov",null]
     }
@@ -112,15 +111,11 @@ export default {
       ChangeExperimentStatus(status){
         this.ExperimentStatus = status.status
         this.$emit('changeExperimentStatus', this.ExperimentStatus)
-        this.reload++
       },
       ChangeComponents() {
         this.activeComponent = ''
         this.system = SystemObject
         this.ChengeFillingDataStatus()
-        if(!this.ExperimentStatus){
-          this.reload++
-        }
       },
       async SaveWorkplace(){
         DisplayLoad(true)
