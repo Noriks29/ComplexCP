@@ -4,9 +4,9 @@
     <div class="SectionMenu" :class="system.typeWorkplace == -1 ? 'hide' : 'show'">
       <p class="ModellingTitle">{{ TextTitleModellingName }}</p>
       <div class="HeadersSction">
-        <div class="systemDiv"><SystemWindow :FillingDataStatus="FillingDataStatuss" :modellingStatus="ExperimentStatus" @updateParentComponent="ChangeComponents" :systemStatus="system" /></div>
+        <div class="PanelMenu"><SystemWindow :FillingDataStatus="FillingDataStatuss" :modellingStatus="ExperimentStatus" @updateParentComponent="ChangeComponents" :systemStatus="system" /></div>
         <transition name="ComponentModelling" mode="out-in">
-          <div class="ModellingDiv">
+          <div class="ModellingDiv PanelMenu">
             <component :is="ComponentModellingList[system.typeWorkplace]" :systemStatus="system" :reload="reload" :ExperimentStatus="ExperimentStatus" @ChangeExperimentStatus="ChangeExperimentStatus"></component>  
           </div>
         </transition> 
@@ -334,13 +334,6 @@ export default {
       }
     }
   }
-}
-.systemDiv{
-  margin: 10px;
-  padding: 10px;
-  border: 1px solid gray;
-  border-radius: 15px;
-  background-color: var(--color-bg-panel);
 }
 
 .HeadersSction{

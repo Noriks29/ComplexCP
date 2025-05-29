@@ -36,6 +36,9 @@ import { CreateDateTime } from '@/js/WorkWithDTime';
         return CreateDateTime(time)
       },
       ChangeTime(obgTime){
+        if(obgTime.id == 'modelingBegin'){
+          ChangeSystemObject('startTime', obgTime.time)
+        }
         ChangeSystemObject(obgTime.id, obgTime.time)
       },
       ChangeParam(target){
