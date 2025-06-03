@@ -32,7 +32,7 @@ import { UnixToDtime } from '@/js/WorkWithDTime';
 import { KaSettings } from './KaSettings';
 import PlanPavlov from './Pavlov/PlanPavlov.vue';
 import NodeLoad from './Pavlov/NodeLoad.vue';
-import { NPList, OGList, GetSystemObject, SystemObject } from '@/js/GlobalData';
+import { NPList, OGList, SystemObject } from '@/js/GlobalData';
 export default {
   name: 'KA2',
   mixins: [KaSettings],
@@ -59,13 +59,12 @@ export default {
   methods: {
     async StartModelling(){
       DisplayLoad(true)
-      this.StartAwait("successPlannerModelling")
-      let rezult = await FetchPost("/api/v1/planner", {"interSatellite": this.interSatellite}, undefined, true, "Расчёт Planner окончен") || null
-      console.log(rezult)
+      let rezult = await FetchPost("/api/v1/planner", {"interSatellite": this.interSatellite}, undefined, true) || null
       try {
         this.modellingRezult= rezult.XMLDocument
+        this.$showToast('План успешно получен','success', 'Планирование');
       } catch (error) {
-        console.error(error)
+        this.$showToast('Ошибка расчёта'+error,'error', 'Планирование');
       }
       await this.ParceRezult()
       DisplayLoad(false)
@@ -86,8 +85,6 @@ export default {
         element.timeEnd = time
         element.timeUnixend = UnixToDtime(element.timeEnd,false)
       });
-
-
       let dataToPrevrap = plan
       let dataPrevrap = []
       let objectList = {}
@@ -167,27 +164,14 @@ export default {
     ShowNodeLoad(){
       this.modellingSettings.showTable = 'NodeLoad'
     },
-
-    StartAwait(param){
-      setTimeout(() => {
-        let interval = setInterval(async () => {
-          let system = await GetSystemObject()
-          console.log(system)
-          console.log("идут запросы системы")
-          if(system[param]){
-            clearInterval(interval)
-            console.log("Интревал оборван")
-          }
-        }, 3000);
-      }, 4000);
-    },
     async GetRezultPavlov(){
       DisplayLoad(true)
       let rezult = await FetchGet("/api/v1/planner/all") || null
       try {
         this.modellingRezult= rezult.XMLDocument
-      } catch (error) {
-        console.error(error)
+        this.$showToast('План найден в базе','info', 'Планирование');
+      } catch {
+        console.log()
       }
       await this.ParceRezult()
       DisplayLoad(false)

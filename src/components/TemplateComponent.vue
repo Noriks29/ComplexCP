@@ -21,6 +21,13 @@
           </transition>
         </div>
         <div class="FlexMenuSection">
+        <div class="ButtonSection second" v-if="system.typeWorkplace in {3:null}">
+          <h1>Получение ИД</h1>
+          <div class="ButtonList">
+            <button class="ButtonCommand"  @click="GetDataToModule(1)"><span>Планирование без НКУ</span></button>
+            <button class="ButtonCommand"  @click="GetDataToModule(2)"><span>Планирование с НКУ</span></button>
+          </div>
+        </div>
           <div class="ButtonSection first">
             <h1>КС</h1>
             <!--rgb(0 34 108)
@@ -116,6 +123,9 @@ export default {
         this.activeComponent = ''
         this.system = SystemObject
         this.ChengeFillingDataStatus()
+      },
+      GetDataToModule(moduleL){
+        this.$showToast('Запросы неактивны в модуль:'+moduleL,'info', 'В разработке');
       },
       async SaveWorkplace(){
         DisplayLoad(true)

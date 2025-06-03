@@ -2,7 +2,7 @@
   <div class="notification-container">
     <div class="notification" :class="data.type+' '+data.delete" v-for="data, index in dataAlert" :key="index">
         <div>
-        <strong class="Title">{{data.id+'-'+data.type+'-'+data.title}}</strong>
+        <strong class="Title">{{data.type+'-'+data.title}}</strong>
         {{ data.message }}
         </div>
         <button class="close-btn" @click="dismissToast(data.id)">x</button>

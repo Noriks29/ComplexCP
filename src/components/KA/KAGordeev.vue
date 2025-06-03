@@ -25,7 +25,6 @@
 
 import { DisplayLoad, FetchGet } from '@/js/LoadDisplayMetod';
 import DefaultTable from '../DefaultTable.vue';
-import { GetSystemObject } from '@/js/GlobalData';
 
 import { KaSettings } from './KaSettings';
   export default {
@@ -64,19 +63,6 @@ import { KaSettings } from './KaSettings';
         console.log(rezult)
         DisplayLoad(false)
         this.GetRezultGordeev()
-      },
-      StartAwait(param){
-        setTimeout(() => {
-          let interval = setInterval(async () => {
-            let system = await GetSystemObject()
-            console.log(system)
-            console.log("идут запросы системы")
-            if(system[param]){
-              clearInterval(interval)
-              console.log("Интревал оборван")
-            }
-          }, 3000);
-        }, 4000);
       },
       async GetRezultGordeev(){
         this.modellingRezult.data = await FetchGet("/api/v1/route/all") || []
