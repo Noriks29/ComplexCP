@@ -19,8 +19,8 @@
             <tr v-for="data, index in dataPrevrap" :key="index">
                 <td>{{ data.typeEl }}</td><td>{{ data.interval }}</td>
                 <td>{{ data.intervalTime.timeUnixstart.time+' - '+data.intervalTime.timeUnixend.time}}</td>
-                <td>{{ data.objectName.type }}</td>
-                <td>{{ data.objectName.name}}</td>
+                <td>{{ data.objectName != undefined ? data.objectName.type : "Error" }}</td>
+                <td>{{ data.objectName != undefined ? data.objectName.name : "Error" }}</td>
                 <td>{{ data.to_objectName.name}}</td>
                 <td>{{ data.volume }}</td><td>{{ (data.time != undefined ? this.TimeFormat(data.time) : '')}}</td>
                 <td>{{ data.flow }}</td><td>{{ data.tech }}</td>
@@ -135,6 +135,7 @@ import XLSX from 'xlsx-js-style';
                       },
                     ]
                 this.dataPrevrap.forEach(event => {
+                  try {
                   console.log(event)
                     for (let i = 0; i < dataPlotly.length; i++) {
                       const plot = dataPlotly[i];
@@ -145,6 +146,9 @@ import XLSX from 'xlsx-js-style';
                         plot.y.push(event.objectName.name)
                         plot.text.push(event.volume)
                       }
+                    }
+                    } catch (error) {
+                      this.$showToast('Некорректная отрисовка графика, прерываю...','error', 'Ошибка графика');
                     }
                 })
                 let annotations = []

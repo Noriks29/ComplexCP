@@ -5,7 +5,7 @@
       <div class="ContentDiv">
         <div class="FlexRow Panel">
           <div class="ButtonModelling">
-            <button  @click="StartModelling" class="ButtonCommand rightPadding"><img src="../../assets/start.png" alt="" class="iconButton">Старт моделирования</button>
+            <button  @click="StartModelling" class="ButtonCommand rightPadding"><img src="../../assets/start.png" alt="" class="iconButton">Старт планирования</button>
           </div>
           <div class="PanelWork" v-if="!modellingSettings.experimentEddit">
           <table class="colum">
@@ -13,11 +13,6 @@
               <tr>
                 <td class="tdflexRow">
                   <button @click="ShowShootingPlan" :class="(modellingRezult.E77.length < 1) ? 'disable' : ''" class="ButtonCommand">План съёмок</button>
-                </td>
-              </tr>
-              <tr>
-                <td class="tdflexRow">
-                  <button @click="ShowLogAll" :class="(modellingRezult.log.length < 1) ? 'disable' : ''" class="ButtonCommand">Лог движка</button>
                   <button @click="ShowLogSmao" :class="(modellingRezult.Smao.length < 1) ? 'disable' : ''" class="ButtonCommand icon"><img src="../../assets/instructions.png" alt="smaoResponse"></button>
                 </td>
               </tr>

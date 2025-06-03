@@ -17,7 +17,7 @@
               <tr v-for="data, index in dataTable.data" :key="index">
                 <td v-if="settings.showIndex">{{ index+1 }}</td>
                 <td v-for="dataLabel, label in dataTable.label" :key="label" >
-                  <SelectDiv v-if="dataLabel.tag.name == 'SelectDiv'" :dataOption="dataLabel.tag.dataOption" :valueS="{lable: data[dataLabel.param][dataLabel.tag.valueS]}" :id="String(index)" @valueSelect="SelectChangeKA"/>
+                  <SelectDiv v-if="dataLabel.tag.name == 'SelectDiv'" :dataOption="dataLabel.tag.dataOption" :valueS="{lable: data[dataLabel.param][dataLabel.tag.valueS]}" :id="String(index)" @valueSelect="SelectChange($event, dataLabel.param)"/>
                   <component v-else :is="dataLabel.tag.name" :type="dataLabel.tag.type" :value="data[dataLabel.param]" :readonly="!settings.editAccess" placeholder="Введите значение"
                     @change="ChangeParam({value: $event.target.value, id: index, param: dataLabel.param})">{{ data[dataLabel.param] }}
                   </component>
@@ -84,6 +84,10 @@ import XLSX from 'xlsx-js-style';
         DeletedRow(index){
           this.$emit('DeletedRow', index)
         },
+        SelectChange(data, param){
+          this.$emit('changeT', {data:data,param:param})
+        },
+
         LoadXLSX(){
           const workbook = XLSX.utils.book_new();
           let data = [[]]

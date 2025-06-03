@@ -4,21 +4,14 @@
       <div class="ContentDiv">
         <div class="FlexRow Panel">
           <div class="ButtonModelling">
-            <button v-if="!ExperimentStatus && !modellingSettings.experimentEddit" @click="Experiment(true)" class="ButtonCommand rightPadding"><img src="../../assets/start.png" alt="" class="iconButton">Начать эксперимент</button>
-            <button v-if="ExperimentStatus" @click="StartModelling" class="ButtonCommand rightPadding"><img src="../../assets/start.png" alt="" class="iconButton">Старт моделирования</button>
-            <button v-if="ExperimentStatus" @click="Experiment(false)" class="ButtonCommand rightPadding">Закончить эксперимент</button>
+             <button  @click="StartModelling" class="ButtonCommand rightPadding"><img src="../../assets/start.png" alt="" class="iconButton">Старт планирования</button>
           </div>
-          <fieldset style="display: inline-block;">
-            <div><input type="checkbox"  v-model="PreWrapDefaultTable"/><label>Форматирование вывода: {{ PreWrapDefaultTable }}</label></div>
-          </fieldset>
           <div class="PanelWork" v-if="!modellingSettings.experimentEddit">
           <table class="colum">
             <tbody>
               <tr>
-                <td><button class="ButtonCommand LIghtPoint" @click="GetRezultGordeev"><div :class="systemStatus.successRouteModelling ? 'approved' : 'Notapproved'"></div>Результат(переделать на разделы)</button></td>
-              </tr>
-              <tr>
-                <td><button class="ButtonCommand" @click="ShowRezult()" :class="(modellingRezult.data.length < 1) ? 'disable' : ''">Показать Результат(убрать)</button></td>
+                <td><button class="ButtonCommand LIghtPoint" @click="ShowRezult" :class="(modellingRezult.data.length < 1) ? 'disable' : ''">План съёмок</button></td>
+                <button @click="console.log" :class="(true) ? 'disable' : ''" class="ButtonCommand icon"><img src="../../assets/instructions.png" alt="smaoResponse"></button>
               </tr>
               </tbody>
             </table>
@@ -49,6 +42,7 @@ import { KaSettings } from './KaSettings';
         interSatellite: true,
         dataTable: [],
         dataLableName: [],
+        ShootingData: [],
         PreWrapDefaultTable: false,
         ShowDefaultTable: false
       }
@@ -69,6 +63,7 @@ import { KaSettings } from './KaSettings';
         let rezult = await FetchGet("/api/v1/route", true, "Расчёт Route окончен") || []
         console.log(rezult)
         DisplayLoad(false)
+        this.GetRezultGordeev()
       },
       StartAwait(param){
         setTimeout(() => {
@@ -85,6 +80,20 @@ import { KaSettings } from './KaSettings';
       },
       async GetRezultGordeev(){
         this.modellingRezult.data = await FetchGet("/api/v1/route/all") || []
+        this.ShootingData = []
+        this.modellingRezult.data.forEach(element => {
+          this.ShootingData.push({
+            targetName: element.namePoint,
+            nodeName: "--",
+            wsUnix: '--',
+            weUnix: '--',
+            transition: '--',
+            tsUnix: '--',
+            teUnix: '--',
+            pitch: '--',
+            roll: '--'
+          })
+        })
       },
       ShowRezult(){
         this.dataTable = []
@@ -95,14 +104,15 @@ import { KaSettings } from './KaSettings';
           console.log(element)
           this.dataTable.push({data: element}) 
         }
+        this.ShootingData.forEach(element => {
+          this.dataTable.push({data: element})
+        })
         this.ShowDefaultTable = true
-      },
-      async ReLoadComponent(){
-        console.log("Перезагрузка")
       }
     },
     async mounted(){
-      this.ReLoadComponent()
+      this.GetRezultGordeev()
+
     }
   }
   </script>

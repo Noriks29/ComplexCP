@@ -1,10 +1,10 @@
 <template>
   <table class="TableDefault"><tbody>
-    <tr><td>Интервал TLE:</td><td>
-            {{ CreateDateTime(dataSystem.minTleTime)}}
+    <tr><td>Интервал расчёта группировки:</td><td>
+            {{ dataSystem.minTleTime ? CreateDateTime(dataSystem.minTleTime) : 'Не указан'}}
           </td></tr>
     <tr><td></td><td>
-            {{ CreateDateTime(dataSystem.maxTleTime) }}
+            {{ dataSystem.maxTleTime ? CreateDateTime(dataSystem.maxTleTime) : 'Не указан'}}
           </td></tr>
           <tr><td colspan="1">Начало горизонта планирования:</td><td>
             <DateTime :valueUnix="dataSystem.modelingBegin" :id="'modelingBegin'"  @valueSelect="ChangeTime"/>

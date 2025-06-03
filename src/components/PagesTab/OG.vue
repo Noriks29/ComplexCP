@@ -14,68 +14,27 @@
           <span v-else><img src="../../assets/approve.svg"></span>
           <span>{{ approved ?  'Редактировать' : 'Утвердить'}}</span>
           </button></div>
-          <div>
+          <div class="OGList">
+            <div v-for="data, index in dataJson"
+              :key="index"
+              class="ButtonCommand" :class="data.id==selectOG.id?'Select':''"
+            >
+              <div  @click="SelectOGFromList(data)" type="name">{{ data.constellationName }}</div>
+              <div class="iconDelete" @click="DeleteRowOG(data)" type="icon"><img  src="@/assets/delete.svg" alt="Удалить"></div>
+          </div>
             <button class="ButtonCommand" :class="!approved? '' : 'disable'"  @click="PageSettings.status=(PageSettings.status+1)%2">
               <img src="@/assets/add.png" alt="" class="addButtonIcon">{{ (PageSettings.status == 1) ? 'Прекратить' : 'Добавить орбитальную группировку' }}
             </button>
           </div>
         </div>
-        <div class="OGList">
-        <div v-for="data, index in dataJson"
-          :key="index"
-          v-show="!(data.deleted==true)"
-          class="ElementCol"
-        >
-          <div  @click="SelectOGFromList(data)" type="name">{{ data.constellationName }}</div>
-          <div  @click="SelectOGFromList(data)" type="type">{{ OGType[data.inputType] }}</div>
-          <div class="iconDelete" @click="DeleteRowOG(data)" type="icon"><img  src="@/assets/delete.svg" alt="Удалить"></div>
-        </div>
-        </div>
     </div>
 
 
     <div class="Panel RightPanel">
-      <DefaultTable2 :dataTable="dataTable" :settings="{showIndex:true}" @changeT="ChangeParamTable" @addRow="AddRow(0,0)" @DeletedRow="DeleteRow"/>
-          <div v-if="PageSettings.status == 0 && selectOG != null" style="height: 93%;">
-            <div class="TableDiv" style="max-height: 100%; height: 90%;">
-            <table class="TableDefault">
-              <thead>
-                <tr><th>Модель КА</th><th>Имя КА</th>
-                  <th>Расчёт TLE</th>
-                  <th>Большая полуось</th>
-                  <th>Эксцентриситет</th><th>Наклон</th><th>Долгота восходящего узла</th><th>Аргумент широты перигея</th>
-                  <th>Истинная аномалия</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  v-for="(data, index) in selectOG.satellites" :key="index"
-                  :class="!abilityEdit ? 'disable' :''"
-                  @change="ChangeParam"
-                  v-show="!(data.deleted==true)"
-                >
-                  <td :class="!abilityEdit ? 'disable' : ''"><SelectDiv  :dataOption="KaModels" :valueS="{lable: KaLableId[data.modelSat.id], value: data.modelSat}" :id="String(index)" @valueSelect="SelectChangeKA" /></td>
-                  <td><input type="text" v-model="data.name"></td>
-                  <td>{{ CreateDateTime(data.tleTime) }}</td>
-                  <td><input type="number" v-model="data.altitude"></td>
-                  <td><input type="number" v-model="data.eccentricity"></td>
-                  <td><input type="number" v-model="data.incline"></td>
-                  <td><input type="number" v-model="data.longitudeAscendingNode"></td>
-                  <td><input type="number" v-model="data.perigeeWidthArgument"></td>
-                  <td><input type="number" v-model="data.trueAnomaly"></td>
-                </tr></tbody><tfoot>
-              </tfoot>
-            </table>
-          </div>
-          </div>
+      <DefaultTable2 v-if="PageSettings.status == 0" :dataTable="dataTable" :settings="{showIndex:true}" @changeT="ChangeParamTable"/>
+
           <div v-if="PageSettings.status == 1">
             <div class="flexrow">
-              <div class="SelectDivInFlex">
-                <SelectDiv  
-                    :dataOption="[]" 
-                    :valueS="{lable: OGType[OG_Param.inputType]}"
-                    @valueSelect="OG_Param.inputType=$event.value"/>
-              </div>
               <div class="inputdiv"><input type="text" v-model="OG_Param.constellationName" placeholder="Введите название"></div>
 
               <div v-if="OG_Param.inputType == 3">
@@ -97,10 +56,9 @@
 </template>
   
   <script>
-import {DisplayLoad, FetchGet, FetchPost, FetchPostFile} from '@/js/LoadDisplayMetod'
+import {FetchGet, FetchPost, FetchPostFile} from '@/js/LoadDisplayMetod'
 import { PagesSettings } from './PagesSettings.js';
 import { OGList, ChangeOG, SystemObject, ChangeSystemObject} from '@/js/GlobalData';
-import SelectDiv from '../SelectDiv.vue';
 import { CreateDateTime } from '@/js/WorkWithDTime';
 import DefaultTable2 from '../DefaultTable2.vue';
 
@@ -128,8 +86,7 @@ import DefaultTable2 from '../DefaultTable2.vue';
 
         KaModels: [], //список моделей ка
         KaLableId: {}, // чисто для базового вывода имени ка
-        selectOG: undefined, //выбранная группировка ог
-        abilityEdit: false, // доступ к редактированию
+        selectOG: {id:null}, //выбранная группировка ог
 
         approved: true, //утверждено или нет
         
@@ -146,20 +103,31 @@ import DefaultTable2 from '../DefaultTable2.vue';
     },
     components:
     {
-      SelectDiv,
       DefaultTable2
     },
     methods: {
       CreateDateTime(time){
         return CreateDateTime(time)
       },
-      SelectOGFromList(data){
-        this.selectOG = data
-        this.dataTable.data = data.satellites
-        if(this.selectOG.inputType in {1:null, 2:null} && !this.approved){
-          this.abilityEdit = true
+      ChangeParamTable(data){
+        if(data.param == 'modelSat'){
+          this.selectOG.satellites[data.data.id][data.param].id = data.data.value
         }
-        this.OGTimePrevrap()
+        this.SaveOGChange()
+      },
+      SelectOGFromList(data){
+        this.selectOG = {id:null}
+        if(data != undefined){
+          this.selectOG = data
+          this.dataTable.data = data.satellites
+          if(this.selectOG.inputType in {1:null, 2:null} && !this.approved){
+            this.abilityEdit = true
+          }
+          this.OGTimePrevrap()
+        }
+        else{
+          this.dataTable.data = []
+        }
       },
       OGTimePrevrap(){
         this.selectOG.satellites.forEach(element => {
@@ -169,9 +137,10 @@ import DefaultTable2 from '../DefaultTable2.vue';
       async DeleteRowOG(data){
         if(!this.approved){
           await FetchPost('/api/v1/constellation/delete/byId',{},'id='+data.id)
-          this.selectOG = undefined
+          this.selectOG = {id:null}
           this.dataJson = await FetchGet('/api/v1/constellation/get/list') || []
           ChangeOG(this.dataJson)
+          this.SelectOGFromList(this.dataJson[0])
         }
       },
       async ChangeApproved(stat){
@@ -186,27 +155,6 @@ import DefaultTable2 from '../DefaultTable2.vue';
           }
           await ChangeSystemObject('constellationStatus', stat)
         },
-
-        AddRow(){
-            var addedRow = {
-                    'altitude' : 0, 'eccentricity' : 0,
-                    'incline' : 0, 'longitudeAscendingNode' : 0,
-                    'perigeeWidthArgument' : 0, 'trueAnomaly' : 0,
-                    'phaseShift': null, plane:null, position:null,
-                    'deleted': false, 'satelliteId': undefined,
-                    "modelSat": {"id": this.KaModels[0].value},
-                    name: "none", role: 0
-                };
-            this.selectOG.satellites.push(addedRow);  
-            this.SaveOGChange()
-        },
-        ChangeParam(){
-            this.SaveOGChange()
-          },
-          SelectChangeKA(data){
-            this.selectOG.satellites[data.id].modelSat.id = data.value
-            this.SaveOGChange()
-          },
           async SaveOGChange() { //сохранение изменения ог
             await FetchPost('/api/v1/constellation/update',this.selectOG)
             this.dataJson = await ChangeOG(await FetchGet('/api/v1/constellation/get/list') || [])
@@ -224,14 +172,8 @@ import DefaultTable2 from '../DefaultTable2.vue';
             if(this.OG_Param.constellationName != undefined)
             {
               let responce =  {}
-              if(this.OG_Param.inputType == 1)
-              {
-                responce = await FetchPost('/api/v1/constellation/add',this.OG_Param) || {}
-              }
-              else if(this.OG_Param.inputType == 2) {
-                responce = await FetchPost('/api/v1/constellation/calc/planar',this.OG_Param) || {}
-              }
-              else if(this.OG_Param.inputType == 3){
+              this.SelectOGFromList(undefined)
+              if(this.OG_Param.inputType == 3){
                 const formData = new FormData(); // Создаем FormData
                 const file = this.OG_Param.file
                 formData.append('file', file); // Добавляем файл
@@ -242,6 +184,7 @@ import DefaultTable2 from '../DefaultTable2.vue';
               if(responce.type == "SUCCESS"){
                 this.dataJson = await ChangeOG(await FetchGet('/api/v1/constellation/get/list') || [])
                 this.PageSettings.status = 0
+                this.SelectOGFromList(undefined)
               }
               else{
                 alert("Ошибка добавления" + JSON.stringify(responce))
@@ -260,18 +203,16 @@ import DefaultTable2 from '../DefaultTable2.vue';
           },
     },
     async mounted(){
-      DisplayLoad(true)
       this.approved = SystemObject.constellationStatus
       this.dataJson = OGList
-      this.KaRole = []
       let result = await FetchGet('/api/v1/modelsat/all')
       this.KaModels = []
       for (let index = 0; index < result.length; index++) {
         this.KaModels.push({value:result[index].id, lable: result[index].modelName})
-        this.KaLableId[result[index].id] = result[index].modelName
       }
       this.dataTable.label[0].tag.dataOption = this.KaModels
-      DisplayLoad(false)
+      this.selectOG = OGList[0]
+      this.SelectOGFromList(this.dataJson[0])
     },
   }
   </script>
@@ -302,7 +243,24 @@ import DefaultTable2 from '../DefaultTable2.vue';
 }
 
 
-
+.OGList{
+  display: flex;
+  .ButtonCommand{
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    width: auto !important;
+    flex: none !important;
+    .addButtonIcon{
+      top: auto;
+    }
+  }
+}
+.ButtonApprovedDiv{
+  width: auto !important;
+  flex: none !important;
+  margin-right: 40px;
+}
 
 
 

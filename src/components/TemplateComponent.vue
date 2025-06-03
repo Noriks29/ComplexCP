@@ -36,11 +36,11 @@
               <button class="buttonType1" :class="activeComponent=='TypeKA'? 'select':''" @click="SelectComponent('TypeKA')"><span>Модели КА</span></button>
             </div>   
           </div>
-          <div class="ButtonSection second" v-if="system.typeWorkplace in {2:null,3:null}">
+          <div class="ButtonSection second" v-if="system.typeWorkplace in {3:null}">
             <h1>Связь</h1>
             <div class="ButtonList">
               <button class="buttonType1" :class="activeComponent=='EarthConstellation'? 'select':''" :disabled="!FillingDataStatus" @click="SelectComponent('EarthConstellation')"><div :class="system.earthSatStatus ? 'approved' : 'Notapproved'"></div><span>КА - НП</span></button>
-              <button v-if="system.typeWorkplace in {3:null}" class="buttonType1" :class="activeComponent=='LeaderConstellationConstellation'? 'select':''" :disabled="!FillingDataStatus"  @click="SelectComponent('LeaderConstellationConstellation')"><div :class="system.satSatStatus ? 'approved' : 'Notapproved'"></div><span>КА - КА</span></button>
+              <button class="buttonType1" :class="activeComponent=='LeaderConstellationConstellation'? 'select':''" :disabled="!FillingDataStatus"  @click="SelectComponent('LeaderConstellationConstellation')"><div :class="system.satSatStatus ? 'approved' : 'Notapproved'"></div><span>КА - КА</span></button>
             </div>
           </div>
           <div class="ButtonSection third" >
@@ -211,7 +211,7 @@ export default {
 .SectionMenu{
   align-items: normal !important;
   .ModellingDiv{
-    height: fit-content !important;
+    height: calc(100% - 46px) !important;
     flex: 1;
     overflow-y: auto;
     display: flex;

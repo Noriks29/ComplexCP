@@ -31,6 +31,9 @@
           <div id="plotlydiv">
             <!--Карта-->
           </div>
+          <div id="plotlydiv2">
+            <!--Карта-->
+          </div>
         </div>
         
       </div>
@@ -115,6 +118,7 @@ import XLSX from 'xlsx-js-style';
           },
           CreatePlot(){
                 document.getElementById("plotlydiv").innerHTML=''
+                document.getElementById("plotlydiv2").innerHTML=''
                 if(this.dataT.length < 1 ) return
                 let dataPlotly = [
                     {
@@ -132,6 +136,22 @@ import XLSX from 'xlsx-js-style';
                         opacity: 0.8,color: "red",line: {width: 1}
                       }
                     }]
+                let dataPlotly2 = [
+                    {
+                      type: 'bar',name: "Видимость",y: [],x: [],
+                      orientation: 'h',base: [], text:[],
+                      marker: {
+                        opacity: 0.1,color: "blue",line: {width: 1}
+                      }
+                    },
+                    {
+                      type: 'bar',name: "Съёмка",y: [],x: [],
+                      orientation: 'h', text: [],
+                      base: [],
+                      marker: {
+                        opacity: 0.8,color: "red",line: {width: 1}
+                      }
+                    }]
                 let annotations = []
                 this.dataT.forEach(element => {
                     dataPlotly[0].y.push(element.targetName)
@@ -141,9 +161,18 @@ import XLSX from 'xlsx-js-style';
                     dataPlotly[0].base.push(CreateDateTime(element.ws, 1))
                     dataPlotly[1].base.push(CreateDateTime(element.ts, 1))
                     annotations.push({x: CreateDateTime(element.ts+(element.te-element.ts)/2, 1),y: element.targetName,xref: 'x',yref: 'y',text:element.nodeName,showarrow: false,ax: 0,ay: 0})
+                    dataPlotly2[0].y.push(element.nodeName)
+                    dataPlotly2[1].y.push(element.nodeName)
+                    dataPlotly2[0].x.push(CreateDateTime(element.we - element.ws, 2))
+                    dataPlotly2[1].x.push(CreateDateTime(element.te - element.ts, 2))
+                    dataPlotly2[0].base.push(CreateDateTime(element.ws, 1))
+                    dataPlotly2[1].base.push(CreateDateTime(element.ts, 1))
+                    dataPlotly2[1].text.push(element.targetName)
                   })
-                Plotly.newPlot("plotlydiv", dataPlotly, {annotations:annotations, barmode: 'stack', showlegend: false,height:150+(dataPlotly.length*70), margin:{l:100,t:40,b:40,r:40}})
-          },
+                Plotly.newPlot("plotlydiv", dataPlotly, {titel: 'График съёмки целей', annotations:annotations, barmode: 'stack', showlegend: false,height:150+(dataPlotly.length*70), margin:{l:100,t:40,b:40,r:40}})
+                Plotly.newPlot("plotlydiv2", dataPlotly2, {titel: 'График съёмки целей', barmode: 'stack', showlegend: false,height:150+(dataPlotly.length*70), margin:{l:100,t:40,b:40,r:40}})
+
+              },
           PrevrapData(){
             this.dataTable.forEach(E77 => {
                 this.dataT = this.dataT.concat(E77.data)
