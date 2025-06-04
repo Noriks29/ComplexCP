@@ -67,23 +67,19 @@ import { KaSettings } from './KaSettings';
       async GetRezultGordeev(){
         this.modellingRezult.data = await FetchGet("/api/v1/route/all") || []
         this.ShootingData = []
-        this.modellingRezult.data.forEach(element => {
-          this.ShootingData.push({
-            targetName: element.namePoint,
-            nodeName: "--",
-            wsUnix: '--',
-            weUnix: '--',
-            transition: '--',
-            tsUnix: '--',
-            teUnix: '--',
-            pitch: '--',
-            roll: '--'
-          })
-        })
       },
       ShowRezult(){
         this.dataTable = []
-        this.dataLableName = [{label: "data", nameParam: "data"}]
+        this.dataLableName = [{label: "--", nameParam: "data"},
+          {label: "Целевая функция", nameParam: "prod"},
+          {label: "Время перенацеливания", nameParam: "tau"},
+          {label: "Начало разворота", nameParam: "timeStart"},
+          {label: "Конец разворота", nameParam: "timeEnd"},
+          {label: "Долгота Цели", nameParam: "L"},
+          {label: "Широта цели", nameParam: "B"},
+          {label: "Тангаж", nameParam: "deltaL"},
+          {label: "Крен", nameParam: "deltaB"},
+        ]
         let dataT = this.modellingRezult.data
         for (let index = 0; index < dataT.length; index++) {
           const element = JSON.stringify(dataT[index], null, 2);

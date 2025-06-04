@@ -64,7 +64,7 @@
 
 <script>
 import { saveAs } from 'file-saver';
-import {FetchGet, FetchPostFile, DisplayLoad} from '../js/LoadDisplayMetod'
+import {FetchGet, FetchPost,  FetchPostFile, DisplayLoad} from '../js/LoadDisplayMetod'
 import { NPList, OGList, SystemObject } from '@/js/GlobalData';
 
 import KA1 from './KA/KA1.vue';
@@ -124,8 +124,13 @@ export default {
         this.system = SystemObject
         this.ChengeFillingDataStatus()
       },
-      GetDataToModule(moduleL){
-        this.$showToast('Запросы неактивны в модуль:'+moduleL,'info', 'В разработке');
+      async GetDataToModule(moduleL){
+        
+        DisplayLoad(true)
+        await FetchPost('/api/v1/workplace/replace', moduleL)
+        alert("На данный момент лучше перезагружать сайт после этого запроса")
+        this.$showToast('На данный момент лучше перезагружать сайт после этого запроса','info', 'В разработке');
+        DisplayLoad(false)
       },
       async SaveWorkplace(){
         DisplayLoad(true)
