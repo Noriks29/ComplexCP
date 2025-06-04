@@ -23,7 +23,7 @@
   
 <script>
 
-import { DisplayLoad, FetchGet } from '@/js/LoadDisplayMetod';
+import {FetchGet } from '@/js/LoadDisplayMetod';
 import DefaultTable from '../DefaultTable.vue';
 
 import { KaSettings } from './KaSettings';
@@ -57,12 +57,10 @@ import { KaSettings } from './KaSettings';
         this.$emit('ChangeExperimentStatus', {status})
       },
       async StartModelling(){
-        DisplayLoad(true)
-        this.StartAwait("successRouteModelling")
-        let rezult = await FetchGet("/api/v1/route", true, "Расчёт Route окончен") || []
-        console.log(rezult)
-        DisplayLoad(false)
-        this.GetRezultGordeev()
+        this.$showLoad(true);
+        this.modellingRezult.data = await FetchGet("/api/v1/route", true, "Расчёт Route окончен") || []
+        this.ShootingData = []
+        this.$showLoad(false);
       },
       async GetRezultGordeev(){
         this.modellingRezult.data = await FetchGet("/api/v1/route/all") || []
@@ -70,25 +68,24 @@ import { KaSettings } from './KaSettings';
       },
       ShowRezult(){
         this.dataTable = []
-        this.dataLableName = [{label: "--", nameParam: "data"},
-          {label: "Целевая функция", nameParam: "prod"},
-          {label: "Время перенацеливания", nameParam: "tau"},
-          {label: "Начало разворота", nameParam: "timeStart"},
-          {label: "Конец разворота", nameParam: "timeEnd"},
-          {label: "Долгота Цели", nameParam: "L"},
-          {label: "Широта цели", nameParam: "B"},
-          {label: "Тангаж", nameParam: "deltaL"},
-          {label: "Крен", nameParam: "deltaB"},
+        this.dataLableName = [
+          {lable: "Цель", nameParam: "namePoint"},
+          {lable: "Целевая функция", nameParam: "prod"},
+          {lable: "Время перенацеливания", nameParam: "tau"},
+          {lable: "Начало разворота", nameParam: "timeStart"},
+          {lable: "Конец разворота", nameParam: "timeEnd"},
+          {lable: "Долгота Цели", nameParam: "L"},
+          {lable: "Широта цели", nameParam: "B"},
+          {lable: "Тангаж", nameParam: "deltaL"},
+          {lable: "Крен", nameParam: "deltaB"},
+          {lable: "Зона видимости цели", nameParam: "zoneVisio"},
+          {lable: "rootSatellite", nameParam: "rootSatellite"},
         ]
         let dataT = this.modellingRezult.data
         for (let index = 0; index < dataT.length; index++) {
-          const element = JSON.stringify(dataT[index], null, 2);
-          console.log(element)
-          this.dataTable.push({data: element}) 
+          const element = dataT[index];
+          this.dataTable.push(element) 
         }
-        this.ShootingData.forEach(element => {
-          this.dataTable.push({data: element})
-        })
         this.ShowDefaultTable = true
       }
     },

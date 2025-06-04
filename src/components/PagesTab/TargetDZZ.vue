@@ -90,7 +90,7 @@
   
   <script>
 
-import {DisplayLoad, FetchGet, FetchPost} from '../../js/LoadDisplayMetod.js'
+import {FetchGet, FetchPost} from '../../js/LoadDisplayMetod.js'
 import { PagesSettings } from './PagesSettings';
 import { OGList, NPList } from '@/js/GlobalData.js';
 import SelectDiv from '../SelectDiv.vue'
@@ -314,7 +314,6 @@ import XLSX from 'xlsx-js-style';
     },
     
     async mounted() {
-      DisplayLoad(true)
       if(this.systemStatus.typeWorkplace in {3:null}){
         this.viewmode = 2
       }
@@ -328,7 +327,6 @@ import XLSX from 'xlsx-js-style';
           this.datarequestКАList.push({value: element.satelliteId, lable: element.name })
         })
       });
-      DisplayLoad(false)
     },
   }
   </script>

@@ -26,7 +26,7 @@
 <script>
 
 import { UnixToDtime } from '@/js/WorkWithDTime';
-import { FetchGet, DisplayLoad, FetchPost } from '@/js/LoadDisplayMetod';
+import { FetchGet, FetchPost } from '@/js/LoadDisplayMetod';
 import DefaultTable from '@/components/DefaultTable.vue'
 import ShootingPlan from './ShootingPlan.vue';
 
@@ -92,7 +92,7 @@ import { NPList, OGList } from '@/js/GlobalData';
     },
     methods: {
       async StartModelling(){
-        DisplayLoad(true)
+        this.$showLoad(true);
         let dataPost = Object.assign(this.modellingSettings)
         dataPost.chargeSimulation = Number(dataPost.chargeSimulation)
         dataPost.optionPro42 = Number(dataPost.optionPro42)
@@ -105,7 +105,7 @@ import { NPList, OGList } from '@/js/GlobalData';
           this.dataModelling = rezult
           this.ParceModellingRezult()
         }
-        DisplayLoad(false)
+        this.$showLoad(false);
       },
       async ParceModellingRezult(){
         this.modellingRezult = {

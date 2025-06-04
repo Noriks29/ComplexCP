@@ -26,7 +26,7 @@
 
 <script>
 
-import { DisplayLoad, FetchGet, FetchPost } from '@/js/LoadDisplayMetod';
+import { FetchGet, FetchPost } from '@/js/LoadDisplayMetod';
 import DefaultTable from '../DefaultTable.vue';
 import { UnixToDtime } from '@/js/WorkWithDTime';
 import { KaSettings } from './KaSettings';
@@ -58,7 +58,7 @@ export default {
   },
   methods: {
     async StartModelling(){
-      DisplayLoad(true)
+      this.$showLoad(true);
       let rezult = await FetchPost("/api/v1/planner", {"interSatellite": this.interSatellite}, undefined, true) || null
       try {
         this.modellingRezult= rezult.XMLDocument
@@ -67,7 +67,7 @@ export default {
         this.$showToast('Ошибка расчёта'+error,'error', 'Планирование');
       }
       await this.ParceRezult()
-      DisplayLoad(false)
+      this.$showLoad(false);
     },
     ParceRezult(){
       console.log(this.modellingRezult, "Обработка результатов")
@@ -165,7 +165,6 @@ export default {
       this.modellingSettings.showTable = 'NodeLoad'
     },
     async GetRezultPavlov(){
-      DisplayLoad(true)
       let rezult = await FetchGet("/api/v1/planner/all") || null
       try {
         this.modellingRezult= rezult.XMLDocument
@@ -174,7 +173,6 @@ export default {
         console.log()
       }
       await this.ParceRezult()
-      DisplayLoad(false)
     },
     ShowRezult(){
       this.dataTable = []

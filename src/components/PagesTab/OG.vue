@@ -8,12 +8,6 @@
     <div class="ContentDiv">
     <div class="Panel LeftPanel">
         <div class="FlexColumn">
-          <div class="ButtonApprovedDiv" v-if="!modellingStatus">
-          <button @click="ChangeApproved(!approved)" class="ButtonCommand" :class="approved? 'green' : 'red'">
-          <span v-if="approved"><img src="../../assets/edit.svg"></span>
-          <span v-else><img src="../../assets/approve.svg"></span>
-          <span>{{ approved ?  'Редактировать' : 'Утвердить'}}</span>
-          </button></div>
           <div class="OGList">
             <div v-for="data, index in dataJson"
               :key="index"
@@ -22,7 +16,7 @@
               <div  @click="SelectOGFromList(data)" type="name">{{ data.constellationName }}</div>
               <div class="iconDelete" @click="DeleteRowOG(data)" type="icon"><img  src="@/assets/delete.svg" alt="Удалить"></div>
           </div>
-            <button class="ButtonCommand" :class="!approved? '' : 'disable'"  @click="PageSettings.status=(PageSettings.status+1)%2">
+            <button class="ButtonCommand"  @click="PageSettings.status=(PageSettings.status+1)%2">
               <img src="@/assets/add.png" alt="" class="addButtonIcon">{{ (PageSettings.status == 1) ? 'Прекратить' : 'Добавить орбитальную группировку' }}
             </button>
           </div>
@@ -58,7 +52,7 @@
   <script>
 import {FetchGet, FetchPost, FetchPostFile} from '@/js/LoadDisplayMetod'
 import { PagesSettings } from './PagesSettings.js';
-import { OGList, ChangeOG, SystemObject, ChangeSystemObject} from '@/js/GlobalData';
+import { OGList, ChangeOG} from '@/js/GlobalData';
 import { CreateDateTime } from '@/js/WorkWithDTime';
 import DefaultTable2 from '../DefaultTable2.vue';
 
@@ -88,7 +82,6 @@ import DefaultTable2 from '../DefaultTable2.vue';
         KaLableId: {}, // чисто для базового вывода имени ка
         selectOG: {id:null}, //выбранная группировка ог
 
-        approved: true, //утверждено или нет
         
         //далее для добавления ог
         OG_Param:{
@@ -120,7 +113,7 @@ import DefaultTable2 from '../DefaultTable2.vue';
         if(data != undefined){
           this.selectOG = data
           this.dataTable.data = data.satellites
-          if(this.selectOG.inputType in {1:null, 2:null} && !this.approved){
+          if(this.selectOG.inputType in {1:null, 2:null}){
             this.abilityEdit = true
           }
           this.OGTimePrevrap()
@@ -135,26 +128,12 @@ import DefaultTable2 from '../DefaultTable2.vue';
         });
       },
       async DeleteRowOG(data){
-        if(!this.approved){
           await FetchPost('/api/v1/constellation/delete/byId',{},'id='+data.id)
           this.selectOG = {id:null}
           this.dataJson = await FetchGet('/api/v1/constellation/get/list') || []
           ChangeOG(this.dataJson)
           this.SelectOGFromList(this.dataJson[0])
-        }
       },
-      async ChangeApproved(stat){
-          this.approved = stat
-          this.abilityEdit = false
-          try {
-            if(this.selectOG.inputType in {1:null, 2:null} && !this.approved){
-              this.abilityEdit = true
-            }
-          } catch (error) {
-            this.abilityEdit = false
-          }
-          await ChangeSystemObject('constellationStatus', stat)
-        },
           async SaveOGChange() { //сохранение изменения ог
             await FetchPost('/api/v1/constellation/update',this.selectOG)
             this.dataJson = await ChangeOG(await FetchGet('/api/v1/constellation/get/list') || [])
@@ -203,7 +182,6 @@ import DefaultTable2 from '../DefaultTable2.vue';
           },
     },
     async mounted(){
-      this.approved = SystemObject.constellationStatus
       this.dataJson = OGList
       let result = await FetchGet('/api/v1/modelsat/all')
       this.KaModels = []
@@ -255,11 +233,6 @@ import DefaultTable2 from '../DefaultTable2.vue';
       top: auto;
     }
   }
-}
-.ButtonApprovedDiv{
-  width: auto !important;
-  flex: none !important;
-  margin-right: 40px;
 }
 
 

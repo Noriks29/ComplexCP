@@ -1,6 +1,6 @@
 
 <template>
-    <AlertToast />
+    <AlertToast /><LoadProcess />
     <div class="headerSelectMode" :class="login !== undefined && systemStatus.typeWorkplace == -1 ? 'show' : ''">
       <div v-for="data, index in workplaceList" :key="index"
         class="SelectMode"
@@ -34,8 +34,6 @@
       </div>
     </div>
     <TemplateComponent v-if="systemStatus.typeWorkplace != -1" @changeExperimentStatus="ChangeExperimentStatus"/>
-    
-    <LoadProcess />
     <div class="ChangeViewMode" @click="ChangeColor"><svg fill="none" height="24" stroke-width="1.5" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18C15.3137 18 18 15.3137 18 12C18 8.68629 15.3137 6 12 6C8.68629 6 6 8.68629 6 12C6 15.3137 8.68629 18 12 18Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 12L23 12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 2V1" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 23V22" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 20L19 19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 4L19 5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 20L5 19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 4L5 5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 12L2 12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
    
     
@@ -43,7 +41,7 @@
 </template> 
 <script>
 import TemplateComponent from './components/TemplateComponent.vue'
-import {DisplayLoad, FetchPost} from './js/LoadDisplayMetod.js'
+import {FetchPost} from './js/LoadDisplayMetod.js'
 import LoadProcess from './components/LoadProcess.vue'
 import GlobalStyle from './style/GlobalStyle.scss'
 import GlobalElementStyle from '@/style/GlobalElementStyle.scss'
@@ -81,7 +79,7 @@ export default {
         this.VerifyWorkSapce(data)
       },
       async VerifyWorkSapce(data){
-        DisplayLoad(true)
+        this.$showLoad(true);
         this.workplaceList = []
         let result = await FetchPost("/api/v1/authentication/user/login",data)
         if(result == undefined){
@@ -97,7 +95,7 @@ export default {
           localStorage.setItem('password',  data.password);
           this.login = data.nameUser
         }
-        DisplayLoad(false)
+        this.$showLoad(false);
       },
       Log_out(){
         localStorage.removeItem('nameUser')
@@ -111,12 +109,12 @@ export default {
       },
       async StartSystem(data){
         ClearGlobalData()
-        DisplayLoad(true)
+        this.$showLoad(true);
         await localStorage.setItem('data', data.accessKey)
         await localStorage.setItem('modname', data.name)
         await InitGlobalData()
         this.systemStatus = SystemObject
-        DisplayLoad(false)
+        this.$showLoad(false);
       },
       ChangetypeWorkplace(mode){
         if(this.experimentStatus == false){
@@ -158,6 +156,7 @@ export default {
     } catch (error) {
       console.log(error)
     }
+    this.$showLoad(true);
   },
   components: {
     TemplateComponent,

@@ -38,16 +38,16 @@
             <span @click="this.$showToast('This is a global success message!','process', 'TestTitle');">-1-</span>
             <span @click="this.$showToast('This is a global success message!','test', 'TestTitle');">-1-</span>-->
             <div class="ButtonList">
-              <button class="buttonType1" :class="activeComponent=='NP'? 'select':''" @click="SelectComponent('NP')"><div :class="system.earthStatus ? 'approved' : 'Notapproved'"></div><span>НП</span></button>
-              <button class="buttonType1" :class="activeComponent=='OG'? 'select':''" @click="SelectComponent('OG')"><div :class="system.constellationStatus ? 'approved' : 'Notapproved'"></div><span>КА и ОГ</span></button>
+              <button class="buttonType1" :class="activeComponent=='NP'? 'select':''" @click="SelectComponent('NP')"><span>НП</span></button>
+              <button class="buttonType1" :class="activeComponent=='OG'? 'select':''" @click="SelectComponent('OG')"><span>КА и ОГ</span></button>
               <button class="buttonType1" :class="activeComponent=='TypeKA'? 'select':''" @click="SelectComponent('TypeKA')"><span>Модели КА</span></button>
             </div>   
           </div>
           <div class="ButtonSection second" v-if="system.typeWorkplace in {3:null}">
             <h1>Связь</h1>
             <div class="ButtonList">
-              <button class="buttonType1" :class="activeComponent=='EarthConstellation'? 'select':''" :disabled="!FillingDataStatus" @click="SelectComponent('EarthConstellation')"><div :class="system.earthSatStatus ? 'approved' : 'Notapproved'"></div><span>КА - НП</span></button>
-              <button class="buttonType1" :class="activeComponent=='LeaderConstellationConstellation'? 'select':''" :disabled="!FillingDataStatus"  @click="SelectComponent('LeaderConstellationConstellation')"><div :class="system.satSatStatus ? 'approved' : 'Notapproved'"></div><span>КА - КА</span></button>
+              <button class="buttonType1" :class="activeComponent=='EarthConstellation'? 'select':''" :disabled="!FillingDataStatus" @click="SelectComponent('EarthConstellation')"><span>КА - НП</span></button>
+              <button class="buttonType1" :class="activeComponent=='LeaderConstellationConstellation'? 'select':''" :disabled="!FillingDataStatus"  @click="SelectComponent('LeaderConstellationConstellation')"><span>КА - КА</span></button>
             </div>
           </div>
           <div class="ButtonSection third" >
@@ -64,7 +64,7 @@
 
 <script>
 import { saveAs } from 'file-saver';
-import {FetchGet, FetchPost,  FetchPostFile, DisplayLoad} from '../js/LoadDisplayMetod'
+import {FetchGet, FetchPost,  FetchPostFile} from '../js/LoadDisplayMetod'
 import { NPList, OGList, SystemObject } from '@/js/GlobalData';
 
 import KA1 from './KA/KA1.vue';
@@ -126,14 +126,14 @@ export default {
       },
       async GetDataToModule(moduleL){
         
-        DisplayLoad(true)
+        this.$showLoad(true);
         await FetchPost('/api/v1/workplace/replace', moduleL)
         alert("На данный момент лучше перезагружать сайт после этого запроса")
         this.$showToast('На данный момент лучше перезагружать сайт после этого запроса','info', 'В разработке');
-        DisplayLoad(false)
+        this.$showLoad(false);
       },
       async SaveWorkplace(){
-        DisplayLoad(true)
+        this.$showLoad(true);
         let dataLoad = {}
         dataLoad.modelSat = await FetchGet('/api/v1/modelsat/all')
         let result = NPList
@@ -187,7 +187,7 @@ export default {
             type: 'application/json'
         });
         saveAs(fileToSave, fileName);
-        DisplayLoad(false)
+        this.$showLoad(false);
       },
       async LoadFile(data){
         if (data.target.files[0]) {
@@ -318,14 +318,14 @@ export default {
 
       button{
         flex: 1;
-        margin: 3px 0px 3px 10px;
+        margin: 3px 0px 3px 0px;
         padding: 10px 0px 10px 5px;
         display: flex;
         align-items: center;
         justify-content: flex-start;
         z-index: 2;
         span{
-          padding-left: 15px;
+          padding-left: 8px;
         }
         div{
           position: absolute;

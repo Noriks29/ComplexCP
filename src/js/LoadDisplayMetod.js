@@ -3,12 +3,14 @@ const ShowFetchData = true
 
 function DisplayLoad(status){
     const element = document.getElementById("loadProcess");
+    console.log(element, status)
+    /*
     if(status){
         element.style.display = "flex"
     }
     else{
         element.style.display = "none"
-    }
+    }*/
 }
 async function FetchGet(http, AlertError = true, massage=null){
     let AcsessKey = localStorage.data

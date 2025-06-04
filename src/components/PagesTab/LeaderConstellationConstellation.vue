@@ -33,7 +33,7 @@
   
   <script>
 
-import {DisplayLoad, FetchGet, FetchPost} from '../../js/LoadDisplayMetod.js'
+import {FetchGet, FetchPost} from '../../js/LoadDisplayMetod.js'
 import { PagesSettings } from './PagesSettings.js';
 import Plotly from 'plotly.js-dist'
 
@@ -87,7 +87,7 @@ import Plotly from 'plotly.js-dist'
 
 
        async CommandWork(commandId){
-            DisplayLoad(true)
+            this.$showLoad(true);
             let dataPlotly = null
             switch (commandId) {
               case 0:
@@ -161,7 +161,7 @@ import Plotly from 'plotly.js-dist'
               default:
                 break;
             }
-            DisplayLoad(false)
+            this.$showLoad(false);
         },
         async ReFetch(){
           if(this.PageSettings.mode) this.clusterTopology = await FetchGet("/api/v1/topology/all") || []
@@ -182,8 +182,6 @@ import Plotly from 'plotly.js-dist'
         }
     },
     async mounted() {
-      DisplayLoad(true)
-
       this.ReFetch()
       let rezult = await FetchGet("/api/v1/constellation/cl/all") || []
       this.PageSettings.SatNp = await FetchGet('/api/v1/modelling/data/earth-sat/all', false) || []
@@ -192,7 +190,6 @@ import Plotly from 'plotly.js-dist'
       rezult.forEach(element => {
         this.lessConstellation.push({lable: element.constellationName, value: element})
       })
-      DisplayLoad(false)
     }
   }
   </script>

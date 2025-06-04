@@ -40,7 +40,7 @@
   
   <script>
 
-import {DisplayLoad, FetchGet, FetchPost} from '../../js/LoadDisplayMetod.js'
+import {FetchGet, FetchPost} from '../../js/LoadDisplayMetod.js'
 import { PagesSettings } from './PagesSettings';
 import Plotly from 'plotly.js-dist'
 
@@ -63,16 +63,16 @@ import Plotly from 'plotly.js-dist'
               this.PageSettings.status = 1
             }
             if(commandId == 5){
-              DisplayLoad(true)
+              this.$showLoad(true);
               await FetchGet("/api/v1/contact-plan/earth")
               this.ReFetch()
-              DisplayLoad(false)
+              this.$showLoad(false);
             }
             if(commandId == 1){
-              DisplayLoad(true)
+              this.$showLoad(true);
               await FetchPost('/api/v1/pro42/view/earth', {leaderProcessing: this.PageSettings.mode})
               this.ReFetch()
-              DisplayLoad(false)
+              this.$showLoad(false);
             }
             if(commandId == 6){
               this.ShowPlotlyContain = true
@@ -117,9 +117,7 @@ import Plotly from 'plotly.js-dist'
     },
     
     async mounted() {
-        DisplayLoad(true)
         this.ReFetch()
-        DisplayLoad(false)
     }
   }
   </script>

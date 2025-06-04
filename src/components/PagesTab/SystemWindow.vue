@@ -1,9 +1,8 @@
 <template>
   <table class="TableDefault"><tbody>
     <tr><td>Интервал расчёта группировки:</td><td>
-            {{ dataSystem.minTleTime ? CreateDateTime(dataSystem.minTleTime) : 'Не указан'}}
-          </td></tr>
-    <tr><td></td><td>
+            {{ (dataSystem.minTleTime ? CreateDateTime(dataSystem.minTleTime) : 'Не указан' ) + " -- "}}
+            
             {{ dataSystem.maxTleTime ? CreateDateTime(dataSystem.maxTleTime) : 'Не указан'}}
           </td></tr>
           <tr><td colspan="1">Начало горизонта планирования:</td><td>

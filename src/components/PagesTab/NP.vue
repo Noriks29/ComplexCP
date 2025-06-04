@@ -6,26 +6,16 @@
             </button>
           </div>
     <div class="ContentDiv">
-    <div class="Panel LeftPanel">
-      <div class="FlexColumn">
-      <div class="ButtonApprovedDiv" v-if="!modellingStatus">
-          <button @click="ChangeApproved(!approved)" class="ButtonCommand" :class="approved? 'green' : 'red'">
-          <span v-if="approved"><img src="../../assets/edit.svg"></span>
-          <span v-else><img src="../../assets/approve.svg"></span>
-          <span>{{ approved ?  'Редактировать' : 'Утвердить'}}</span>
-        </button>
-      </div>
-      </div>
-    </div>
+
     <div class="Panel RightPanel">
-      <DefaultTable2  :dataTable="dataTable" :settings="{showIndex:true,deleteMode: true,editAccess:!approved}" @changeT="ChangeParamTable" @addRow="AddRow(0,0)" @DeletedRow="DeleteRow"/>
+      <DefaultTable2  :dataTable="dataTable" :settings="{showIndex:true,deleteMode: true,editAccess:true}" @changeT="ChangeParamTable" @addRow="AddRow(0,0)" @DeletedRow="DeleteRow"/>
    </div> 
   </div>
   </div>
 </template>
   
 <script>
-import { NPList, ChangeNP, SystemObject, ChangeSystemObject} from '@/js/GlobalData.js'; 
+import { NPList, ChangeNP} from '@/js/GlobalData.js'; 
 import { PagesSettings } from './PagesSettings.js';
 import DefaultTable2 from '../DefaultTable2.vue';
 
@@ -35,7 +25,6 @@ import DefaultTable2 from '../DefaultTable2.vue';
     data(){
       return{
         dataJson: [], // локальное хранилище нп
-        approved: true,
         dataTable: {label:[
           {param: 'nameEarthPoint', name: 'Название', tag: {name: "input"}},
           {param: 'latitude', name: 'Широта', tag: {name: "input", type: "number"}},
@@ -91,17 +80,12 @@ import DefaultTable2 from '../DefaultTable2.vue';
             this.dataJson = await ChangeNP(this.dataJson)
             this.ShowTable()
         },
-        async ChangeApproved(status){
-          await ChangeSystemObject('earthStatus', status)
-          this.approved = status
-        },
         ShowTable(){
           this.dataTable.data = this.dataJson
         },
     },
     async mounted() {
       this.dataJson = await NPList
-      this.approved = SystemObject.earthStatus
       this.ShowTable()
     }
   }

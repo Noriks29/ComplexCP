@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import {FetchGet, FetchPost, DisplayLoad} from '../js/LoadDisplayMetod'
+import {FetchGet, FetchPost} from '../js/LoadDisplayMetod'
 import { NPList, OGList } from '@/js/GlobalData';
 import SelectDiv from './SelectDiv.vue';
 import L from 'leaflet';
@@ -85,7 +85,7 @@ export default {
           alert("Скопировано")
         },
         async GetKARoad(){
-          DisplayLoad(true)
+          this.$showLoad(true);
           let color = document.getElementById("inputColorKa")
           let colors = ['#ff0000','#00ff00','#0000ff','#ffff00','#00ffff','#990000','#009900','#999900','#000099','#ffcc00','#00ffcc','#cc0000','#00cc00','#cccc00','#0000cc','#ee0000','#00ee00','#eeee00','#00eeee','#aaaa00']
           if (this.KatoDraw.value == null) {
@@ -127,7 +127,7 @@ export default {
             }
             L.polyline(arrayPoint, {color: color.value + "d4", weight: 2}).addTo(this.map);
           }
-          DisplayLoad(false)
+          this.$showLoad(false);
         },
         ReloadMapContainer(){
           this.map.off();
@@ -137,8 +137,6 @@ export default {
 
     },
     async mounted() {
-      DisplayLoad(true)
-      console.log(NPList)
       this.KAArray.push({value: null, lable: "Все КА" })
       OGList.forEach(OG => {
         OG.satellites.forEach(element =>{
@@ -147,9 +145,7 @@ export default {
       });
       this.KatoDraw = this.KAArray[0]
       this.requestJson = await FetchGet('/api/v1/satrequest/request/get/all') || []
-
       this.CreateMap()
-      DisplayLoad(false)
     },
 }
 

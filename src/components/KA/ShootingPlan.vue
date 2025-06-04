@@ -43,7 +43,6 @@
   <script>
 import Plotly from 'plotly.js-dist'
 import { CreateDateTime } from '@/js/WorkWithDTime'
-import { DisplayLoad } from '@/js/LoadDisplayMetod'
 import XLSX from 'xlsx-js-style';
 
     export default {
@@ -75,7 +74,7 @@ import XLSX from 'xlsx-js-style';
             this.$emit('closetable', true)
           },
           LoadXLSX(){
-            DisplayLoad(true)
+            this.$showLoad(true);
             const workbook = XLSX.utils.book_new();
             let data = [[]]
             this.dataLableName.forEach(lable => {
@@ -114,7 +113,7 @@ import XLSX from 'xlsx-js-style';
             }
             workbook.Sheets['ShootingPlan'] = worksheet;
             XLSX.writeFile(workbook, 'ShootingPlan.xlsx');
-            DisplayLoad(false)
+            this.$showLoad(false);
           },
           CreatePlot(){
                 document.getElementById("plotlydiv").innerHTML=''
