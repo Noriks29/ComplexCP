@@ -1,6 +1,7 @@
 
 <template>
     <AlertToast /><LoadProcess />
+    <div id="backgroundDiv"></div>
     <div class="headerSelectMode" :class="login !== undefined && systemStatus.typeWorkplace == -1 ? 'show' : ''">
       <div v-for="data, index in workplaceList" :key="index"
         class="SelectMode"
@@ -48,6 +49,9 @@ import GlobalStyle from './style/GlobalStyle.scss'
 import GlobalElementStyle from '@/style/GlobalElementStyle.scss'
 import { ClearGlobalData, InitGlobalData, SystemObject } from './js/GlobalData'
 import AlertToast from './components/AlertToast.vue'
+
+import NET from 'vanta/dist/vanta.net.min'
+import * as THREE from 'three'
 
 export default {
   name: 'App',
@@ -142,6 +146,22 @@ export default {
       }
     },
   async mounted() {
+   NET({
+  el: "#backgroundDiv",
+  THREE: THREE, // Убедитесь, что THREE правильно импортирован
+  mouseControls: false,
+  touchControls: false,
+  gyroControls: false,
+  minHeight: 500.00,
+  minWidth: 500.00,
+  scale: 1.00,
+  scaleMobile: 1.00,
+  color: 0x15eb,       // Цвет точек
+  backgroundColor: 0x000000, // Фон (чёрный)
+  points: 7.00,
+  maxDistance: 27.00,
+  spacing: 20.00,
+})
     this.workplaceList = []
     if(localStorage.nameUser != undefined && localStorage.email != undefined && localStorage.password != undefined){
       let data = {
@@ -170,6 +190,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+#backgroundDiv{
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    
+}
+
   .ModalLoginBack{
     position: relative;
     z-index: 3;
