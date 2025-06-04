@@ -7,6 +7,7 @@
       ><button class="ButtonSelectMode" :class="systemStatus.typeWorkplace == data.type ? 'active' : ''" @click="ChangetypeWorkplace(data.type)">{{ data.name }}</button></div>
     </div>
     <div class="idSesion" :class="login !== undefined ? systemStatus.typeWorkplace !== -1?'show WokspaceSelect':'show':''">
+        <div class="ModuleTitle" :class="titleModule==''?'hide':''">{{ titleModule }}</div>
         <div class="flexdiv" >login: {{ login }} {{ SystemObject }}
           <button class="Menubutton"  :class="systemStatus.typeWorkplace !== -1 ? 'show' : ''" @click="ChangetypeWorkplace(-1)"><svg enable-background="new 0 0 32 32" id="Editable-line" version="1.1" viewBox="0 0 32 32" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><circle cx="5" cy="6" fill="none" id="XMLID_303_" r="1" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><circle cx="5" cy="16" fill="none" id="XMLID_305_" r="1" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><circle cx="5" cy="26" fill="none" id="XMLID_304_" r="1" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><line fill="none" id="XMLID_29_" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="10" x2="28" y1="6" y2="6"/><line fill="none" id="XMLID_30_" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="10" x2="28" y1="16" y2="16"/><line fill="none" id="XMLID_31_" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="10" x2="28" y1="26" y2="26"/></svg></button>
           <button v-if="experimentStatus == false" class="logoutbutton"  @click="Log_out">
@@ -57,6 +58,7 @@ export default {
   data() {
     return{
       systemStatus: {typeWorkplace: -1},
+      titleModule: ' ',
       login: undefined,
       errorLogin: false,
       experimentStatus: false,
@@ -111,12 +113,13 @@ export default {
         ClearGlobalData()
         this.$showLoad(true);
         await localStorage.setItem('data', data.accessKey)
-        await localStorage.setItem('modname', data.name)
+        this.titleModule = data.name
         await InitGlobalData()
         this.systemStatus = SystemObject
         this.$showLoad(false);
       },
       ChangetypeWorkplace(mode){
+        this.titleModule = ''
         if(this.experimentStatus == false){
           this.workplaceList.forEach(workplace => {
             if(workplace.type == mode){
@@ -234,24 +237,32 @@ export default {
   position: fixed;
   right: 10px;
   top: 6px;
-  border-bottom: 2px solid;
-  box-shadow: 0px 3px 4px -4px var(--box-shadow-Pabel2);
   transform: translate(0px, -150%);
   transition: all 0.5s ease-in-out;
+  width: calc(100% - 20px);
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  overflow: hidden;
   z-index: 2;
-
     &.show{
       transform: translate(0px, 0%);
     }
     &.WokspaceSelect{
-      width: calc(100% - 20px);
+      
       .flexdiv{
         justify-content: flex-end;
+      }
+      .ModuleTitle{
+        transform: translate(0px, 0px);
+        box-shadow: 0px 3px 4px -4px var(--box-shadow-Pabel2);
       }
     }
     .flexdiv{
       display: flex;
       align-items: center;
+      box-shadow: 0px 3px 4px -4px var(--box-shadow-Pabel2);
+      border-bottom: 2px solid;
     }
     svg{
       fill: var(--color-Main);
@@ -287,6 +298,16 @@ export default {
           top: -3px;
         }
     }
+}
+
+.ModuleTitle{
+  flex: 1;
+  text-align: left;
+  border-bottom: 2px solid;
+  transform: translate(150%, 0px);
+  transition: all 1s ease-out;
+  font-size: larger;
+  font-weight: bold;
 }
 
 

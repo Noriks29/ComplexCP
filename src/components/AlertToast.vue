@@ -2,7 +2,7 @@
   <div class="notification-container">
     <div class="notification" :class="data.type+' '+data.delete" v-for="data, index in dataAlert" :key="index">
         <div>
-        <strong class="Title">{{data.type+'-'+data.title}}</strong>
+        <strong class="Title">{{data.type+' - '+data.title}}</strong>
         {{ data.message }}
         </div>
         <button class="close-btn" @click="dismissToast(data.id)">x</button>
@@ -20,7 +20,7 @@ export default {
     };
   },
   methods: {
-    showSuccess(message=null, type=null, title=null, time=5000) {
+    showSuccess(message=null, type=null, title=null, time=4000) {
       this.dataAlert[this.maxid]={id: this.maxid,message: message, type: type, title: title, delete: ''}
       let id = this.maxid 
       setTimeout(() => {

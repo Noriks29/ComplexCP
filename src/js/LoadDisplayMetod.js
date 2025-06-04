@@ -1,17 +1,6 @@
 import { adress  } from "./config_server";
 const ShowFetchData = true
 
-function DisplayLoad(status){
-    const element = document.getElementById("loadProcess");
-    console.log(element, status)
-    /*
-    if(status){
-        element.style.display = "flex"
-    }
-    else{
-        element.style.display = "none"
-    }*/
-}
 async function FetchGet(http, AlertError = true, massage=null){
     let AcsessKey = localStorage.data
     let add = adress
@@ -73,7 +62,7 @@ async function FetchPost(http,datapost,dopparamhttp, AlertError = true, massage=
 
 
 async function FetchPostFile(http,formData){
-    DisplayLoad(true)
+    //DisplayLoad(true)
     if(ShowFetchData) console.log(formData)
     let AcsessKey = localStorage.data
     let add = adress
@@ -92,12 +81,12 @@ async function FetchPostFile(http,formData){
         else{
             let rezult = await response.json()
             if(ShowFetchData) console.log(http, rezult)
-            DisplayLoad(false)
+            //DisplayLoad(false)
             return rezult;
         }
         } catch (error) {
             console.log('Error save:', error);
-            DisplayLoad(false)
+            //DisplayLoad(false)
             return undefined;
         }
 
@@ -105,7 +94,6 @@ async function FetchPostFile(http,formData){
 
 
 export{
-    DisplayLoad,
     FetchGet,
     FetchPost,
     FetchPostFile

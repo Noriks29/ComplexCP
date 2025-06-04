@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import AlertToastPlugin from '@/components/alert'
-import LoadProcessPlugin from './js/load'
+import AlertToastPlugin from '@/js/alert'
+import LoadProcessPlugin from '@/js/load'
 
 const app = createApp(App)
 app.use(AlertToastPlugin)

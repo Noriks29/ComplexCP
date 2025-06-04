@@ -11,7 +11,6 @@
 </template>
 
 <script>
-import {FetchGet, FetchPost} from '../js/LoadDisplayMetod'
 import { NPList, OGList } from '@/js/GlobalData';
 import SelectDiv from './SelectDiv.vue';
 import L from 'leaflet';
@@ -40,7 +39,7 @@ export default {
       async CreateMap(){
           this.map = {}
           console.log(await document.getElementById("map"))
-          this.map = L.map('map', {zoomAnimation: true}).setView(new L.LatLng(59.932936, 30.311349), 2);
+          this.map = L.map('map', {zoomAnimation: true}).setView(new L.LatLng(55, 60), 3);
           L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', 
           {
             minZoom: 1, 
@@ -89,7 +88,7 @@ export default {
           let color = document.getElementById("inputColorKa")
           let colors = ['#ff0000','#00ff00','#0000ff','#ffff00','#00ffff','#990000','#009900','#999900','#000099','#ffcc00','#00ffcc','#cc0000','#00cc00','#cccc00','#0000cc','#ee0000','#00ee00','#eeee00','#00eeee','#aaaa00']
           if (this.KatoDraw.value == null) {
-            let roads = await FetchGet("/api/v1/pro42/gps/all") || []
+            let roads = await this.$FetchGet("/api/v1/pro42/gps/all") || []
             let colorid = 0
             roads.forEach(road => {
               let arrayPoint = [[]]
@@ -112,7 +111,7 @@ export default {
 
           }
           else{
-            let road = await FetchPost("/api/v1/pro42/gps/sat", {}, "satelliteId="+this.KatoDraw.satelliteId) || []
+            let road = await this.$FetchPost("/api/v1/pro42/gps/sat", {}, "satelliteId="+this.KatoDraw.satelliteId) || []
             let arrayPoint = [[]]
             let line_index = 0
             for (let index = 0; index < road.length; index+=1) {
@@ -144,7 +143,7 @@ export default {
         })
       });
       this.KatoDraw = this.KAArray[0]
-      this.requestJson = await FetchGet('/api/v1/satrequest/request/get/all') || []
+      this.requestJson = await this.$FetchGet('/api/v1/satrequest/request/get/all') || []
       this.CreateMap()
     },
 }

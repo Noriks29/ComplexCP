@@ -50,7 +50,7 @@
 </template>
   
   <script>
-import {FetchGet, FetchPost, FetchPostFile} from '@/js/LoadDisplayMetod'
+import { FetchPostFile} from '@/js/LoadDisplayMetod'
 import { PagesSettings } from './PagesSettings.js';
 import { OGList, ChangeOG} from '@/js/GlobalData';
 import { CreateDateTime } from '@/js/WorkWithDTime';
@@ -128,15 +128,15 @@ import DefaultTable2 from '../DefaultTable2.vue';
         });
       },
       async DeleteRowOG(data){
-          await FetchPost('/api/v1/constellation/delete/byId',{},'id='+data.id)
+          await this.$FetchPost('/api/v1/constellation/delete/byId',{},'id='+data.id)
           this.selectOG = {id:null}
-          this.dataJson = await FetchGet('/api/v1/constellation/get/list') || []
+          this.dataJson = await this.$FetchGet('/api/v1/constellation/get/list') || []
           ChangeOG(this.dataJson)
           this.SelectOGFromList(this.dataJson[0])
       },
           async SaveOGChange() { //сохранение изменения ог
-            await FetchPost('/api/v1/constellation/update',this.selectOG)
-            this.dataJson = await ChangeOG(await FetchGet('/api/v1/constellation/get/list') || [])
+            await this.$FetchPost('/api/v1/constellation/update',this.selectOG)
+            this.dataJson = await ChangeOG(await this.$FetchGet('/api/v1/constellation/get/list') || [])
             for (let i = 0; i < this.dataJson.length; i++) {
               const element = this.dataJson[i];
               if(element.id == this.selectOG.id){
@@ -161,7 +161,7 @@ import DefaultTable2 from '../DefaultTable2.vue';
                 responce = await FetchPostFile("/api/v1/constellation/upload/tle", formData)
               }
               if(responce.type == "SUCCESS"){
-                this.dataJson = await ChangeOG(await FetchGet('/api/v1/constellation/get/list') || [])
+                this.dataJson = await ChangeOG(await this.$FetchGet('/api/v1/constellation/get/list') || [])
                 this.PageSettings.status = 0
                 this.SelectOGFromList(undefined)
               }
@@ -183,7 +183,7 @@ import DefaultTable2 from '../DefaultTable2.vue';
     },
     async mounted(){
       this.dataJson = OGList
-      let result = await FetchGet('/api/v1/modelsat/all')
+      let result = await this.$FetchGet('/api/v1/modelsat/all')
       this.KaModels = []
       for (let index = 0; index < result.length; index++) {
         this.KaModels.push({value:result[index].id, lable: result[index].modelName})

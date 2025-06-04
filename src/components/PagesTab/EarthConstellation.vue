@@ -40,7 +40,6 @@
   
   <script>
 
-import {FetchGet, FetchPost} from '../../js/LoadDisplayMetod.js'
 import { PagesSettings } from './PagesSettings';
 import Plotly from 'plotly.js-dist'
 
@@ -64,19 +63,19 @@ import Plotly from 'plotly.js-dist'
             }
             if(commandId == 5){
               this.$showLoad(true);
-              await FetchGet("/api/v1/contact-plan/earth")
+              await this.$FetchGet("/api/v1/contact-plan/earth")
               this.ReFetch()
               this.$showLoad(false);
             }
             if(commandId == 1){
               this.$showLoad(true);
-              await FetchPost('/api/v1/pro42/view/earth', {leaderProcessing: this.PageSettings.mode})
+              await this.$FetchPost('/api/v1/pro42/view/earth', {leaderProcessing: this.PageSettings.mode})
               this.ReFetch()
               this.$showLoad(false);
             }
             if(commandId == 6){
               this.ShowPlotlyContain = true
-              let response = await FetchGet('/api/v1/modelling/data/earth-sat/all') || []
+              let response = await this.$FetchGet('/api/v1/modelling/data/earth-sat/all') || []
               let dataGrapf = {
                 type: 'bar',
                 y: [],
@@ -106,7 +105,10 @@ import Plotly from 'plotly.js-dist'
             }
         },
         async ReFetch(){
-          this.PageSettings.SatNp = await FetchGet('/api/v1/modelling/data/earth-sat/all', false) || []
+          this.PageSettings.SatNp = await this.$FetchGet('/api/v1/modelling/data/earth-sat/all', false) || []
+          if(this.PageSettings.SatNp.length < 1){
+            this.$showToast('Окна видимости не найдены','info', 'КА - НП');
+          }
           this.PageSettings.SatNp = this.PageSettings.SatNp.sort((a, b) => parseFloat(a.begin) - parseFloat(b.begin))
               for (let index = 0; index < this.PageSettings.SatNp.length; index++) {
                 const element = this.PageSettings.SatNp[index]

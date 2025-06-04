@@ -2,9 +2,8 @@
     
     
     <div class="SectionMenu" :class="system.typeWorkplace == -1 ? 'hide' : 'show'">
-      <p class="ModellingTitle">{{ TextTitleModellingName }}</p>
       <div class="HeadersSction">
-        <div class="PanelMenu"><SystemWindow :FillingDataStatus="FillingDataStatuss" :modellingStatus="ExperimentStatus" @updateParentComponent="ChangeComponents" :systemStatus="system" /></div>
+        <div class="PanelMenu"><SystemWindow :modellingStatus="ExperimentStatus" @updateParentComponent="ChangeComponents" :systemStatus="system" /></div>
         <transition name="ComponentModelling" mode="out-in">
           <div class="ModellingDiv PanelMenu">
             <component :is="ComponentModellingList[system.typeWorkplace]" :systemStatus="system" :ExperimentStatus="ExperimentStatus" @ChangeExperimentStatus="ChangeExperimentStatus"></component>  
@@ -16,7 +15,7 @@
           <MapContainer v-if="activeComponent == ''"/>
           <transition name="translate" mode="out-in" v-if="activeComponent != ''">
             <div class="ComponentSelect">
-              <component :is="activeComponent" :FillingDataStatus="FillingDataStatuss" :modellingStatus="ExperimentStatus" @updateParentComponent="ChangeComponents" :systemStatus="system" ></component> 
+              <component :is="activeComponent" :modellingStatus="ExperimentStatus" @updateParentComponent="ChangeComponents" :systemStatus="system" ></component> 
             </div>
           </transition>
         </div>
@@ -46,14 +45,14 @@
           <div class="ButtonSection second" v-if="system.typeWorkplace in {3:null}">
             <h1>Связь</h1>
             <div class="ButtonList">
-              <button class="buttonType1" :class="activeComponent=='EarthConstellation'? 'select':''" :disabled="!FillingDataStatus" @click="SelectComponent('EarthConstellation')"><span>КА - НП</span></button>
-              <button class="buttonType1" :class="activeComponent=='LeaderConstellationConstellation'? 'select':''" :disabled="!FillingDataStatus"  @click="SelectComponent('LeaderConstellationConstellation')"><span>КА - КА</span></button>
+              <button class="buttonType1" :class="activeComponent=='EarthConstellation'? 'select':''" @click="SelectComponent('EarthConstellation')"><span>КА - НП</span></button>
+              <button class="buttonType1" :class="activeComponent=='LeaderConstellationConstellation'? 'select':''"  @click="SelectComponent('LeaderConstellationConstellation')"><span>КА - КА</span></button>
             </div>
           </div>
           <div class="ButtonSection third" >
             <h1>Исходные данные</h1>
             <div class="ButtonList">
-              <button class="buttonType1" :class="activeComponent=='TargetDZZ'? 'select':''" :disabled="!FillingDataStatus" @click="SelectComponent('TargetDZZ')"><span>Заявки</span></button>
+              <button class="buttonType1" :class="activeComponent=='TargetDZZ'? 'select':''" @click="SelectComponent('TargetDZZ')"><span>Заявки</span></button>
             </div>
           </div>        
         </div>
@@ -63,9 +62,8 @@
 </template>
 
 <script>
-import { saveAs } from 'file-saver';
-import {FetchGet, FetchPost,  FetchPostFile} from '../js/LoadDisplayMetod'
-import { NPList, OGList, SystemObject } from '@/js/GlobalData';
+import { FetchPost} from '../js/LoadDisplayMetod'
+import { SystemObject } from '@/js/GlobalData';
 
 import KA1 from './KA/KA1.vue';
 import KAGordeev from "./KA/KAGordeev.vue";
@@ -100,15 +98,13 @@ export default {
   data(){
       return{
         activeComponent: "",
-        TextTitleModellingName: '',
-        FillingDataStatus: 0,
         system: {typeWorkplace: -1},
         ExperimentStatus: false,
         ComponentModellingList: [null,"KA1","KAGordeev","KAPavlov",null]
     }
   },
   methods: {
-    SelectComponent(nameComponent) {
+      SelectComponent(nameComponent) {
         if(this.activeComponent == nameComponent){
           this.activeComponent = ''
           return
@@ -122,7 +118,6 @@ export default {
       ChangeComponents() {
         this.activeComponent = ''
         this.system = SystemObject
-        this.ChengeFillingDataStatus()
       },
       async GetDataToModule(moduleL){
         
@@ -132,85 +127,10 @@ export default {
         this.$showToast('На данный момент лучше перезагружать сайт после этого запроса','info', 'В разработке');
         this.$showLoad(false);
       },
-      async SaveWorkplace(){
-        this.$showLoad(true);
-        let dataLoad = {}
-        dataLoad.modelSat = await FetchGet('/api/v1/modelsat/all')
-        let result = NPList
-        for (let index = 0; index < result.length; index++) {
-          let new_data = result[index];
-          new_data.id = undefined
-          new_data.idNode = undefined
-          result[index] = new_data
-        }
-        dataLoad.earth = result
-        result = await FetchGet('/api/v1/system/get')
-        result.systemId = undefined
-        dataLoad.system = result
-
-        result = OGList
-        for (let index = 0; index < result.length; index++) {
-          const element = result[index];
-          element.id = undefined
-          for (let jindex = 0; jindex < element.satellites.length; jindex++) {
-            const j_element = element.satellites[jindex];
-            j_element.idNode = undefined
-            j_element.satelliteId = undefined
-            element.satellites[jindex] = j_element
-          }
-          result[index] = element 
-        }
-        dataLoad.constellation = result
-
-        result = await FetchGet('/api/v1/satrequest/catalog/get/all') || []
-        for (let index = 0; index < result.length; index++) {
-          const element = result[index];
-          element.goalId = undefined
-          result[index] = element
-        }
-        dataLoad.catalog = result
-
-        dataLoad.satRequestData = await FetchGet('/api/v1/satrequest/data/get/all') || []
-
-        result = await FetchGet('/api/v1/satrequest/request/get/all') || []
-        for (let index = 0; index < result.length; index++) {
-          const element = result[index];
-          element.orderId = undefined
-          element.requestId = undefined
-          element.deleted = undefined
-          result[index] = element
-        }
-        dataLoad.request = result
-
-        var fileName = 'myData.json';
-        var fileToSave = new Blob([JSON.stringify(dataLoad, null, 2)], {
-            type: 'application/json'
-        });
-        saveAs(fileToSave, fileName);
-        this.$showLoad(false);
-      },
-      async LoadFile(data){
-        if (data.target.files[0]) {
-          var file = data.target.files[0];
-          const formData = new FormData();
-          formData.append('file', file);
-          await FetchPostFile("/api/v1/workplace/upload/file", formData)
-        }
-      },
-      ChengeFillingDataStatus(){
-        this.TextTitleModellingName = localStorage.getItem('modname')
-      if(this.system.constellationStatus && this.system.earthStatus){
-        this.FillingDataStatus = 1
-      }
-      else{
-        this.FillingDataStatus = 0
-      }
-    },
     },
     
     created(){
-      this.system = SystemObject
-      this.ChengeFillingDataStatus()
+      this.ChangeComponents()
     },
 }
 
@@ -225,6 +145,8 @@ export default {
     }
 .SectionMenu{
   align-items: normal !important;
+  top: 40px !important;
+  height: calc(100% - 40px) !important;
   .ModellingDiv{
     height: calc(100% - 46px) !important;
     flex: 1;
@@ -344,6 +266,9 @@ export default {
       }
     }
   }
+}
+.PanelMenu{
+  animation: 1s ease-out 0s 1 slideInFromTop;
 }
 
 .HeadersSction{

@@ -23,7 +23,6 @@
   
 <script>
 
-import {FetchGet } from '@/js/LoadDisplayMetod';
 import DefaultTable from '../DefaultTable.vue';
 
 import { KaSettings } from './KaSettings';
@@ -58,32 +57,35 @@ import { KaSettings } from './KaSettings';
       },
       async StartModelling(){
         this.$showLoad(true);
-        this.modellingRezult.data = await FetchGet("/api/v1/route", true, "Расчёт Route окончен") || []
+        this.modellingRezult.data = await this.$FetchGet("/api/v1/route", true, "Расчёт Route окончен") || []
         this.ShootingData = []
         this.$showLoad(false);
       },
       async GetRezultGordeev(){
-        this.modellingRezult.data = await FetchGet("/api/v1/route/all") || []
+        this.modellingRezult.data = await this.$FetchGet("/api/v1/route/all") || []
         this.ShootingData = []
       },
       ShowRezult(){
         this.dataTable = []
         this.dataLableName = [
-          {lable: "Цель", nameParam: "namePoint"},
-          {lable: "Целевая функция", nameParam: "prod"},
-          {lable: "Время перенацеливания", nameParam: "tau"},
-          {lable: "Начало разворота", nameParam: "timeStart"},
-          {lable: "Конец разворота", nameParam: "timeEnd"},
-          {lable: "Долгота Цели", nameParam: "L"},
-          {lable: "Широта цели", nameParam: "B"},
-          {lable: "Тангаж", nameParam: "deltaL"},
-          {lable: "Крен", nameParam: "deltaB"},
-          {lable: "Зона видимости цели", nameParam: "zoneVisio"},
-          {lable: "rootSatellite", nameParam: "rootSatellite"},
+          {lable: "Цель", nameParam: "targetName"},
+          {lable: "КА", nameParam: "nodeName"},
+          {lable: "Начало видимости", nameParam: "zoneVisio"},
+          {lable: "Окончание видимости", nameParam: "id"},
+          {lable: "Разворот", nameParam: "transition"},
+          {lable: "Начало съёмки", nameParam: "id"},
+          {lable: "Окончаниие съёмки", nameParam: "id"},
+          {lable: "Тангаж", nameParam: "pitch"},
+          {lable: "Крен", nameParam: "roll"}
         ]
         let dataT = this.modellingRezult.data
         for (let index = 0; index < dataT.length; index++) {
           const element = dataT[index];
+          element.roll = Math.floor(element.deltaB*1000)/1000
+          element.pitch = Math.floor(element.deltaL*1000)/1000
+          element.targetName = element.namePoint
+          element.nodeName = element.rootSatellite
+          element.transition = 0
           this.dataTable.push(element) 
         }
         this.ShowDefaultTable = true

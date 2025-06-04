@@ -26,7 +26,6 @@
 <script>
 
 import { UnixToDtime } from '@/js/WorkWithDTime';
-import { FetchGet, FetchPost } from '@/js/LoadDisplayMetod';
 import DefaultTable from '@/components/DefaultTable.vue'
 import ShootingPlan from './ShootingPlan.vue';
 
@@ -98,9 +97,9 @@ import { NPList, OGList } from '@/js/GlobalData';
         dataPost.optionPro42 = Number(dataPost.optionPro42)
         let rezult = {}
         if(this.systemStatus.typeWorkplace in {3:null,4:null}){
-          rezult = await FetchPost("/api/v1/smao", dataPost) || {engineLogResponse: []}
+          rezult = await this.$FetchPost("/api/v1/smao", dataPost) || {engineLogResponse: []}
         }
-        else rezult = await FetchPost('/api/v1/smao', dataPost) || {engineLogResponse: []}
+        else rezult = await this.$FetchPost('/api/v1/smao', dataPost) || {engineLogResponse: []}
         if(rezult.engineLogResponse.length > 0){
           this.dataModelling = rezult
           this.ParceModellingRezult()
@@ -121,7 +120,7 @@ import { NPList, OGList } from '@/js/GlobalData';
         try{this.modellingRezult.Smao.push(this.dataModelling.smaoLogResponse)} //лог движка 
           catch (error) {console.error(error)}
         try {//лог событий
-          let events = await FetchGet('/api/v1/event/codes/all') || []
+          let events = await this.$FetchGet('/api/v1/event/codes/all') || []
           let dataevents = {}
           events.forEach(element => dataevents[element.codeEvent]=element.descriptionEvent)
           this.dataModelling.logResponse.logDataArray.forEach(element => {
@@ -156,10 +155,10 @@ import { NPList, OGList } from '@/js/GlobalData';
               let oneE77 = {idSender:  element.idSender, data: []}
               for (let index = 0; index < element.visualFormsData.visualFormsDataShooting.length; index++) {
                 const e = Object.assign({}, element.visualFormsData.visualFormsDataShooting[index]);
-                e.wsUnix = UnixToDtime(e.ws).time
-                e.weUnix = UnixToDtime(e.we).time
-                e.tsUnix = UnixToDtime(e.ts).time
-                e.teUnix = UnixToDtime(e.te).time
+                e.wsUnix = UnixToDtime(Math.floor(e.ws)).time
+                e.weUnix = UnixToDtime(Math.floor(e.we)).time
+                e.tsUnix = UnixToDtime(Math.floor(e.ts)).time
+                e.teUnix = UnixToDtime(Math.floor(e.te)).time
                 e.pitch =  Math.round(e.pitch * 100) / 100
                 e.roll =  Math.round(e.roll * 100) / 100
                 oneE77.data.push(e)
@@ -246,7 +245,7 @@ import { NPList, OGList } from '@/js/GlobalData';
       async ReLoadComponent(){
         this.earthList = NPList
         this.ConstellationJson = OGList
-        let result = await FetchGet('/api/v1/satrequest/request/get/all') || []
+        let result = await this.$FetchGet('/api/v1/satrequest/request/get/all') || []
         this.purposesJson = result.length
         this.arr = []
         for (let i = 0; i < this.ConstellationJson.length; i++) {

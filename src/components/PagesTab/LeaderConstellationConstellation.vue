@@ -15,7 +15,7 @@
             </div>
         </div>
         <div class="Panel RightPanel">
-          <div v-if="PageSettings.status == 1">
+          <div v-if="PageSettings.status == 1" class="TableDiv" style="max-height: 60vh">
             <table class="TableDefault">
             <thead><tr><th>КА</th><th>Видимый КА</th><th>Начало</th><th>Конец</th></tr></thead>
               <tbody><tr v-for="data, index in PageSettings.SatSat" :key="index">
@@ -33,7 +33,6 @@
   
   <script>
 
-import {FetchGet, FetchPost} from '../../js/LoadDisplayMetod.js'
 import { PagesSettings } from './PagesSettings.js';
 import Plotly from 'plotly.js-dist'
 
@@ -66,7 +65,7 @@ import Plotly from 'plotly.js-dist'
               "endTime": null,
               "deleted": null
             })
-            await FetchPost('/api/v1/topology/update', this.clusterTopology, null)
+            await this.$FetchPost('/api/v1/topology/update', this.clusterTopology, null)
             this.ReFetch()
             break;
           case 'network':
@@ -75,7 +74,7 @@ import Plotly from 'plotly.js-dist'
                 "endTime": 10002000,
                 "deleted": null
               })
-            await FetchPost('/api/v1/network/update', this.networkClaster, null)
+            await this.$FetchPost('/api/v1/network/update', this.networkClaster, null)
             this.ReFetch()
           
             break;
@@ -96,13 +95,13 @@ import Plotly from 'plotly.js-dist'
                 break;
               case 1:
                 document.getElementById("plotlymapContain1").innerHTML=''
-                if(this.PageSettings.mode) await FetchPost('/api/v1/cluster/pro42',this.experimentObject, null)
-                else await FetchGet('/api/v1/pro42/view/sat', null)
+                if(this.PageSettings.mode) await this.$FetchPost('/api/v1/cluster/pro42',this.experimentObject, null)
+                else await this.$FetchGet('/api/v1/pro42/view/sat', null)
                 await this.ReFetch()
                 break;
               case 2:
                 document.getElementById("plotlymapContain1").innerHTML=''
-                await FetchGet('/api/v1/contact-plan/sat')
+                await this.$FetchGet('/api/v1/contact-plan/sat')
                 await this.ReFetch()
                 this.PageSettings.status = 1
                 break;
@@ -164,12 +163,12 @@ import Plotly from 'plotly.js-dist'
             this.$showLoad(false);
         },
         async ReFetch(){
-          if(this.PageSettings.mode) this.clusterTopology = await FetchGet("/api/v1/topology/all") || []
-          if(this.PageSettings.mode) this.networkClaster = await FetchGet("/api/v1/network/all") || []
+          if(this.PageSettings.mode) this.clusterTopology = await this.$FetchGet("/api/v1/topology/all") || []
+          if(this.PageSettings.mode) this.networkClaster = await this.$FetchGet("/api/v1/network/all") || []
           this.PageSettings.SatSat = []
           let response = []
-          if(this.PageSettings.mode) response = await FetchGet('/api/v1/cluster/all',false) || []
-          else response = await FetchGet('/api/v1/modelling/data/sat-sat/all',false) || []
+          if(this.PageSettings.mode) response = await this.$FetchGet('/api/v1/cluster/all',false) || []
+          else response = await this.$FetchGet('/api/v1/modelling/data/sat-sat/all',false) || []
             if(response.length < 1){
               return
             }
@@ -183,8 +182,8 @@ import Plotly from 'plotly.js-dist'
     },
     async mounted() {
       this.ReFetch()
-      let rezult = await FetchGet("/api/v1/constellation/cl/all") || []
-      this.PageSettings.SatNp = await FetchGet('/api/v1/modelling/data/earth-sat/all', false) || []
+      let rezult = await this.$FetchGet("/api/v1/constellation/cl/all") || []
+      this.PageSettings.SatNp = await this.$FetchGet('/api/v1/modelling/data/earth-sat/all', false) || []
       
       this.lessConstellation = []
       rezult.forEach(element => {

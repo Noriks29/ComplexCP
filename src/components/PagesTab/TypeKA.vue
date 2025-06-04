@@ -22,7 +22,7 @@
           <div v-if="viewPanel == 1">
               <p>Режимы функционирования</p>
               <div>
-                  <div>
+                  <div class="TableDiv" style="max-height: 60vh;">
                     <table class="TableDefault">
                       <thead><tr><th>Код</th><th>Режим полёта</th><th>Режим функционирования</th><th>Метод</th><th>К</th><th></th></tr></thead>
                       <tbody v-for="data, index in SelectKA.value.modes" :key="index">
@@ -38,7 +38,7 @@
                     </table>
                   </div>
                   <p>Правила выбора режима полета, если интервалы времени пересекаются</p>
-                  <div>
+                  <div class="TableDiv" style="max-height: 60vh;">
                     <table class="TableDefault">
                       <thead><tr><th>Пересечение режимов</th><th>Выполняется</th></tr></thead>
                       <tbody><tr><th>A и B</th><td>выбор 1</td></tr>
@@ -51,6 +51,7 @@
 
           <div v-if="viewPanel == 2">
               <p>Каталог устройств</p>
+              <div class="TableDiv" style="max-height: 60vh;">
               <table class="TableDefault">
                 <thead><tr><th style="width: 0px;">Использовать</th><th>Прибор</th><th></th></tr></thead>
                 <tbody><tr v-for="data,index in SelectKA.value.devCatalogs" :key="index" :id="data.id">
@@ -62,8 +63,10 @@
                   <td colspan="3"><button @click="AddRow('devCatalogs')"><img src="../../assets/add.png" alt="" class="addButtonIcon">Добавить</button></td>
                 </tr></tbody>
               </table>
-
+              </div>
+              
               <p>Устройства</p>
+              <div class="TableDiv" style="max-height: 60vh;">
               <table class="TableDefault"><thead>
                 <tr><th>Прибор</th><th style="width: 0px;">Свойство</th><th></th></tr></thead>
                 <tbody><tr v-for="data,index in SelectKA.value.devices" :key="index" :id="data.id">
@@ -73,16 +76,17 @@
                   <td @click="DeleteRow(index, 'devices')" class="delete"><img class="iconDelete" src="../../assets/delete.svg" alt="-"></td>
                 </tr></tbody>
               </table>
+              </div>
           </div>
           <div v-if="viewPanel == 3">
-              <p>Потребление энергии устройствами </p>
-              <div>
-                <table class="TableDefault" id="TableChargeKA"><tbody>
+              <div class="TableDiv" style="max-height: 60vh;">
+                <table class="TableDefault" id="TableChargeKA"><thead>
                   <tr>
                     <th rowspan="2">Прибор</th>
                     <th v-for="data, index in SelectKA.modesList" :key="index">{{ data.mode }}</th>
                   </tr>
                   <tr><th v-for="data, index in SelectKA.value.modes" :key="index" :colspan="data.operatingModes.length">{{ data.flightMode }}</th></tr>
+                  </thead><tbody>
                   <tr v-for="data, index in SelectKA.value.devices" :key="index" :id="data.devCatalog.id">
                     <td>{{ data.devCatalog.nameDevice }}</td>
                     <td v-for="dataMode, indexMode in SelectKA.modesList" :key="indexMode">
@@ -93,8 +97,7 @@
               </div>
           </div>
           <div v-if="viewPanel == 4">
-              <p>Параметры функционирования</p>
-              <div>
+              <div class="TableDiv" style="max-height: 60vh;">
                   <table class="TableDefault" @change="ChangeParamKa">
                     <tbody>
                       <tr><th colspan="3">Параметры разворота</th></tr>
@@ -139,7 +142,6 @@
 </template>
 
 <script>
-import { FetchGet, FetchPost } from "@/js/LoadDisplayMetod";
 import SelectDiv from '../SelectDiv.vue';
 import { PagesSettings } from './PagesSettings.js';
 
@@ -164,7 +166,7 @@ export default {
   methods:{
       async ChangeKA(data){
           if(data.value == "add"){
-            await FetchGet("/api/v1/modelsat/add")
+            await this.$FetchGet("/api/v1/modelsat/add")
             this.ReFerchKA(undefined)
           }
           else{
@@ -183,20 +185,20 @@ export default {
         console.log(event)
         switch (category) {
           case 'property':
-              await FetchPost("/api/v1/modelsat/update/devices", this.SelectKA.value.devices)
+              await this.$FetchPost("/api/v1/modelsat/update/devices", this.SelectKA.value.devices)
             break;
           case 'devCatalogs':
-              await FetchPost("/api/v1/modelsat/update/devCatalog", this.SelectKA.value.devCatalogs)
+              await this.$FetchPost("/api/v1/modelsat/update/devCatalog", this.SelectKA.value.devCatalogs)
             break;
           case 'modes':
-              await FetchPost("/api/v1/modelsat/update/modes", this.SelectKA.value.modes)
+              await this.$FetchPost("/api/v1/modelsat/update/modes", this.SelectKA.value.modes)
             break;
           case 'charge':
               for (let i = 0; i < this.SelectKA.value.charges.length; i++) {
                 const chargeKa = this.SelectKA.value.charges[i];
                 if(chargeKa.flightModeId == event.target.id && chargeKa.deviceId == parentIndex){
                   chargeKa.charge = event.target.value
-                  await FetchPost("/api/v1/modelsat/update/charges", [chargeKa])
+                  await this.$FetchPost("/api/v1/modelsat/update/charges", [chargeKa])
                   break
                 }
               }
@@ -210,15 +212,15 @@ export default {
         switch (category) {
           case "devCatalogs":
             this.SelectKA.value.devCatalogs.push({"nameDevice": "null","modelId": this.SelectKA.value.id})
-            await FetchPost("/api/v1/modelsat/update/devCatalog", this.SelectKA.value.devCatalogs)
+            await this.$FetchPost("/api/v1/modelsat/update/devCatalog", this.SelectKA.value.devCatalogs)
             break;
           case "devices":
             this.SelectKA.value.devices.push({"devCatalog": data,"modelId": this.SelectKA.value.id,"property": 0})
-            await FetchPost("/api/v1/modelsat/update/devices", this.SelectKA.value.devices)
+            await this.$FetchPost("/api/v1/modelsat/update/devices", this.SelectKA.value.devices)
             break;
           case 'modes':
             this.SelectKA.value.modes[data].operatingModes.push({"coefficient": 1,"method": 1,"mode": "null"})
-            await FetchPost("/api/v1/modelsat/update/modes", this.SelectKA.value.modes)
+            await this.$FetchPost("/api/v1/modelsat/update/modes", this.SelectKA.value.modes)
             break;
           default:
             break;
@@ -229,15 +231,15 @@ export default {
         switch (category) {
           case "devCatalogs":
             this.SelectKA.value.devCatalogs[index].deleted = true
-            await FetchPost("/api/v1/modelsat/update/devCatalog", this.SelectKA.value.devCatalogs)
+            await this.$FetchPost("/api/v1/modelsat/update/devCatalog", this.SelectKA.value.devCatalogs)
             break;
           case 'devices':
             this.SelectKA.value.devices[index].deleted = true
-            await FetchPost("/api/v1/modelsat/update/devices", this.SelectKA.value.devices)
+            await this.$FetchPost("/api/v1/modelsat/update/devices", this.SelectKA.value.devices)
             break;
           case 'modes':
             this.SelectKA.value.modes[parentIndex].operatingModes[index].deleted = true
-            await FetchPost("/api/v1/modelsat/update/modes", this.SelectKA.value.modes)
+            await this.$FetchPost("/api/v1/modelsat/update/modes", this.SelectKA.value.modes)
             break;
           default:
             break;
@@ -245,10 +247,10 @@ export default {
         await this.ReFerchKA(this.SelectKA.value.id)
       },
       async ChangeParamKa(){
-        await FetchPost("/api/v1/modelsat/update/parameters", this.SelectKA.value.operatingParameter)
+        await this.$FetchPost("/api/v1/modelsat/update/parameters", this.SelectKA.value.operatingParameter)
       },
       async ReFerchKA(index){
-        let result = await FetchGet('/api/v1/modelsat/all')
+        let result = await this.$FetchGet('/api/v1/modelsat/all')
         this.KatypeList = []
         result.forEach(element => {this.KatypeList.push({lable: element.modelName, value: element})})
         this.KatypeList.push({lable:"Добавить модель", value: "add"})

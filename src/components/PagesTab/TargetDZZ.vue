@@ -16,7 +16,7 @@
             </div>
         </div>
         <div class="Panel RightPanel" >
-          <div v-if="viewmode == 0">
+          <div v-if="viewmode == 0" class="TableDiv" style="max-height: 60vh; min-height: 60vh;">
             <table class="TableDefault">
               <thead><tr><th>Цель</th><th>Широта</th><th>Долгота</th><th>Высота</th><th>НП</th><th>Критерий</th><th>Приоритет</th><th>Время появления</th><th>Срок выполнения</th><th v-if="systemStatus.typeWorkplace in {3:null,4:null}">Признак</th><th></th></tr></thead>
               <tbody><tr
@@ -42,7 +42,7 @@
             </tbody></table>
           </div>
 
-          <div v-if="viewmode == 1">
+          <div v-if="viewmode == 1" class="TableDiv" style="max-height: 60vh; min-height: 60vh;">
           <table class="TableDefault">
           <thead><tr><th>Цель</th><th>Заявки</th><th>Широта</th><th>Долгота</th><th>Высота</th><th></th></tr></thead>
           <tbody><tr v-for="data, index in catalogJson"
@@ -61,7 +61,7 @@
             </tr> 
           </tbody></table>
         </div>
-        <div v-if="viewmode == 2" class="TableDiv" style="max-height: 85vh; min-height: 80%;">
+        <div v-if="viewmode == 2" class="TableDiv" style="max-height: 60vh; min-height: 60vh;">
           <table class="TableDefault">
             <thead><tr><th>Имя</th><th>МКА</th><th>Объём, Мбайт</th><th>Приоритет</th><th>Время появления</th><th></th></tr></thead>
             <tbody><tr v-for="data, index in datarequest"
@@ -90,7 +90,6 @@
   
   <script>
 
-import {FetchGet, FetchPost} from '../../js/LoadDisplayMetod.js'
 import { PagesSettings } from './PagesSettings';
 import { OGList, NPList } from '@/js/GlobalData.js';
 import SelectDiv from '../SelectDiv.vue'
@@ -141,10 +140,10 @@ import XLSX from 'xlsx-js-style';
       },
       async GetRequestFromDB(mode){
         if(mode == 1){
-          await FetchGet('/api/v1/smao/requests')
+          await this.$FetchGet('/api/v1/smao/requests')
         }
         else if(mode==2){
-          await FetchGet('/api/v1/route/requests')
+          await this.$FetchGet('/api/v1/route/requests')
         }
         await this.ReFetch()
       },
@@ -233,19 +232,19 @@ import XLSX from 'xlsx-js-style';
               this.SatartSave('catalog')
           },
       async SatartSave(target){
-        if(target == 'catalog'){await FetchPost("/api/v1/satrequest/catalog/update", this.catalogJson)}
-        if(target == 'request'){await FetchPost("/api/v1/satrequest/request/update", this.requestJson)}
-        if(target == 'datarequest'){await FetchPost("/api/v1/satrequest/data/update", this.datarequest)}
+        if(target == 'catalog'){await this.$FetchPost("/api/v1/satrequest/catalog/update", this.catalogJson)}
+        if(target == 'request'){await this.$FetchPost("/api/v1/satrequest/request/update", this.requestJson)}
+        if(target == 'datarequest'){await this.$FetchPost("/api/v1/satrequest/data/update", this.datarequest)}
         await this.ReFetch()
       },
       
       async ReFetch(){
-        this.datarequest = await FetchGet('/api/v1/satrequest/data/get/all') || []
-        this.catalogJson = await FetchGet('/api/v1/satrequest/catalog/get/all') || []
+        this.datarequest = await this.$FetchGet('/api/v1/satrequest/data/get/all') || []
+        this.catalogJson = await this.$FetchGet('/api/v1/satrequest/catalog/get/all') || []
         for (let index = 0; index < this.catalogJson.length; index++) {
           this.catalogJson[index].countRequest = 0;
         }
-        this.requestJson = await FetchGet('/api/v1/satrequest/request/get/all') || []
+        this.requestJson = await this.$FetchGet('/api/v1/satrequest/request/get/all') || []
         for (let index = 0; index < this.requestJson.length; index++) {
           const element = this.requestJson[index].catalog.goalId
           for (let indexii = 0; indexii < this.catalogJson.length; indexii++) {
