@@ -30,7 +30,6 @@ import DefaultTable from '@/components/DefaultTable.vue'
 import ShootingPlan from './ShootingPlan.vue';
 
 import { KaSettings } from './KaSettings';
-import { NPList, OGList } from '@/js/GlobalData';
 
 
   export default {
@@ -39,8 +38,6 @@ import { NPList, OGList } from '@/js/GlobalData';
     data(){
       return{
         purposesJson: 0, //колличество заявок
-        OGList: [], // подгружаем импорты
-        NPList: [], // подгружаем импорты
         ConstellationJson: [], //список ог
         ShowTable: null, //переменная для отображения таблиц
         PreWrapDefaultTable: false,
@@ -243,8 +240,8 @@ import { NPList, OGList } from '@/js/GlobalData';
         this.ShowTable='DefaultTable'
       },
       async ReLoadComponent(){
-        this.earthList = NPList
-        this.ConstellationJson = OGList
+        this.earthList = await this.$NPList()
+        this.ConstellationJson = await this.$OGList()
         let result = await this.$FetchGet('/api/v1/satrequest/request/get/all') || []
         this.purposesJson = result.length
         this.arr = []

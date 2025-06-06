@@ -17,7 +17,6 @@
   <script>
 import DateTime from '../DateTime.vue';
 import { PagesSettings } from './PagesSettings';
-import { SystemObject, ChangeSystemObject } from '@/js/GlobalData';
 import { CreateDateTime } from '@/js/WorkWithDTime';
   export default {
     name: 'SystemWindow',
@@ -36,16 +35,16 @@ import { CreateDateTime } from '@/js/WorkWithDTime';
       },
       ChangeTime(obgTime){
         if(obgTime.id == 'modelingBegin'){
-          ChangeSystemObject('startTime', obgTime.time)
+          this.$ChangeSystemObject('startTime', obgTime.time)
         }
-        ChangeSystemObject(obgTime.id, obgTime.time)
+        this.$ChangeSystemObject(obgTime.id, obgTime.time)
       },
       ChangeParam(target){
-        ChangeSystemObject('step',  Math.floor(target.target.value))
+        this.$ChangeSystemObject('step',  Math.floor(target.target.value))
       },
     },
-    created(){
-      this.dataSystem = SystemObject
+    async created(){
+      this.dataSystem = await this.$SystemObject()
     },
   }
   </script>

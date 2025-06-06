@@ -11,7 +11,7 @@
             <tbody>
               <tr>
                 <td><button class="ButtonCommand LIghtPoint" @click="ShowRezult" :class="(modellingRezult.data.length < 1) ? 'disable' : ''">План съёмок</button></td>
-                <button @click="console.log" :class="(true) ? 'disable' : ''" class="ButtonCommand icon"><img src="../../assets/instructions.png" alt="smaoResponse"></button>
+                <td><button @click="console.log" :class="(true) ? 'disable' : ''" class="ButtonCommand icon"><img src="../../assets/instructions.png" alt="smaoResponse"></button></td>
               </tr>
               </tbody>
             </table>

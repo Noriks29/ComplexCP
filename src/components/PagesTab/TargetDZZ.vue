@@ -91,7 +91,6 @@
   <script>
 
 import { PagesSettings } from './PagesSettings';
-import { OGList, NPList } from '@/js/GlobalData.js';
 import SelectDiv from '../SelectDiv.vue'
 import DateTime from '../DateTime.vue';
 import XLSX from 'xlsx-js-style';
@@ -316,11 +315,13 @@ import XLSX from 'xlsx-js-style';
       if(this.systemStatus.typeWorkplace in {3:null}){
         this.viewmode = 2
       }
+      let NPList = await this.$NPList()
       NPList.forEach(element => {
         this.arrNP.push({value: element, lable: element.nameEarthPoint })
       })
       await this.ReFetch()
       this.datarequestКАList = []
+      let OGList = await this.$OGList()
       OGList.forEach(OG => {
         OG.satellites.forEach(element =>{
           this.datarequestКАList.push({value: element.satelliteId, lable: element.name })

@@ -10,8 +10,6 @@
             <div class="FlexColumn">
               <div><button @click="CommandWork(1)" class="ButtonCommand">Рассчитать окна видимости</button></div>
               <div><button @click="CommandWork(2)" class="ButtonCommand">Расчёт плана контактов</button></div>
-              <div><button @click="CommandWork(3)" class="ButtonCommand">Показать окна видимости / плана контактов</button></div>
-              <div><button @click="CommandWork(4)" class="ButtonCommand">Графическое представление плана контактов</button></div>
             </div>
         </div>
         <div class="Panel RightPanel">
@@ -23,7 +21,7 @@
               </tr>
             </tbody></table>
           </div>
-          <div id="plotlymapContain1" style="height: 79vh;"></div>
+          <div id="plotlymapContain1" style="height: fit-content;"></div>
           </div>
         </div>
     </div>
@@ -41,9 +39,6 @@ import Plotly from 'plotly.js-dist'
     mixins: [PagesSettings],
     data(){
       return{
-        clusterTopology: [], // топология сети
-        networkClaster: [], //полносвязная сеть
-        lessConstellation: [], // облегчённый список ог для селектора
         PageSettings:{
           mode: false, //лидер / все
           status: 1, //код открытого окна
@@ -51,73 +46,28 @@ import Plotly from 'plotly.js-dist'
           SatSat: [], //список контактов сат-сат
         },
         experimentObject: {angle: 0}, //обьект отправки пост
-        ShowPlotlyContain: false,
       }
     },
     methods: {
-      async AddRow(mode){
-        switch (mode) {
-          case 'clusterTopology':
-            this.clusterTopology.push({
-              "cluster1": this.lessConstellation[0].value,
-              "cluster2": this.lessConstellation[1].value,
-              "beginTime": null,
-              "endTime": null,
-              "deleted": null
-            })
-            await this.$FetchPost('/api/v1/topology/update', this.clusterTopology, null)
-            this.ReFetch()
-            break;
-          case 'network':
-            this.networkClaster.push({
-                "beginTime": 10000000,
-                "endTime": 10002000,
-                "deleted": null
-              })
-            await this.$FetchPost('/api/v1/network/update', this.networkClaster, null)
-            this.ReFetch()
-          
-            break;
-        
-          default:
-            break;
-        }
-      },
-
-
        async CommandWork(commandId){
             this.$showLoad(true);
             let dataPlotly = null
             switch (commandId) {
-              case 0:
-                this.PageSettings.status = 0
-                
-                break;
               case 1:
                 document.getElementById("plotlymapContain1").innerHTML=''
-                if(this.PageSettings.mode) await this.$FetchPost('/api/v1/cluster/pro42',this.experimentObject, null)
-                else await this.$FetchGet('/api/v1/pro42/view/sat', null)
+                await this.$FetchGet('/api/v1/pro42/view/sat', null)
                 await this.ReFetch()
                 break;
               case 2:
                 document.getElementById("plotlymapContain1").innerHTML=''
                 await this.$FetchGet('/api/v1/contact-plan/sat')
                 await this.ReFetch()
-                this.PageSettings.status = 1
-                break;
-
-              case 3:
-                //Таблица сат-сат
-                this.PageSettings.status = 1
-                break;
-              
+                break;   
               case 4:
-                this.PageSettings.status = 4
                 document.getElementById("plotlymapContain1").innerHTML=''
                 if(this.PageSettings.SatSat.length < 1 ) return
                 this.ShowPlotlyContain = true
                 dataPlotly = []
-
                 this.PageSettings.SatSat.forEach(element => {
                   let flagadd = false
                   dataPlotly.forEach(plot => {
@@ -148,27 +98,17 @@ import Plotly from 'plotly.js-dist'
                     })
                   }
                 });
-                console.log(dataPlotly)
-                Plotly.newPlot("plotlymapContain1", dataPlotly, {title: 'Окна видимости', showlegend: false,height:150+(dataPlotly.length*70), margin:{l:150,t:40,b:40,r:10}})
+                Plotly.newPlot("plotlymapContain1", dataPlotly, {title: 'Окна видимости', barmode: 'stack', showlegend: false,height:80+(dataPlotly.length*70), margin:{l:150,t:40,b:40,r:10}})
                 break
-              
-              case 5:
-                this.PageSettings.status = 2
-                document.getElementById("plotlymapContain1").innerHTML=''
-                break;
-            
+
               default:
                 break;
             }
             this.$showLoad(false);
         },
         async ReFetch(){
-          if(this.PageSettings.mode) this.clusterTopology = await this.$FetchGet("/api/v1/topology/all") || []
-          if(this.PageSettings.mode) this.networkClaster = await this.$FetchGet("/api/v1/network/all") || []
           this.PageSettings.SatSat = []
-          let response = []
-          if(this.PageSettings.mode) response = await this.$FetchGet('/api/v1/cluster/all',false) || []
-          else response = await this.$FetchGet('/api/v1/modelling/data/sat-sat/all',false) || []
+          let response = await this.$FetchGet('/api/v1/modelling/data/sat-sat/all',false) || []
             if(response.length < 1){
               return
             }
@@ -178,17 +118,11 @@ import Plotly from 'plotly.js-dist'
               response[index].endUnix = this.CreateDateTime(response[index].end)
             }
           this.PageSettings.SatSat = response
+          this.CommandWork(4)
         }
     },
     async mounted() {
       this.ReFetch()
-      let rezult = await this.$FetchGet("/api/v1/constellation/cl/all") || []
-      this.PageSettings.SatNp = await this.$FetchGet('/api/v1/modelling/data/earth-sat/all', false) || []
-      
-      this.lessConstellation = []
-      rezult.forEach(element => {
-        this.lessConstellation.push({lable: element.constellationName, value: element})
-      })
     }
   }
   </script>

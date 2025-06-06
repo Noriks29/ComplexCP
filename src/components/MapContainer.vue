@@ -11,7 +11,6 @@
 </template>
 
 <script>
-import { NPList, OGList } from '@/js/GlobalData';
 import SelectDiv from './SelectDiv.vue';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -29,7 +28,8 @@ export default {
         KatoDraw: {},
         KAArray: [],
         LastLatLng: {lat: 0, lng:0},
-        requestJson: []
+        requestJson: [],
+        NPList: [],OGList:[]
     }
   },
   components:{
@@ -60,8 +60,7 @@ export default {
                 fillOpacity: 0.4
               }).addTo(this.map)
           }
-          console.log(NPList)
-          NPList.forEach(element => {
+          this.NPList.forEach(element => {
               L.circle([element.latitude, element.longitude], 30000, {
                 color: 'green',
                 fillColor: '#121100',
@@ -136,8 +135,10 @@ export default {
 
     },
     async mounted() {
+      this.NPList = await this.$NPList()
+      this.OGList = await this.$OGList()
       this.KAArray.push({value: null, lable: "Все КА" })
-      OGList.forEach(OG => {
+      this.OGList.forEach(OG => {
         OG.satellites.forEach(element =>{
           this.KAArray.push({value: element, lable: OG.constellationName + "-" + element.name })
         })

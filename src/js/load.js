@@ -1,7 +1,6 @@
 import { ref } from 'vue';
 import LoadProcess from '@/components/LoadProcess.vue';
 import { adress } from './config_server';
-const ShowFetchData = true
 const LoadProcessPlugin = {
   install(app) {
     const LoadComponent = ref(null);
@@ -11,7 +10,7 @@ const LoadProcessPlugin = {
       if (LoadComponent.value && LoadComponent.value.showSuccess) {
         LoadComponent.value.showSuccess(status, title);
       } else {
-        console.error('Error showing success toast');
+        this.$showToast('Ошибка отображения загрузки','error',"LOAD");
       }
     };
     app.config.globalProperties.$FetchGet = async function (http, AlertError = true, massage=null){
@@ -20,23 +19,20 @@ const LoadProcessPlugin = {
             const response = await fetch('http://'+adress+http+'?accessKey='+AcsessKey);
             if (!response.ok) { // для мэссэджей ильяса
                 let rezult = await response.json()
-                if(ShowFetchData) console.log(http,rezult)
                 throw new Error(rezult.MESSAGE);
             }
             else{
                 let rezult = await response.json()
-                if(ShowFetchData) console.log(http, rezult)
-                if(massage != null) alert(massage)
+                if(massage != null) this.$showToast(massage,'success',"Запрос выполнен");
                 return rezult;
             }
         } catch (error) {
-            console.log('Error during fetch:', error);
-            if(AlertError) alert("Ошибка запроса, дальнейшая работа может быть некорректной!" + error)
+            console.error('Error during fetch:', error);
+            if(AlertError) this.$showToast(error,'error',"Запрос не выполнен");
             return undefined
         }
     }
     app.config.globalProperties.$FetchPost = async function (http,datapost,dopparamhttp, AlertError = true, massage=null){
-        if(ShowFetchData) console.log(JSON.stringify(datapost))
         let AcsessKey = localStorage.data
         if(dopparamhttp != undefined){
             AcsessKey = AcsessKey +"&"+dopparamhttp
@@ -51,18 +47,16 @@ const LoadProcessPlugin = {
             })
             if (!response.ok) {
                 let rezult = await response.json()
-                if(ShowFetchData) console.log(http,rezult)
                 throw new Error(rezult.MESSAGE);
             }
             else{
                 let rezult = await response.json()
-                if(ShowFetchData) console.log(http, rezult)
-                if(massage != null) alert(massage)
+                if(massage != null) this.$showToast(massage,'success',"Запрос выполнен");
                 return rezult;
             }
             } catch (error) {
-                console.log('Error save:', error);
-                if(AlertError) alert("ОШИБКА ОТПРАВКИ  " + error)
+                console.error('Error save:', error);
+                if(AlertError) this.$showToast(error,'error',"Запрос не выполнен");
                 return undefined;
             }
     }

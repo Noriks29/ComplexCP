@@ -1,65 +1,6 @@
 import { adress  } from "./config_server";
 const ShowFetchData = true
 
-async function FetchGet(http, AlertError = true, massage=null){
-    let AcsessKey = localStorage.data
-    let add = adress
-    try {
-        const response = await fetch('http://'+add+http+'?accessKey='+AcsessKey);
-        if (!response.ok) {
-            let rezult = await response.json()
-            if(ShowFetchData) console.log(http,rezult)
-            throw new Error(rezult.MESSAGE);
-        }
-        else{
-            let rezult = await response.json()
-            if(ShowFetchData) console.log(http, rezult)
-            if(massage != null) alert(massage)
-            return rezult;
-        }
-    } catch (error) {
-        console.log('Error during fetch:', error);
-        if(AlertError) alert("Ошибка запроса, дальнейшая работа может быть некорректной!" + error)
-        //if(AlertError) this.$showToast(error,'error', 'TestTitle');
-        return undefined
-    }
-
-}
-
-async function FetchPost(http,datapost,dopparamhttp, AlertError = true, massage=null){
-    if(ShowFetchData) console.log(JSON.stringify(datapost))
-    let AcsessKey = localStorage.data
-    let add = adress
-    if(dopparamhttp != undefined){
-        AcsessKey = AcsessKey +"&"+dopparamhttp
-    }
-    try {
-        const response = await fetch('http://'+add+http+'?accessKey='+AcsessKey,{
-          method:  'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(datapost)
-        })
-        if (!response.ok) {
-            let rezult = await response.json()
-            if(ShowFetchData) console.log(http,rezult)
-            throw new Error(rezult.MESSAGE);
-        }
-        else{
-            let rezult = await response.json()
-            if(ShowFetchData) console.log(http, rezult)
-            if(massage != null) alert(massage)
-            return rezult;
-        }
-        } catch (error) {
-            console.log('Error save:', error);
-            if(AlertError) alert("ОШИБКА ОТПРАВКИ  " + error)
-            //if(AlertError) this.$showToast(error,'error', 'ОШИБКА ОТПРАВКИ');
-            return undefined;
-        }
-}
-
 
 async function FetchPostFile(http,formData){
     //DisplayLoad(true)
@@ -94,7 +35,5 @@ async function FetchPostFile(http,formData){
 
 
 export{
-    FetchGet,
-    FetchPost,
     FetchPostFile
 }

@@ -62,8 +62,6 @@
 </template>
 
 <script>
-import { FetchPost} from '../js/LoadDisplayMetod'
-import { SystemObject } from '@/js/GlobalData';
 
 import KA1 from './KA/KA1.vue';
 import KAGordeev from "./KA/KAGordeev.vue";
@@ -115,14 +113,14 @@ export default {
         this.ExperimentStatus = status.status
         this.$emit('changeExperimentStatus', this.ExperimentStatus)
       },
-      ChangeComponents() {
+      async ChangeComponents() {
         this.activeComponent = ''
-        this.system = SystemObject
+        this.system = await this.$SystemObject()
       },
       async GetDataToModule(moduleL){
         
         this.$showLoad(true);
-        await FetchPost('/api/v1/workplace/replace', moduleL)
+        await this.$FetchPost('/api/v1/workplace/replace', moduleL)
         alert("На данный момент лучше перезагружать сайт после этого запроса")
         this.$showToast('На данный момент лучше перезагружать сайт после этого запроса','info', 'В разработке');
         this.$showLoad(false);

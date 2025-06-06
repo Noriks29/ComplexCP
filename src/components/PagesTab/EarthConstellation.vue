@@ -9,14 +9,12 @@
       <div class="Panel LeftPanel">
         <div class="FlexColumn">
           <div><button @click="CommandWork(1)" class="ButtonCommand">Рассчитать окна видимости</button></div>
-          <div><button @click="CommandWork(2)" class="ButtonCommand">Показать окна видимости / плана контактов</button></div>
           <div><button @click="CommandWork(5)" class="ButtonCommand">Расчёт плана контактов</button></div>
-          <div><button @click="CommandWork(6)" class="ButtonCommand">Графическое представление плана контактов</button></div>
         </div>
       </div>
 
       <div class="Panel RightPanel">
-          <div v-if="PageSettings.status == 1" class="TableDiv" style="max-height: 95%;">
+          <div v-if="PageSettings.status == 1" class="TableDiv" style="max-height: 60vh;">
             <table class="TableDefault">
               <thead><tr><th>НП</th><th>КА</th><th>Начало</th><th>Конец</th></tr></thead>
               <tbody><tr v-for="data, index in PageSettings.SatNp" :key="index">
@@ -24,16 +22,9 @@
               </tr>
             </tbody></table>
           </div>
+          <div id="plotlymapContain1" style="height: fit-content;"></div>
       </div>
 
-    </div>
-    <div id="PlotlyDiv" v-if="ShowPlotlyContain">
-      <div class="ContainerDiv">
-        <div class="closebutton"><button @click="ShowPlotlyContain = false">
-        <img src="../../assets/close.svg"><span>&#8203;</span>
-      </button></div>
-      <div id="plotlymapContain1" style="height: 79vh;"></div>
-      </div>
     </div>
     </div>
   </template>
@@ -58,24 +49,25 @@ import Plotly from 'plotly.js-dist'
     },
     methods: {
        async CommandWork(commandId){
-            if(commandId == 2){
-              this.PageSettings.status = 1
-            }
             if(commandId == 5){
               this.$showLoad(true);
+              document.getElementById("plotlymapContain1").innerHTML=''
               await this.$FetchGet("/api/v1/contact-plan/earth")
               this.ReFetch()
               this.$showLoad(false);
             }
             if(commandId == 1){
               this.$showLoad(true);
+              document.getElementById("plotlymapContain1").innerHTML=''
               await this.$FetchPost('/api/v1/pro42/view/earth', {leaderProcessing: this.PageSettings.mode})
               this.ReFetch()
               this.$showLoad(false);
             }
             if(commandId == 6){
-              this.ShowPlotlyContain = true
+              document.getElementById("plotlymapContain1").innerHTML=''
               let response = await this.$FetchGet('/api/v1/modelling/data/earth-sat/all') || []
+              let dataPlotly = []
+              /*
               let dataGrapf = {
                 type: 'bar',
                 y: [],
@@ -89,17 +81,54 @@ import Plotly from 'plotly.js-dist'
                     width: 2
                   }
                 }
-              }
+              }*/
               response.forEach(element => {
+                /*
                 console.log(this.CreateDateTime(element.end - element.begin, 2))
                 dataGrapf.y.push(element.earthName)
                 dataGrapf.text.push(element.satelliteName)
                 dataGrapf.x.push(this.CreateDateTime(element.end - element.begin, 2))
-                dataGrapf.base.push(this.CreateDateTime(element.begin, 1))
+                dataGrapf.base.push(this.CreateDateTime(element.begin, 1))*/
+
+
+                let flagadd = false
+                  dataPlotly.forEach(plot => {
+                    if(plot.name == element.earthName){
+                      plot.y.push(element.earthName)
+                      plot.text.push(element.satelliteName)
+                      plot.x.push(this.CreateDateTime(element.end - element.begin, 2))
+                      plot.base.push(this.CreateDateTime(element.begin, 1))
+                      flagadd = true
+                    }
+                  })
+                  if(!flagadd){
+                    dataPlotly.push({
+                      type: 'bar',
+                      name: element.earthName,
+                      y: [element.earthName],
+                      x: [this.CreateDateTime(element.end - element.begin, 2)],
+                      text: [element.satelliteName],
+                      orientation: 'h',
+                      base: [this.CreateDateTime(element.begin, 1)],
+                      textfont: {
+                        size: 16,
+                        color: '#000000'
+                      },
+                      marker: {
+                        opacity: 0.5,
+                        color: "#0065ff",
+                        line: {width: 1}
+                      }
+                    })
+                  }
               });
-              Plotly.newPlot("plotlymapContain1", [dataGrapf],
+              Plotly.newPlot("plotlymapContain1", dataPlotly,
                 {
                   title: 'Окна видимости',
+                  barmode: 'stack', 
+                  showlegend: false,
+                  height:80+(dataPlotly.length*80),
+                  margin:{l:150,t:40,b:40,r:10}
                 }
               )
             }
@@ -115,6 +144,7 @@ import Plotly from 'plotly.js-dist'
                 element.begin = this.CreateDateTime(element.begin)
                 element.end = this.CreateDateTime(element.end)
               }
+          this.CommandWork(6)
         }
     },
     

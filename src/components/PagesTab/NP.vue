@@ -14,8 +14,7 @@
   </div>
 </template>
   
-<script>
-import { NPList, ChangeNP} from '@/js/GlobalData.js'; 
+<script> 
 import { PagesSettings } from './PagesSettings.js';
 import DefaultTable2 from '../DefaultTable2.vue';
 
@@ -38,7 +37,8 @@ import DefaultTable2 from '../DefaultTable2.vue';
     methods: {
         async AddRow(lng=0,lat=0){
           this.dataJson.push({'nameEarthPoint' : "", 'longitude' : lng, 'latitude' : lat, 'deleted': false});   
-          this.dataJson = await ChangeNP(this.dataJson)
+          await this.$ChangeNPList(this.dataJson)
+          this.dataJson = await this.$GetNPList();
           this.ShowTable()
         },
         TryParceLatLng(id){
@@ -73,11 +73,12 @@ import DefaultTable2 from '../DefaultTable2.vue';
               if(latitudecorrect > 180) latitudecorrect = 180
               this.dataJson[id].longitude = latitudecorrect
 
-          await ChangeNP(this.dataJson, false)
+          await this.$ChangeNPList(this.dataJson)
         },
         async DeleteRow(index){
             this.dataJson[index].deleted = true
-            this.dataJson = await ChangeNP(this.dataJson)
+            await this.$ChangeNPList(this.dataJson)
+            this.dataJson = await this.$GetNPList();
             this.ShowTable()
         },
         ShowTable(){
@@ -85,7 +86,7 @@ import DefaultTable2 from '../DefaultTable2.vue';
         },
     },
     async mounted() {
-      this.dataJson = await NPList
+      this.dataJson = await this.$NPList()
       this.ShowTable()
     }
   }

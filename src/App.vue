@@ -43,11 +43,9 @@
 </template> 
 <script>
 import TemplateComponent from './components/TemplateComponent.vue'
-import {FetchPost} from './js/LoadDisplayMetod.js'
 import LoadProcess from './components/LoadProcess.vue'
 import GlobalStyle from './style/GlobalStyle.scss'
 import GlobalElementStyle from '@/style/GlobalElementStyle.scss'
-import { ClearGlobalData, InitGlobalData, SystemObject } from './js/GlobalData'
 import AlertToast from './components/AlertToast.vue'
 
 import NET from 'vanta/dist/vanta.net.min'
@@ -87,12 +85,13 @@ export default {
       async VerifyWorkSapce(data){
         this.$showLoad(true);
         this.workplaceList = []
-        let result = await FetchPost("/api/v1/authentication/user/login",data)
+        let result = await this.$FetchPost("/api/v1/authentication/user/login",data,null,false)
         if(result == undefined){
           this.errorLogin = true
           this.$showToast('Неудачная попытка входа','warning', 'Login');
         }
         else if(result.length > 0){
+          this.$showToast('Добро пожаловать '+data.nameUser,'success', 'Login');
           result.sort((a,b) => {return a.type - b.type})
           this.workplaceList = result
           this.errorLogin = false
@@ -111,15 +110,15 @@ export default {
         this.workplaceList = []
         this.login = undefined
         this.systemStatus = {typeWorkplace: -1}
-        ClearGlobalData()
+        this.$ClearGlobalData()
       },
       async StartSystem(data){
-        ClearGlobalData()
+        this.$ClearGlobalData()
         this.$showLoad(true);
         await localStorage.setItem('data', data.accessKey)
         this.titleModule = data.name
-        await InitGlobalData()
-        this.systemStatus = SystemObject
+        await this.$InitGlobalData()
+        this.systemStatus = this.$SystemObject()
         this.$showLoad(false);
       },
       ChangetypeWorkplace(mode){
@@ -132,7 +131,7 @@ export default {
             }
           })
           this.systemStatus = {typeWorkplace: -1}
-          ClearGlobalData()
+          this.$ClearGlobalData()
         }
       },
       ChangeColor(){
@@ -146,22 +145,28 @@ export default {
       }
     },
   async mounted() {
-   NET({
-  el: "#backgroundDiv",
-  THREE: THREE, // Убедитесь, что THREE правильно импортирован
-  mouseControls: false,
-  touchControls: false,
-  gyroControls: false,
-  minHeight: 500.00,
-  minWidth: 500.00,
-  scale: 1.00,
-  scaleMobile: 1.00,
-  color: 0x15eb,       // Цвет точек
-  backgroundColor: 0x000000, // Фон (чёрный)
-  points: 7.00,
-  maxDistance: 27.00,
-  spacing: 20.00,
-})
+    this.$showLoad(true);
+  try {
+    NET({
+      el: "#backgroundDiv",
+      THREE: THREE, // Убедитесь, что THREE правильно импортирован
+      mouseControls: false,
+      touchControls: false,
+      gyroControls: false,
+      minHeight: 500.00,
+      minWidth: 500.00,
+      scale: 1.00,
+      scaleMobile: 1.00,
+      color: 0x15eb,       // Цвет точек
+      backgroundColor: 0x000000, // Фон (чёрный)
+      points: 7.00,
+      maxDistance: 27.00,
+      spacing: 20.00,
+    })
+  } catch (error) {
+    this.$showToast('Не удалось загрузить фон','warning', 'Фон');
+  }
+   
     this.workplaceList = []
     if(localStorage.nameUser != undefined && localStorage.email != undefined && localStorage.password != undefined){
       let data = {
@@ -179,7 +184,7 @@ export default {
     } catch (error) {
       console.log(error)
     }
-    this.$showLoad(true);
+    this.$showLoad(false);
   },
   components: {
     TemplateComponent,

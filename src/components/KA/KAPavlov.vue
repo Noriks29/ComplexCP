@@ -31,7 +31,6 @@ import { UnixToDtime } from '@/js/WorkWithDTime';
 import { KaSettings } from './KaSettings';
 import PlanPavlov from './Pavlov/PlanPavlov.vue';
 import NodeLoad from './Pavlov/NodeLoad.vue';
-import { NPList, OGList, SystemObject } from '@/js/GlobalData';
 export default {
   name: 'KA2',
   mixins: [KaSettings],
@@ -68,11 +67,11 @@ export default {
       await this.ParceRezult()
       this.$showLoad(false);
     },
-    ParceRezult(){
+    async ParceRezult(){
       console.log(this.modellingRezult, "Обработка результатов")
       this.modellingRezult.JsonData = JSON.stringify(this.modellingRezult,null,2)
-      let time = SystemObject.modelingBegin
-      console.log(SystemObject.modelingBegin)
+      this.modellingRezult.eventData = []
+      let time = (await this.$SystemObject()).modelingBegin
       let plan = this.modellingRezult.report.plan
       plan.time.sort(function(a, b) { // Обработка времени интервалов
           return parseFloat(a.interval) - parseFloat(b.interval);
@@ -87,10 +86,11 @@ export default {
       let dataToPrevrap = plan
       let dataPrevrap = []
       let objectList = {}
-      
+      let NPList = await this.$NPList()
       NPList.forEach(GS => {
           objectList[GS.id] = {id: GS.id, name: GS.nameEarthPoint, type: 'GS'}
       })
+      let OGList = await this.$OGList()
       OGList.forEach(OG => {
           OG.satellites.forEach(SAT => {
               objectList[SAT.tleId] = {id: SAT.tleId, name: SAT.name, type: 'SAT'}
@@ -156,6 +156,7 @@ export default {
       })
       this.modellingRezult.eventData=dataPrevrap
       console.log(this.modellingRezult, "Обработка результатов финал")
+
     },
     ShowPlan(){
       this.modellingSettings.showTable = 'Plan'
@@ -185,6 +186,7 @@ export default {
     }
   },
   async mounted(){
+    console.log(this.modellingRezult)
     this.ReLoadComponent()
   }
 }
