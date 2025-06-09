@@ -20,7 +20,7 @@ export default {
     };
   },
   methods: {
-    showSuccess(message=null, type=null, title=null, time=4000) {
+    showSuccess(message=null, type=null, title=null, time=5000) {
       this.dataAlert[this.maxid]={id: this.maxid,message: message, type: type, title: title, delete: ''}
       let id = this.maxid 
       setTimeout(() => {

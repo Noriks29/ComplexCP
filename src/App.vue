@@ -11,7 +11,7 @@
         <div class="ModuleTitle" :class="titleModule==''?'hide':''">{{ titleModule }}</div>
         <div class="flexdiv" >login: {{ login }} {{ SystemObject }}
           <button class="Menubutton"  :class="systemStatus.typeWorkplace !== -1 ? 'show' : ''" @click="ChangetypeWorkplace(-1)"><svg enable-background="new 0 0 32 32" id="Editable-line" version="1.1" viewBox="0 0 32 32" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><circle cx="5" cy="6" fill="none" id="XMLID_303_" r="1" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><circle cx="5" cy="16" fill="none" id="XMLID_305_" r="1" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><circle cx="5" cy="26" fill="none" id="XMLID_304_" r="1" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><line fill="none" id="XMLID_29_" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="10" x2="28" y1="6" y2="6"/><line fill="none" id="XMLID_30_" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="10" x2="28" y1="16" y2="16"/><line fill="none" id="XMLID_31_" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="10" x2="28" y1="26" y2="26"/></svg></button>
-          <button v-if="experimentStatus == false" class="logoutbutton"  @click="Log_out">
+          <button class="logoutbutton"  @click="Log_out">
             <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><g id="logout"><line class="cls-1" x1="15.92" x2="28.92" y1="16" y2="16"/><path d="M23.93,25v3h-16V4h16V7h2V3a1,1,0,0,0-1-1h-18a1,1,0,0,0-1,1V29a1,1,0,0,0,1,1h18a1,1,0,0,0,1-1V25Z"/><line class="cls-1" x1="28.92" x2="24.92" y1="16" y2="20"/><line class="cls-1" x1="28.92" x2="24.92" y1="16" y2="12"/><line class="cls-1" x1="24.92" x2="24.92" y1="8.09" y2="6.09"/><line class="cls-1" x1="24.92" x2="24.92" y1="26" y2="24"/></g></svg>
             Выйти</button>
         </div>
@@ -35,7 +35,7 @@
         </div>
       </div>
     </div>
-    <TemplateComponent v-if="systemStatus.typeWorkplace != -1" @changeExperimentStatus="ChangeExperimentStatus"/>
+    <TemplateComponent v-if="systemStatus.typeWorkplace != -1" @reload="ReloadTemplate"/>
     <div class="ChangeViewMode" @click="ChangeColor"><svg fill="none" height="24" stroke-width="1.5" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18C15.3137 18 18 15.3137 18 12C18 8.68629 15.3137 6 12 6C8.68629 6 6 8.68629 6 12C6 15.3137 8.68629 18 12 18Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 12L23 12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 2V1" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 23V22" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 20L19 19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 4L19 5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 20L5 19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 4L5 5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 12L2 12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
    
     
@@ -63,15 +63,11 @@ export default {
       titleModule: ' ',
       login: undefined,
       errorLogin: false,
-      experimentStatus: false,
       workplaceList: [],
       SystemObject: null
     }
   },
   methods: {
-      ChangeExperimentStatus(status){
-        this.experimentStatus = status
-      },
       StartLogin(){
         const login = document.getElementById('login').value
         const password = document.getElementById('password').value
@@ -123,7 +119,6 @@ export default {
       },
       ChangetypeWorkplace(mode){
         this.titleModule = ''
-        if(this.experimentStatus == false){
           this.workplaceList.forEach(workplace => {
             if(workplace.type == mode){
               this.StartSystem(workplace)
@@ -132,7 +127,11 @@ export default {
           })
           this.systemStatus = {typeWorkplace: -1}
           this.$ClearGlobalData()
-        }
+      },
+      async ReloadTemplate(){
+        let tWP = this.systemStatus.typeWorkplace
+        this.systemStatus = {typeWorkplace: -1}
+        await this.ChangetypeWorkplace(tWP)
       },
       ChangeColor(){
         localStorage.viewMode = Number(!Number(localStorage.viewMode || 0) || 0)

@@ -1,13 +1,36 @@
 <template>
   <div class="MapContain">
    <div id="DrawKARoad">
-            <div class="LatLng"><span>Точка: {{ LastLatLng.lat+', '+LastLatLng.lng }}</span><button @click="CopyLatLng"><img src="@/assets/copy.png" alt="Копировать"></button></div>
+            <div class="LatLng"><span>Точка: {{ AddPoint.lat+', '+AddPoint.lng }}</span><button class="ButtonCommand" @click="StartAddPoint">Добавить</button></div>
             <SelectDiv  :dataOption="KAArray" :valueS="KatoDraw" :id="'KA'+String(0)" @valueSelect="ChangeKaDraw"/>
             <input type="color" id="inputColorKa" value="#5900ff"><button class="ButtonCommand" @click="GetKARoad">Отрисовать маршрут</button>
             <button class="ButtonCommand" @click="ReloadMapContainer">Обновить карту</button>
           </div>
           <div id="map"></div>
+    <div class="AddPointDiv" v-if="AddPoint.showadd">
+    <div class="PanelMenu" style="position: relative;">
+      <div class="closeButton" @click="AddPoint.showadd=false"><img src="@/assets/close.svg" alt="закрыть"></div>
+      <h1>Добавление точки</h1>
+      <div>
+        <table>
+          <thead><tr><th>Название</th><th>Широта</th><th>Долгота</th></tr></thead>
+          <tbody><tr>
+            <td><input class="inputType1" type="text" placeholder="Введите название" v-model="AddPoint.name"></td>
+            <td><input class="inputType1" type="number" placeholder="Введите широту" v-model="AddPoint.lat"></td>
+            <td><input class="inputType1" type="number" placeholder="Введите долготу" v-model="AddPoint.lng"></td>
+            <td></td>
+          </tr></tbody>
+        </table>
+      </div>
+      <div>
+        <button class="ButtonCommand" @click="AddNP">Добавить НП</button>
+        <button class="ButtonCommand" @click="AddRequest" :class="system.typeWorkplace == 3? 'disable':''" :disabled="system.typeWorkplace == 3">Добавить в каталог</button>
+      </div>
+      
     </div>
+  </div>
+  </div>
+  
 </template>
 
 <script>
@@ -27,9 +50,15 @@ export default {
         map: {},
         KatoDraw: {},
         KAArray: [],
-        LastLatLng: {lat: 0, lng:0},
         requestJson: [],
-        NPList: [],OGList:[]
+        NPList: [],OGList:[],catalogJson: [],system:{},
+        AddPoint:{
+          showadd: false,
+          lat: 0,
+          lng: 0,
+          name: undefined,
+          height: 0
+        }
     }
   },
   components:{
@@ -52,6 +81,13 @@ export default {
                 iconRetinaUrl: icon2x
           });
           L.Marker.prototype.options.icon = DefaultIcon;
+          this.catalogJson.forEach(element =>{
+            L.circle([element.lat, element.lon], 18000, {
+                color: 'yellow',
+                fillColor: 'yellow',
+                fillOpacity: 0.6
+              }).addTo(this.map)
+          })
           for (let i = 0; i < this.requestJson.length; i++) {
               const element = this.requestJson[i].catalog;
               L.circle([element.lat, element.lon], 21000, {
@@ -69,7 +105,8 @@ export default {
           });
           this.map.on('click', (e) => {
               const { lat, lng } = e.latlng;
-              this.LastLatLng = {lat: lat.toFixed(2), lng: lng.toFixed(2)}
+              this.AddPoint.lat = lat.toFixed(2)
+              this.AddPoint.lng = lng.toFixed(2)
               console.log(`Широта: ${lat}, Долгота: ${lng}`);
           });
 
@@ -77,10 +114,49 @@ export default {
         ChangeKaDraw(e){
           this.KatoDraw = e.value
         },
-        CopyLatLng(){
-          console.log(this.LastLatLng, typeof this.LastLatLng)
-          navigator.clipboard.writeText(JSON.stringify(this.LastLatLng))
-          alert("Скопировано")
+        StartAddPoint(){
+          this.AddPoint.name = undefined
+          this.AddPoint.showadd = true
+        },
+        async AddNP(){
+          if(this.AddPoint.lat != '' && this.AddPoint.lng != '' && this.AddPoint.name != undefined){
+            this.NPList.push({
+              nameEarthPoint: this.AddPoint.name || "С карты",
+              latitude: this.AddPoint.lat || 0,
+              longitude: this.AddPoint.lng || 0,
+
+            })
+            await this.$ChangeNPList(this.NPList)
+            L.circle([this.AddPoint.lat||0, this.AddPoint.lng||0], 30000, {
+                  color: 'green',
+                  fillColor: '#121100',
+                  fillOpacity: 0.4
+                }).addTo(this.map)
+            this.AddPoint.showadd = false
+          }
+          else{
+            this.$showToast('Проверьте корректность данных','warning', 'Добавление НП');
+          }
+        },
+        async AddRequest(){
+          if(this.AddPoint.lat != '' && this.AddPoint.lng != '' && this.AddPoint.name != undefined){
+            this.catalogJson.push({
+              goalName: this.AddPoint.name || "С карты",
+              lat: this.AddPoint.lat || 0,
+              lon: this.AddPoint.lng || 0,
+              alt: 0, goalId: 0 
+            })
+            await this.$FetchPost("/api/v1/satrequest/catalog/update", this.catalogJson)
+            L.circle([this.AddPoint.lat||0, this.AddPoint.lng||0], 18000, {
+                color: 'yellow',
+                fillColor: 'yellow',
+                fillOpacity: 0.8
+              }).addTo(this.map)
+            this.AddPoint.showadd = false
+          }
+          else{
+            this.$showToast('Проверьте корректность данных','warning', 'Добавление в каталог');
+          }
         },
         async GetKARoad(){
           this.$showLoad(true);
@@ -127,7 +203,7 @@ export default {
           }
           this.$showLoad(false);
         },
-        ReloadMapContainer(){
+        async ReloadMapContainer(){
           this.map.off();
           this.map.remove();
           this.CreateMap()
@@ -137,6 +213,8 @@ export default {
     async mounted() {
       this.NPList = await this.$NPList()
       this.OGList = await this.$OGList()
+      this.catalogJson = await this.$FetchGet('/api/v1/satrequest/catalog/get/all') || []
+      this.system = await this.$SystemObject()
       this.KAArray.push({value: null, lable: "Все КА" })
       this.OGList.forEach(OG => {
         OG.satellites.forEach(element =>{
@@ -155,6 +233,29 @@ export default {
 .MapContain{
   position: relative;
   flex: 1;
+}
+
+.AddPointDiv{
+    position: absolute;
+    top: 0px;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+
+    .PanelMenu{
+      animation: 0.1s ease-out 0s 1 slideInFromTop;
+      .closeButton{
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        img{
+          width: 20px;
+        }
+      }
+    }
 }
 
 #DrawKARoad{

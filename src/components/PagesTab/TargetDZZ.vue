@@ -10,9 +10,6 @@
             <div class="FlexColumn">
               <div v-if="!(systemStatus.typeWorkplace in {3:null})"><button @click="viewmode=0" class="ButtonCommand">Заявки ДЗЗ</button></div>
               <div v-if="!(systemStatus.typeWorkplace in {3:null})"><button @click="viewmode=1" class="ButtonCommand">Каталог целей</button></div>
-              <div v-if="!(systemStatus.typeWorkplace in {3:null})"><button @click="viewmode=2" class="ButtonCommand">Данные по заявкам</button></div>
-              <div v-if="!(systemStatus.typeWorkplace in {1:null,2:null})"><button @click="GetRequestFromDB(1)" class="ButtonCommand">Мультиагенты</button></div>
-              <div v-if="!(systemStatus.typeWorkplace in {1:null,2:null})"><button @click="GetRequestFromDB(2)" class="ButtonCommand">Оптимизация</button></div>
             </div>
         </div>
         <div class="Panel RightPanel" >
@@ -137,7 +134,7 @@ import XLSX from 'xlsx-js-style';
           console.error("")
         }
       },
-      async GetRequestFromDB(mode){
+      /*async GetRequestFromDB(mode){
         if(mode == 1){
           await this.$FetchGet('/api/v1/smao/requests')
         }
@@ -145,7 +142,7 @@ import XLSX from 'xlsx-js-style';
           await this.$FetchGet('/api/v1/route/requests')
         }
         await this.ReFetch()
-      },
+      },*/
       SelectChange(e, param){
         this.requestJson[e.id][param] = e.value
         this.SatartSave('request')

@@ -3,10 +3,10 @@
     
     <div class="SectionMenu" :class="system.typeWorkplace == -1 ? 'hide' : 'show'">
       <div class="HeadersSction">
-        <div class="PanelMenu"><SystemWindow :modellingStatus="ExperimentStatus" @updateParentComponent="ChangeComponents" :systemStatus="system" /></div>
+        <div class="PanelMenu"><SystemWindow :modellingStatus="false" @updateParentComponent="ChangeComponents" :systemStatus="system" /></div>
         <transition name="ComponentModelling" mode="out-in">
           <div class="ModellingDiv PanelMenu">
-            <component :is="ComponentModellingList[system.typeWorkplace]" :systemStatus="system" :ExperimentStatus="ExperimentStatus" @ChangeExperimentStatus="ChangeExperimentStatus"></component>  
+            <component :is="ComponentModellingList[system.typeWorkplace]" :systemStatus="system" :ExperimentStatus="false"></component>  
           </div>
         </transition> 
       </div>
@@ -15,7 +15,7 @@
           <MapContainer v-if="activeComponent == ''"/>
           <transition name="translate" mode="out-in" v-if="activeComponent != ''">
             <div class="ComponentSelect">
-              <component :is="activeComponent" :modellingStatus="ExperimentStatus" @updateParentComponent="ChangeComponents" :systemStatus="system" ></component> 
+              <component :is="activeComponent" :modellingStatus="false" @updateParentComponent="ChangeComponents" :systemStatus="system" ></component> 
             </div>
           </transition>
         </div>
@@ -78,7 +78,6 @@ import MapContainer from './MapContainer.vue';
 
 export default {
   name: 'TemplateComponent',
-  emits: ['changeExperimentStatus'],
   components: {
     NP,
     OG,
@@ -97,7 +96,6 @@ export default {
       return{
         activeComponent: "",
         system: {typeWorkplace: -1},
-        ExperimentStatus: false,
         ComponentModellingList: [null,"KA1","KAGordeev","KAPavlov",null]
     }
   },
@@ -109,21 +107,18 @@ export default {
         }
         this.activeComponent = nameComponent
       },
-      ChangeExperimentStatus(status){
-        this.ExperimentStatus = status.status
-        this.$emit('changeExperimentStatus', this.ExperimentStatus)
-      },
       async ChangeComponents() {
         this.activeComponent = ''
         this.system = await this.$SystemObject()
       },
       async GetDataToModule(moduleL){
-        
         this.$showLoad(true);
         await this.$FetchPost('/api/v1/workplace/replace', moduleL)
-        alert("На данный момент лучше перезагружать сайт после этого запроса")
-        this.$showToast('На данный момент лучше перезагружать сайт после этого запроса','info', 'В разработке');
+        this.$showToast('Данные получены','process', 'НП');
+        this.$showToast('Данные получены','process', 'ОГ');
+        this.$showToast('Данные получены','process', 'Заявки');
         this.$showLoad(false);
+        this.$emit('reload')
       },
     },
     

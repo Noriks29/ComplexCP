@@ -1,6 +1,5 @@
 import {ref} from "vue";
 
-
 const GlobalDataPlugin = {
   install(app) {
     let SystemObject = ref({typeWorkplace: -1});
@@ -53,6 +52,7 @@ const GlobalDataPlugin = {
         OGList = ref([])
         SystemObject = ref({typeWorkplace: -1})
     }
+
   },
 };
 
