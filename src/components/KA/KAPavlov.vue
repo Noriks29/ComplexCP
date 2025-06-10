@@ -130,6 +130,17 @@ export default {
         if(dataToPrevrap.process==undefined) dataPrevrap.process = []
         this.$showToast('Проблемы с операциями обработки','warning', 'Обработка');
       }
+      try{
+      dataToPrevrap.inputflow.forEach(el => {
+          el.typeEl = "Съёмка";
+          el.volume = el.text
+          el.time = 1 // тестово 1 секунда 
+          dataPrevrap.push(el)
+      })
+      } catch (error) {
+        if(dataToPrevrap.inputflow==undefined) dataPrevrap.inputflow = []
+        this.$showToast('Проблемы с входными потоками','warning', 'Съёмка');
+      }
       try {
           dataToPrevrap.lost.forEach(el => {
               el.typeEl='Потери';el.volume=el.text; dataPrevrap.push(el);

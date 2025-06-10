@@ -23,8 +23,8 @@
         <div class="ButtonSection second" v-if="system.typeWorkplace in {3:null}">
           <h1>Получение ИД</h1>
           <div class="ButtonList">
-            <button class="ButtonCommand"  @click="GetDataToModule(1)"><span>Планирование без НКУ</span></button>
-            <button class="ButtonCommand"  @click="GetDataToModule(2)"><span>Планирование с НКУ</span></button>
+            <button class="ButtonCommand GetData"  @click="GetDataToModule(1)"><span>План без НКУ</span></button>
+            <button class="ButtonCommand GetData"  @click="GetDataToModule(2)"><span>План с НКУ</span></button>
           </div>
         </div>
           <div class="ButtonSection first">
@@ -130,6 +130,10 @@ export default {
 </script>
 
 <style lang="scss">
+.GetData{
+  margin-right: 5px !important;
+}
+
 .ModellingTitle{
       font-size: 20px;
       margin: 10px;

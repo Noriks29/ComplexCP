@@ -1,4 +1,5 @@
 import {ref} from "vue";
+import SystemWindow from "@/components/PagesTab/SystemWindow.vue";
 
 const GlobalDataPlugin = {
   install(app) {
@@ -52,6 +53,23 @@ const GlobalDataPlugin = {
         OGList = ref([])
         SystemObject = ref({typeWorkplace: -1})
     }
+
+    const toastComponent = ref(null);
+    app.component('SystemWindow', SystemWindow);
+    app.config.globalProperties.$reloadSystem = function () {
+      if (toastComponent.value && toastComponent.value.reload) {
+        toastComponent.value.reload();
+      } else {
+        console.error('Error reload system');
+      }
+    };
+    app.mixin({
+      mounted() {
+        if (this.$options.name === "SystemWindow") {
+          toastComponent.value = this;
+        }
+      },
+    });
 
   },
 };

@@ -106,6 +106,13 @@ import XLSX from 'xlsx-js-style';
                 if(this.dataPrevrap.length < 1 ) return
                 let dataPlotly = [
                       {
+                        type: 'bar',name: "Съёмка",y: [],x: [],
+                        orientation: 'h',base: [],text:[],
+                        marker: {
+                          opacity: 0.5,color: "#086375",line: {width: 1}
+                        }
+                      },
+                      {
                         type: 'bar',name: "Хранение",y: [],x: [],
                         orientation: 'h',base: [],text:[],
                         marker: {
@@ -130,7 +137,7 @@ import XLSX from 'xlsx-js-style';
                         type: 'bar',name: "Потери",y: [],x: [],
                         orientation: 'h',base: [],text:[],
                         marker: {
-                          opacity: 0.6,color: "rad",line: {width: 1}
+                          opacity: 0.6,color: "red",line: {width: 1}
                         }
                       },
                     ]

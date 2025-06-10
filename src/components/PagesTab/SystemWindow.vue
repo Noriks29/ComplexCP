@@ -42,6 +42,9 @@ import { CreateDateTime } from '@/js/WorkWithDTime';
       ChangeParam(target){
         this.$ChangeSystemObject('step',  Math.floor(target.target.value))
       },
+      async reload(){
+        this.dataSystem = await this.$SystemObject()
+      }
     },
     async created(){
       this.dataSystem = await this.$SystemObject()

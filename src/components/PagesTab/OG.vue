@@ -163,6 +163,7 @@ import DefaultTable2 from '../DefaultTable2.vue';
                 this.dataJson = await this.$GetOGList()
                 this.PageSettings.status = 0
                 this.SelectOGFromList(undefined)
+                await this.$reloadSystem()
               }
               else{
                 alert("Ошибка добавления" + JSON.stringify(responce))
