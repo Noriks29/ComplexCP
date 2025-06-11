@@ -11,95 +11,12 @@
                 <label for="">Выбор КА</label>
                 <SelectDiv :dataOption="KatypeList" :valueS="SelectKA" style="flex: 1;"  @valueSelect="ChangeKA"/>
               </div>
-              <div class="FlexColumn">
-                <div><button @click="viewPanel=1" class="ButtonCommand" :class="viewPanel==1?'Select':''">Режимы функционирования</button></div>
-                <div><button @click="viewPanel=2" class="ButtonCommand" :class="viewPanel==2?'Select':''">Устройства</button></div>
-                <div><button @click="viewPanel=3" class="ButtonCommand" :class="viewPanel==3?'Select':''">Потребление энергии устройствами</button></div>
-                <div><button @click="viewPanel=4" class="ButtonCommand" :class="viewPanel==4?'Select':''">Параметры устройств и функционирования</button></div>
-              </div>
           </div>
           <div class="Panel RightPanel">
-          <div v-if="viewPanel == 1">
-              <p>Режимы функционирования</p>
-              <div>
-                  <div class="TableDiv" style="max-height: 60vh;">
-                    <table class="TableDefault">
-                      <thead><tr><th>Код</th><th>Режим полёта</th><th>Режим функционирования</th><th>Метод</th><th>К</th><th></th></tr></thead>
-                      <tbody v-for="data, index in SelectKA.value.modes" :key="index">
-                        <tr><td rowspan="0">{{ data.code || "не назван" }}</td><td rowspan="0">{{ data.flightMode || "не назван" }}</td></tr>
-                        <tr v-for="dataModes, indexModes in data.operatingModes" :key="indexModes" @change="ChangeValue($event, 'modes', index)">
-                          <td><input v-model="dataModes.mode"></td>
-                          <td><input v-model="dataModes.method"></td>
-                          <td><input type="number" v-model="dataModes.coefficient"></td>
-                          <td :id="index" @click="DeleteRow(indexModes, 'modes', index)" class="delete"><img class="iconDelete" src="../../assets/delete.svg" alt="-"></td>
-                        </tr>
-                        <tr><td colspan="6" @click="AddRow('modes',index)">...................................</td></tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <p>Правила выбора режима полета, если интервалы времени пересекаются</p>
-                  <div class="TableDiv" style="max-height: 60vh;">
-                    <table class="TableDefault">
-                      <thead><tr><th>Пересечение режимов</th><th>Выполняется</th></tr></thead>
-                      <tbody><tr><th>A и B</th><td>выбор 1</td></tr>
-                      <tr><th>A и C</th><td>выбор 2</td></tr>
-                      <tr><th>B и C</th><td>выбор 3</td></tr></tbody>
-                    </table>
-                  </div>
-              </div>
-          </div>
-
-          <div v-if="viewPanel == 2">
-              <p>Каталог устройств</p>
-              <div class="TableDiv" style="max-height: 60vh;">
-              <table class="TableDefault">
-                <thead><tr><th style="width: 0px;">Использовать</th><th>Прибор</th><th></th></tr></thead>
-                <tbody><tr v-for="data,index in SelectKA.value.devCatalogs" :key="index" :id="data.id">
-                  <td><img @click="AddRow('devices',data)" src="../../assets/add.png" alt="" class="addButtonIcon" v-if="data.use < 1"></td>
-                  <td><input @change="ChangeValue($event, 'devCatalogs')" v-model="data.nameDevice"></td>
-                  <td @click="DeleteRow(index, 'devCatalogs')" class="delete"><img class="iconDelete" src="../../assets/delete.svg" alt="-"></td>
-                </tr>
-                <tr class="addRowButton">
-                  <td colspan="3"><button @click="AddRow('devCatalogs')"><img src="../../assets/add.png" alt="" class="addButtonIcon">Добавить</button></td>
-                </tr></tbody>
-              </table>
-              </div>
-              
-              <p>Устройства</p>
-              <div class="TableDiv" style="max-height: 60vh;">
-              <table class="TableDefault"><thead>
-                <tr><th>Прибор</th><th style="width: 0px;">Свойство</th><th></th></tr></thead>
-                <tbody><tr v-for="data,index in SelectKA.value.devices" :key="index" :id="data.id">
-                  <td>{{ data.devCatalog.nameDevice || "null"}}</td>
-                  <td><input type="checkbox" v-model="data.constant" @change="ChangeValue($event, 'property')"/>
-                      <label>{{ data.constant ? "=" : "~" }}</label></td>
-                  <td @click="DeleteRow(index, 'devices')" class="delete"><img class="iconDelete" src="../../assets/delete.svg" alt="-"></td>
-                </tr></tbody>
-              </table>
-              </div>
-          </div>
-          <div v-if="viewPanel == 3">
-              <div class="TableDiv" style="max-height: 60vh;">
-                <table class="TableDefault" id="TableChargeKA"><thead>
-                  <tr>
-                    <th rowspan="2">Прибор</th>
-                    <th v-for="data, index in SelectKA.modesList" :key="index">{{ data.mode }}</th>
-                  </tr>
-                  <tr><th v-for="data, index in SelectKA.value.modes" :key="index" :colspan="data.operatingModes.length">{{ data.flightMode }}</th></tr>
-                  </thead><tbody>
-                  <tr v-for="data, index in SelectKA.value.devices" :key="index" :id="data.devCatalog.id">
-                    <td>{{ data.devCatalog.nameDevice }}</td>
-                    <td v-for="dataMode, indexMode in SelectKA.modesList" :key="indexMode">
-                      <input type="number" @change="ChangeValue($event, 'charge', data.devCatalog.id)" :id="dataMode.id" :name="data.devCatalog.id" :value="SelectKA.ChargeTable[data.devCatalog.id][dataMode.id]" step="0.1" :class="SelectKA.ChargeTable[data.devCatalog.id][dataMode.id] == undefined ? 'null':''"/>
-                    </td>
-                  </tr></tbody>
-                </table>
-              </div>
-          </div>
-          <div v-if="viewPanel == 4">
+          <div>
               <div class="TableDiv" style="max-height: 60vh;">
                   <table class="TableDefault" @change="ChangeParamKa">
-                    <tbody>
+                    <tbody v-if="SelectKA.select == undefined">
                       <tr><th colspan="3">Параметры разворота</th></tr>
                           <tr><td>Ускорение / замедление КА</td><td><input type="number" v-model="SelectKA.value.operatingParameter.acceleration"></td><td>гр/с<sup>2</sup></td></tr>
                           <tr><td>Максимальная скорость вращения КА</td><td><input type="number" v-model="SelectKA.value.operatingParameter.maxRotationSpeed"></td><td>гр/с</td></tr>
@@ -153,11 +70,11 @@ export default {
           dataJson: [],
           KatypeList: [],
           SelectKA: {
+            select: false,
             value:{
                 description: ""
             },
-          },
-          viewPanel: 1
+          }
       }
   },
   components:{
@@ -178,73 +95,7 @@ export default {
               })
             })
             alert("Ошибка построения зарядов")
-            //this.BuildCharges() вызывает ошибку надо поправить
           }
-      },
-      async ChangeValue(event, category, parentIndex=0){
-        console.log(event)
-        switch (category) {
-          case 'property':
-              await this.$FetchPost("/api/v1/modelsat/update/devices", this.SelectKA.value.devices)
-            break;
-          case 'devCatalogs':
-              await this.$FetchPost("/api/v1/modelsat/update/devCatalog", this.SelectKA.value.devCatalogs)
-            break;
-          case 'modes':
-              await this.$FetchPost("/api/v1/modelsat/update/modes", this.SelectKA.value.modes)
-            break;
-          case 'charge':
-              for (let i = 0; i < this.SelectKA.value.charges.length; i++) {
-                const chargeKa = this.SelectKA.value.charges[i];
-                if(chargeKa.flightModeId == event.target.id && chargeKa.deviceId == parentIndex){
-                  chargeKa.charge = event.target.value
-                  await this.$FetchPost("/api/v1/modelsat/update/charges", [chargeKa])
-                  break
-                }
-              }
-            break;
-          default:
-            break;
-        }
-        await this.ReFerchKA(this.SelectKA.value.id)
-      },
-      async AddRow(category, data=null){
-        switch (category) {
-          case "devCatalogs":
-            this.SelectKA.value.devCatalogs.push({"nameDevice": "null","modelId": this.SelectKA.value.id})
-            await this.$FetchPost("/api/v1/modelsat/update/devCatalog", this.SelectKA.value.devCatalogs)
-            break;
-          case "devices":
-            this.SelectKA.value.devices.push({"devCatalog": data,"modelId": this.SelectKA.value.id,"property": 0})
-            await this.$FetchPost("/api/v1/modelsat/update/devices", this.SelectKA.value.devices)
-            break;
-          case 'modes':
-            this.SelectKA.value.modes[data].operatingModes.push({"coefficient": 1,"method": 1,"mode": "null"})
-            await this.$FetchPost("/api/v1/modelsat/update/modes", this.SelectKA.value.modes)
-            break;
-          default:
-            break;
-        }
-        await this.ReFerchKA(this.SelectKA.value.id)
-      },
-      async DeleteRow(index, category, parentIndex = 0){
-        switch (category) {
-          case "devCatalogs":
-            this.SelectKA.value.devCatalogs[index].deleted = true
-            await this.$FetchPost("/api/v1/modelsat/update/devCatalog", this.SelectKA.value.devCatalogs)
-            break;
-          case 'devices':
-            this.SelectKA.value.devices[index].deleted = true
-            await this.$FetchPost("/api/v1/modelsat/update/devices", this.SelectKA.value.devices)
-            break;
-          case 'modes':
-            this.SelectKA.value.modes[parentIndex].operatingModes[index].deleted = true
-            await this.$FetchPost("/api/v1/modelsat/update/modes", this.SelectKA.value.modes)
-            break;
-          default:
-            break;
-        }
-        await this.ReFerchKA(this.SelectKA.value.id)
       },
       async ChangeParamKa(){
         await this.$FetchPost("/api/v1/modelsat/update/parameters", this.SelectKA.value.operatingParameter)
@@ -266,19 +117,7 @@ export default {
                   device.use = 1
               })
             })
-        this.BuildCharges()
       },
-      BuildCharges(){
-        this.SelectKA.modesList = [];
-        this.SelectKA.value.modes.forEach(mode => {
-          this.SelectKA.modesList = this.SelectKA.modesList.concat(mode.operatingModes)
-        })
-        this.SelectKA.ChargeTable = {}
-        this.SelectKA.value.charges.forEach(charge => {
-          if(!(charge.deviceId in this.SelectKA.ChargeTable)) this.SelectKA.ChargeTable[charge.deviceId] = {}
-          this.SelectKA.ChargeTable[charge.deviceId][charge.flightModeId] = charge.charge
-        })
-      }
   },
   mounted(){
     this.ReFerchKA(undefined)

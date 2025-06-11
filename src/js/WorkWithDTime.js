@@ -1,5 +1,4 @@
 function DTimeToUnix(time) {
-    //console.log(time)
     return Math.floor(Date.parse(time)/1000)
 }
 

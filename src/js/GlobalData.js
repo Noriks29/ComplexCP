@@ -6,8 +6,11 @@ const GlobalDataPlugin = {
     let SystemObject = ref({typeWorkplace: -1});
     let NPList = ref([]);
     let OGList = ref([]);
-    app.config.globalProperties.$ChangeSystemObject = async function (param, value) {
-        SystemObject[param] = value
+    app.config.globalProperties.$ChangeSystemObject = async function (param, value, dataS=null) {
+        if(dataS == null)SystemObject[param] = value
+        else{
+          SystemObject = dataS
+        }
         await this.$FetchPost('/api/v1/system/update', SystemObject, true)
         return SystemObject
     };

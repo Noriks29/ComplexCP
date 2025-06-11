@@ -4,14 +4,14 @@
             {{ (dataSystem.minTleTime ? CreateDateTime(dataSystem.minTleTime) : 'Не указан' ) + " -- "}}
             
             {{ dataSystem.maxTleTime ? CreateDateTime(dataSystem.maxTleTime) : 'Не указан'}}
-          </td></tr>
+          </td><td rowspan="4"><button class="ButtonCommand ButtonUpload" :class="!systemChange ? 'disable': ''" @click="SaveSystem"><img src="@/assets/save.svg" alt=""></button></td></tr>
           <tr><td colspan="1">Начало горизонта планирования:</td><td>
             <DateTime :valueUnix="dataSystem.modelingBegin" :id="'modelingBegin'"  @valueSelect="ChangeTime"/>
           </td></tr>
           <tr><td  colspan="1">Окончание горизонта планирования:</td><td>
             <DateTime :valueUnix="dataSystem.modelingEnd" :id="'modelingEnd'" @valueSelect="ChangeTime"/>
           </td></tr>
-          <tr><td  colspan="1">Шаг интегрирования баллистики:</td><td><input placeholder="Введите шаг" class="inputType2" id="step" @change="ChangeParam" type="number" min="0" :value="dataSystem.step"></td></tr>
+          <tr><td  colspan="1">Шаг интегрирования баллистики:</td><td><input placeholder="Введите шаг" class="inputType2" id="step" @change="ChangeParam" type="number" min="0" v-model="dataSystem.step"></td></tr>
         </tbody></table>
   </template>
   <script>
@@ -26,7 +26,8 @@ import { CreateDateTime } from '@/js/WorkWithDTime';
     },
     data(){
       return{
-        dataSystem:{}
+        dataSystem:{},
+        systemChange: false
       }
     },
     methods: {
@@ -34,14 +35,23 @@ import { CreateDateTime } from '@/js/WorkWithDTime';
         return CreateDateTime(time)
       },
       ChangeTime(obgTime){
+        this.systemChange = true
         if(obgTime.id == 'modelingBegin'){
-          this.$ChangeSystemObject('startTime', obgTime.time)
+          this.dataSystem.startTime = obgTime.time
+          //this.$ChangeSystemObject('startTime', obgTime.time)
         }
-        this.$ChangeSystemObject(obgTime.id, obgTime.time)
+        this.dataSystem[obgTime.id] = obgTime.time
+        //this.$ChangeSystemObject(obgTime.id, obgTime.time)
       },
-      ChangeParam(target){
-        this.$ChangeSystemObject('step',  Math.floor(target.target.value))
+      ChangeParam(){
+        this.systemChange = true
+        //this.$ChangeSystemObject('step',  Math.floor(target.target.value))
       },
+      async SaveSystem(){
+        await this.$ChangeSystemObject(null, null, this.dataSystem)
+        this.systemChange = false
+      },
+      
       async reload(){
         this.dataSystem = await this.$SystemObject()
       }
@@ -59,6 +69,12 @@ import { CreateDateTime } from '@/js/WorkWithDTime';
   filter: none;
   tr{
     background: none;
+  }
+}
+.ButtonUpload{
+  padding: 30px 10px;
+  img{
+    width: 20px;
   }
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
     <div class="main_contain">
-      <DefaultTable v-if="ShowDefaultTable" :dataLableName="dataLableName" :dataTable="dataTable" @closetable="ShowDefaultTable = false" :prevrap="PreWrapDefaultTable"/>
+      <ShootingPlan v-if="ShowTable=='ShootingPlan'" :dataTable="dataTable" @closetable="ShowTable=null"/>
       <div class="ContentDiv">
         <div class="FlexRow Panel">
           <div class="ButtonModelling">
@@ -23,14 +23,15 @@
   
 <script>
 
-import DefaultTable from '../DefaultTable.vue';
-
+import ShootingPlan from './ShootingPlan.vue';
 import { KaSettings } from './KaSettings';
+import { CreateDateTime } from '@/js/WorkWithDTime'
   export default {
     name: 'KA2',
     mixins: [KaSettings],
     data(){
       return{
+        ShowTable: null, //переменная для отображения таблиц
         modellingRezult: {
           data: []
         },
@@ -41,12 +42,10 @@ import { KaSettings } from './KaSettings';
         dataTable: [],
         dataLableName: [],
         ShootingData: [],
-        PreWrapDefaultTable: false,
-        ShowDefaultTable: false
       }
     },
     components:{
-      DefaultTable
+      ShootingPlan
     },
     methods: {
       Experiment(status){
@@ -81,14 +80,15 @@ import { KaSettings } from './KaSettings';
         let dataT = this.modellingRezult.data
         for (let index = 0; index < dataT.length; index++) {
           const element = dataT[index];
-          element.roll = Math.floor(element.deltaB*1000)/1000
-          element.pitch = Math.floor(element.deltaL*1000)/1000
-          element.targetName = element.namePoint
-          element.nodeName = element.rootSatellite
-          element.transition = 0
-          this.dataTable.push(element) 
+          element.roll = Math.floor(element.roll*1000)/1000
+          element.pitch = Math.floor(element.pitch*1000)/1000
+          element.transition = element.unixTimeEnd - element.unixTimeStart + " сек."
+          element.tsUnix = element.timeEnd;element.ts = element.unixTimeEnd
+          let timeEndTarget = element.unixTimeEnd + element.durationShooting
+          element.teUnix = CreateDateTime(timeEndTarget);element.te = timeEndTarget
+          this.dataTable.push({data:element}) 
         }
-        this.ShowDefaultTable = true
+        this.ShowTable='ShootingPlan'
       }
     },
     async mounted(){

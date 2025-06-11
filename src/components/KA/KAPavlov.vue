@@ -12,6 +12,16 @@
         <div class="PanelWork">
           <table class="colum">
             <tbody>
+              <tr>
+              <td style="text-align: end;">Приоритеты моделлирования:</td>
+              <td class="SliderModelling"><div>
+                <div class="labelDiv">
+                  <label id="volumeM">MAX Объём</label>
+                  <label id="lostM">MIN Потери</label>
+                </div>
+                <input @change="console.log($event.target.value)" type="range"  min="0" max="1" step="0.01" v-model="sliderPriority"/>
+              </div></td>
+            </tr>
             <tr>
               <td><button class="ButtonCommand" @click="ShowPlan" :class="(modellingRezult.eventData.length < 1) ? 'disable' : ''">План</button></td>
               <td><button class="ButtonCommand" @click="ShowNodeLoad" :class="(modellingRezult.eventData.length < 1) ? 'disable' : ''">Нагрузка узлов</button></td>
@@ -44,6 +54,7 @@ export default {
           showTable: null
         },
       interSatellite: true,
+      sliderPriority: 0.1,
       dataTable: [],
       dataLableName: [],
       ShowDefaultTable: false
@@ -57,7 +68,7 @@ export default {
   methods: {
     async StartModelling(){
       this.$showLoad(true);
-      let rezult = await this.$FetchPost("/api/v1/planner", {"interSatellite": this.interSatellite}, undefined, true) || null
+      let rezult = await this.$FetchPost("/api/v1/planner", {"interSatellite": this.interSatellite, "maxVolume": 1-this.sliderPriority,"minLost": this.sliderPriority}, undefined, true) || null
       try {
         this.modellingRezult= rezult.XMLDocument
         this.$showToast('План успешно получен','success', 'Планирование');
@@ -205,5 +216,16 @@ export default {
 
 
 <style lang="scss" scoped>
-
+.SliderModelling{
+  width: 70%;
+  div{
+    .labelDiv{
+      display: flex;
+      justify-content: space-between;
+    }
+    input{
+      padding: 0px !important;
+    }
+  }
+}
 </style>

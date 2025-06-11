@@ -14,6 +14,7 @@
         </div>
         <div class="Panel RightPanel" >
           <div v-if="viewmode == 0" class="TableDiv" style="max-height: 60vh; min-height: 60vh;">
+            <div><button class="ButtonCommand" @click="DeleteALLrequest">Очистить заявки</button></div>
             <table class="TableDefault">
               <thead><tr><th>Цель</th><th>Широта</th><th>Долгота</th><th>Высота</th><th>НП</th><th>Критерий</th><th>Приоритет</th><th>Время появления</th><th>Срок выполнения</th><th v-if="systemStatus.typeWorkplace in {3:null,4:null}">Признак</th><th></th></tr></thead>
               <tbody><tr
@@ -40,6 +41,9 @@
           </div>
 
           <div v-if="viewmode == 1" class="TableDiv" style="max-height: 60vh; min-height: 60vh;">
+            <div><button class="ButtonCommand" @click="DeleteALLcatalog">Очистить каталог</button>
+              <button class="ButtonCommand" @click="AddALLcatalog">Добавить всё в заявки</button>
+            </div>
           <table class="TableDefault">
           <thead><tr><th>Цель</th><th>Заявки</th><th>Широта</th><th>Долгота</th><th>Высота</th><th></th></tr></thead>
           <tbody><tr v-for="data, index in catalogJson"
@@ -119,30 +123,47 @@ import XLSX from 'xlsx-js-style';
         this.requestJson[obgtime.id][obgtime.name] = obgtime.time
         this.SatartSave('request')
       },
-      TryParceLatLng(id){
-        try {
-          navigator.clipboard.readText().then(text => {
-            try {
-              let textParce = JSON.parse(text)
-              this.catalogJson[id].lat = textParce.lat
-              this.catalogJson[id].lon = textParce.lng
-            }catch{
-              console.error('')
-            }
-          })
-        }catch{
-          console.error("")
-        }
+      DeleteALLrequest(){
+        this.$showLoad(true)
+        this.requestJson.forEach(element => {
+          element.deleted = true
+        })
+        this.SatartSave('request')
+        this.$showToast('Все заявки удалены','info', 'Заявки');
+        this.$showLoad(false)
       },
-      /*async GetRequestFromDB(mode){
-        if(mode == 1){
-          await this.$FetchGet('/api/v1/smao/requests')
-        }
-        else if(mode==2){
-          await this.$FetchGet('/api/v1/route/requests')
-        }
-        await this.ReFetch()
-      },*/
+      DeleteALLcatalog(){
+        this.$showLoad(true)
+        this.catalogJson.forEach(element => {
+          element.deleted = true
+        })
+        this.SatartSave('catalog')
+        this.$showToast('Каталог очищен','info', 'Заявки');
+        this.$showLoad(false)
+      },
+      async AddALLcatalog(){
+        
+        await this.DeleteALLrequest()
+        this.$showLoad(true)
+        
+        this.catalogJson.forEach(element => {
+          this.requestJson.push({
+                      "requestId": undefined,
+                      "catalog": element,
+                      "orderId": this.requestJson.length + 1,
+                      "priory": 3,
+                      "term": this.systemStatus.modelingEnd,
+                      "time": this.systemStatus.modelingBegin,
+                      "earthPoint": this.arrNP[0].value,
+                      "choiceCriteria": 1,
+                      "filter": false,
+                      "deleted": null, 'role': "newRow"
+                })
+        })
+        this.SatartSave('request')
+        this.$showToast('Добавление заявок завершено','success', 'Заявки');
+        this.$showLoad(false)
+      },
       SelectChange(e, param){
         this.requestJson[e.id][param] = e.value
         this.SatartSave('request')

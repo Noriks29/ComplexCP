@@ -173,6 +173,7 @@ import XLSX from 'xlsx-js-style';
 
               },
           PrevrapData(){
+            console.log(this.dataTable)
             this.dataTable.forEach(E77 => {
                 this.dataT = this.dataT.concat(E77.data)
             })
