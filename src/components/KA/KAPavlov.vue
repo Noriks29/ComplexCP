@@ -6,8 +6,8 @@
     <div class="ContentDiv">
         <div class="FlexRow Panel">
           <div class="ButtonModelling">
-            <div><input type="checkbox"  v-model="interSatellite"/><label>Межспутниковая связь: {{ interSatellite }}</label></div>
-            <div><input type="checkbox"  v-model="scProcess"/><label>Обработка на борту: {{ scProcess }}</label></div>
+            <div><input type="checkbox"  v-model="interSatellite"/><label>Межспутниковая связь</label></div>
+            <div><input type="checkbox"  v-model="scProcess"/><label>Обработка на борту</label></div>
             <button  @click="StartModelling" class="ButtonCommand rightPadding"><img src="../../assets/start.png" alt="" class="iconButton">Старт планирования</button>
           </div>
         <div class="PanelWork">
