@@ -6,17 +6,19 @@
     <div class="ContentDiv">
         <div class="FlexRow Panel">
           <div class="ButtonModelling">
-            <div><input type="checkbox"  v-model="interSatellite"/><label>interSatellite: {{ interSatellite }}</label></div>
+            <div><input type="checkbox"  v-model="interSatellite"/><label>Межспутниковая связь: {{ interSatellite }}</label></div>
+            <div><input type="checkbox"  v-model="scProcess"/><label>Обработка на борту: {{ scProcess }}</label></div>
             <button  @click="StartModelling" class="ButtonCommand rightPadding"><img src="../../assets/start.png" alt="" class="iconButton">Старт планирования</button>
           </div>
         <div class="PanelWork">
           <table class="colum">
             <tbody>
               <tr>
-              <td style="text-align: end;">Приоритеты моделлирования:</td>
+              <td style="text-align: end;">Важность моделлирования:</td>
               <td class="SliderModelling"><div>
                 <div class="labelDiv">
                   <label id="volumeM">MAX Объём</label>
+                  <input type="number" class="inputType1" style="width: 75px;" v-model="sliderPriority">
                   <label id="lostM">MIN Потери</label>
                 </div>
                 <input @change="console.log($event.target.value)" type="range"  min="0" max="1" step="0.01" v-model="sliderPriority"/>
@@ -54,6 +56,7 @@ export default {
           showTable: null
         },
       interSatellite: true,
+      scProcess: false,
       sliderPriority: 0.1,
       dataTable: [],
       dataLableName: [],
@@ -68,7 +71,7 @@ export default {
   methods: {
     async StartModelling(){
       this.$showLoad(true);
-      let rezult = await this.$FetchPost("/api/v1/planner", {"interSatellite": this.interSatellite, "maxVolume": 1-this.sliderPriority,"minLost": this.sliderPriority}, undefined, true) || null
+      let rezult = await this.$FetchPost("/api/v1/planner", {"interSatellite": this.interSatellite, "maxVolume": 1-this.sliderPriority,"minLost": this.sliderPriority*(-1), "scProcess": this.scProcess}, undefined, true) || null
       try {
         this.modellingRezult= rezult.XMLDocument
         this.$showToast('План успешно получен','success', 'Планирование');

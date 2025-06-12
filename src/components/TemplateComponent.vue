@@ -155,7 +155,7 @@ export default {
       flex:1;
     }
     .main_contain{
-      padding: 5px 0px 10px !important;
+      padding: 0px 0px 0px !important;
       /*height: calc(100% - 85px) !important;*/
       height: fit-content !important;
       .ContentDiv{
@@ -164,6 +164,7 @@ export default {
         align-items: stretch !important;
         .FlexRow{
           width: auto !important;
+          padding: 5px !important;
         }
       }
     }
