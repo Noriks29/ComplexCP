@@ -57,6 +57,7 @@ import { CreateDateTime } from '@/js/WorkWithDTime'
       async StartModelling(){
         this.$showLoad(true);
         this.modellingRezult.data = await this.$FetchGet("/api/v1/route", true, "Расчёт Route окончен") || []
+        await this.GetRezultGordeev()
         this.ShootingData = []
         this.$showLoad(false);
       },
@@ -82,7 +83,7 @@ import { CreateDateTime } from '@/js/WorkWithDTime'
           const element = dataT[index];
           element.roll = Math.floor(element.roll*1000)/1000
           element.pitch = Math.floor(element.pitch*1000)/1000
-          element.transition = element.unixTimeEnd - element.unixTimeStart + " сек."
+          element.transition = element.unixTimeEnd - element.unixTimeStart
           element.tsUnix = element.timeEnd;element.ts = element.unixTimeEnd
           let timeEndTarget = element.unixTimeEnd + element.durationShooting
           element.teUnix = CreateDateTime(timeEndTarget);element.te = timeEndTarget
