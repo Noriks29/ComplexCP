@@ -1,12 +1,29 @@
 <template>
   <div class="MapContain">
-   <div id="DrawKARoad">
-            <div class="LatLng"><span>Точка: {{ AddPoint.lat+', '+AddPoint.lng }}</span><button class="ButtonCommand" @click="StartAddPoint">Добавить</button></div>
+   <div id="DrawKARoad" class="PanelMenu">
             <SelectDiv  :dataOption="KAArray" :valueS="KatoDraw" :id="'KA'+String(0)" @valueSelect="ChangeKaDraw"/>
             <input type="color" id="inputColorKa" value="#5900ff"><button class="ButtonCommand" @click="GetKARoad">Отрисовать маршрут</button>
-            <button class="ButtonCommand" @click="ReloadMapContainer">Обновить карту</button>
-          </div>
-          <div id="map"></div>
+            <div class="LatLng"><span>Точка: {{ AddPoint.lat+', '+AddPoint.lng }}</span><button class="ButtonCommand" @click="StartAddPoint">Добавить</button></div>
+            <button class="ButtonCommand reload" @click="ReloadMapContainer"><img src="@/assets/reload.png" alt="Сброс"></button>
+    </div>
+    <div id="Legend" class="PanelMenu">
+            <div><table>
+              <tbody>
+                <tr><td><span class="circle NP"></span></td><td>Наземный пункт</td></tr>
+                <tr><td><span class="circle Catalog"></span></td><td>Каталог</td></tr>
+                <tr><td><span class="circle Request"></span></td><td>Заявка</td></tr>
+                <tr><td><span class="circle Sat"></span></td><td>КА</td></tr>
+              </tbody>
+            </table></div>
+      <div class="SatList">
+        <div v-for="data, index in RoadKaList" :key="index" 
+        >
+          <span :style="'border-bottom: 1px solid ' + (data.color || 'black') +';'">{{ data.name }}</span>
+          <span class="delete"><img src="@/assets/delete.svg" alt=" - " @click="DeleteRoad(data, index)"></span>
+        </div>
+      </div>
+    </div>
+    <div id="map"></div>
     <div class="AddPointDiv" v-if="AddPoint.showadd">
     <div class="PanelMenu" style="position: relative;">
       <div class="closeButton" @click="AddPoint.showadd=false"><img src="@/assets/close.svg" alt="закрыть"></div>
@@ -58,7 +75,8 @@ export default {
           lng: 0,
           name: undefined,
           height: 0
-        }
+        },
+        RoadKaList:[]
     }
   },
   components:{
@@ -82,7 +100,7 @@ export default {
           });
           L.Marker.prototype.options.icon = DefaultIcon;
           this.catalogJson.forEach(element =>{
-            L.circle([element.lat, element.lon], 18000, {
+            L.circle([element.lat, element.lon], 38000, {
                 color: 'yellow',
                 fillColor: 'yellow',
                 fillOpacity: 0.6
@@ -90,14 +108,14 @@ export default {
           })
           for (let i = 0; i < this.requestJson.length; i++) {
               const element = this.requestJson[i].catalog;
-              L.circle([element.lat, element.lon], 21000, {
+              L.circle([element.lat, element.lon], 41000, {
                 color: 'red',
                 fillColor: '#f03',
                 fillOpacity: 0.4
               }).addTo(this.map)
           }
           this.NPList.forEach(element => {
-              L.circle([element.latitude, element.longitude], 30000, {
+              L.circle([element.latitude, element.longitude], 45000, {
                 color: 'green',
                 fillColor: '#121100',
                 fillOpacity: 0.4
@@ -112,7 +130,7 @@ export default {
 
         },
         ChangeKaDraw(e){
-          this.KatoDraw = e.value
+          this.KatoDraw = e
         },
         StartAddPoint(){
           this.AddPoint.name = undefined
@@ -127,7 +145,7 @@ export default {
 
             })
             await this.$ChangeNPList(this.NPList)
-            L.circle([this.AddPoint.lat||0, this.AddPoint.lng||0], 30000, {
+            L.circle([this.AddPoint.lat||0, this.AddPoint.lng||0], 40000, {
                   color: 'green',
                   fillColor: '#121100',
                   fillOpacity: 0.4
@@ -147,7 +165,7 @@ export default {
               alt: 0, goalId: 0 
             })
             await this.$FetchPost("/api/v1/satrequest/catalog/update", this.catalogJson)
-            L.circle([this.AddPoint.lat||0, this.AddPoint.lng||0], 18000, {
+            L.circle([this.AddPoint.lat||0, this.AddPoint.lng||0], 28000, {
                 color: 'yellow',
                 fillColor: 'yellow',
                 fillOpacity: 0.8
@@ -160,34 +178,32 @@ export default {
         },
         async GetKARoad(){
           this.$showLoad(true);
-          let color = document.getElementById("inputColorKa")
-          let colors = ['#ff0000','#00ff00','#0000ff','#ffff00','#00ffff','#990000','#009900','#999900','#000099','#ffcc00','#00ffcc','#cc0000','#00cc00','#cccc00','#0000cc','#ee0000','#00ee00','#eeee00','#00eeee','#aaaa00']
           if (this.KatoDraw.value == null) {
             let roads = await this.$FetchGet("/api/v1/pro42/gps/all") || []
             let colorid = 0
+            let colors = ['#ff0000','#00ff00','#0000ff','#ffff00','#00ffff','#990000','#009900','#999900','#000099','#ffcc00','#00ffcc','#cc0000','#00cc00','#cccc00','#0000cc','#ee0000','#00ee00','#eeee00','#00eeee','#aaaa00']
             roads.forEach(road => {
-              let arrayPoint = [[]]
-              let line_index = 0
-              for (let index = 0; index < road.coordinates.length; index+=1) {
-                const element = road.coordinates[index];
-                if (arrayPoint[line_index].length > 0) {
-                  if(arrayPoint[line_index][arrayPoint[line_index].length-1].lng * element.longitude < -1000){
-                    line_index++
-                    arrayPoint.push([])
+              let name = road.satelliteId
+              this.KAArray.forEach(sat => {
+                if(sat.value != null){
+                  if(sat.value.satelliteId == road.satelliteId){
+                    name = sat.value.name
                   }
                 }
-                arrayPoint[line_index].push({lat: element.latitude, lng: element.longitude})
-              }
-              arrayPoint.forEach(dataRoad => {
-                L.polyline(dataRoad, {color: colors[colorid] + "d4", weight: 2}).addTo(this.map);
               })
+              this.DrowRoad(road.coordinates,colors[colorid], name)
               colorid++
             });
-
           }
           else{
-            let road = await this.$FetchPost("/api/v1/pro42/gps/sat", {}, "satelliteId="+this.KatoDraw.satelliteId) || []
-            let arrayPoint = [[]]
+            let color = document.getElementById("inputColorKa").value
+            let road = await this.$FetchPost("/api/v1/pro42/gps/sat", {}, "satelliteId="+this.KatoDraw.value.satelliteId) || []
+            this.DrowRoad(road,color, this.KatoDraw.value.name)
+          }
+          this.$showLoad(false);
+        },
+        DrowRoad(road,color,nameKA){
+          let arrayPoint = [[]]
             let line_index = 0
             for (let index = 0; index < road.length; index+=1) {
               const element = road[index];
@@ -197,11 +213,19 @@ export default {
                     arrayPoint.push([])
                   }
                 }
-              arrayPoint[line_index].push({lat: element.latitude, lng: element.longitude})
+              
+              arrayPoint[line_index].push({lat:element.latitude, lng: element.longitude})
             }
-            L.polyline(arrayPoint, {color: color.value + "d4", weight: 2}).addTo(this.map);
-          }
-          this.$showLoad(false);
+            let point = arrayPoint[line_index][arrayPoint[line_index].length-1]
+            let roadSat = L.polyline(arrayPoint, {color: color + "d4", weight: 2}).addTo(this.map);
+            let pointSat = L.circle([point.lat, point.lng], 85000, {color: "#0000ff69", fillOpacity: 0.3, fillColor: 'blue'}).addTo(this.map)
+            this.RoadKaList.push({name: nameKA, color: color, road:roadSat, point: pointSat})
+        },
+        DeleteRoad(data, index){
+          this.RoadKaList.splice(index, 1)
+          console.log(this.RoadKaList)
+          this.map.removeLayer(data.road)
+          this.map.removeLayer(data.point)
         },
         async ReloadMapContainer(){
           this.map.off();
@@ -218,7 +242,7 @@ export default {
       this.KAArray.push({value: null, lable: "Все КА" })
       this.OGList.forEach(OG => {
         OG.satellites.forEach(element =>{
-          this.KAArray.push({value: element, lable: OG.constellationName + "-" + element.name })
+          this.KAArray.push({value: element, lable: element.name })
         })
       });
       this.KatoDraw = this.KAArray[0]
@@ -258,32 +282,95 @@ export default {
     }
 }
 
+#Legend{
+  position: absolute;
+  left: 5px;
+  bottom: 5px;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px 5px;
+  table{
+    tr{
+      td{
+        text-align: left;
+        padding-left: 5px;
+        .circle{
+          width: 10px;
+          height: 10px;
+          display: block;
+          border-radius: 50px;
+          &.NP{
+            background-color: green;
+          }
+          &.Catalog{
+            background-color: yellow;
+          }
+          &.Request{
+            background-color: red;
+          }
+          &.Sat{
+            background-color: blue;
+          }
+        }
+      }
+    }
+  }
+  .SatList{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-height: 200px;
+    overflow-y: auto;
+    div{
+      border-radius: 5px;
+      margin: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .delete{
+        width: 25px;
+      }
+    }
+  }
+  
+}
+
 #DrawKARoad{
   position: absolute;
-  right: 0;
+  right: 5px;
   top: 5px;
   z-index: 1;
   display: flex;
   align-items: center;
-  padding: 5px 20px;
+  padding: 5px 5px;
 
   #inputColorKa{
   height: 50px;
-  width: 100px;
-  padding: 0px;
-  margin: 5px;
+  width: 80px;
+  border: none;
+  padding: 2px;
+  margin: 0px 5px;
   }
   .ButtonCommand{
     margin: 5px;
+    &.reload{
+      margin: 3px;
+      img{
+         width: 20px;
+      }
+    }
   }
 }
 #map{
-  background-color: var(--color-bg-panel);
-  position: relative;
-  outline-style: none;
-  height: calc(100% - 20px);
-  margin: 10px;
-  z-index: 0;
+    background-color: var(--color-bg-panel);
+    position: relative;
+    outline-style: none;
+    height: calc(100% - 14px);
+    margin: 7px;
+    z-index: 0;
+    border-radius: 10px;
   .leaflet-map-pane{
             pointer-events: none;
         }
@@ -296,10 +383,12 @@ export default {
 .LatLng{
     display: flex;
     align-items: center;
+    justify-content: space-between;
     background-color: var(--background-Button1);
     padding: 5px;
     border-radius: 10px;
     margin-right: 5px;
+    min-width: 260px;
     span{
       white-space: nowrap;
       color: var(--color-Main);

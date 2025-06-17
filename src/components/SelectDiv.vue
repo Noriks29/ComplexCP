@@ -61,7 +61,7 @@
         this.PostValue()
       },
       PostValue() {
-        this.$emit('valueSelect', {value: this.value, id: this.id})
+        this.$emit('valueSelect', {value: this.value, id: this.id, lable: this.lable})
       },
       DisplayList(){
         if(this.displayList){
