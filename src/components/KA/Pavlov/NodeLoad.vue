@@ -9,6 +9,22 @@
         </div>
         
         <div class="DataBody">
+          <div class="TableDiv">
+          <table class="TableDefault">
+          <thead>
+            <tr><th colspan="2">Показатели качества</th><th colspan="2">Значимость показателей</th></tr>
+            <tr><th>Доставленные данные</th><th>Потерянные данные</th><th>Доставленные данные</th><th>Потерянные данные</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+                <td>{{ summary.criterion.selector[0].value }}</td>
+                <td>{{ summary.criterion.selector[1].value }}</td>
+                <td>{{ summary.selectors.selector[1].sign }}</td>
+                <td>{{ summary.selectors.selector[0].sign }}</td>
+            </tr>
+          </tbody>
+          </table>
+        </div>
         <div class="TableDiv">
           <table class="TableDefault">
           <thead>
@@ -52,6 +68,9 @@ import { UnixToDtime } from '@/js/WorkWithDTime';
         dataTable:{
           type: Array
         },
+        summary:{
+          typr: Object
+        }
       },
       data() {
         return {
@@ -309,6 +328,7 @@ import { UnixToDtime } from '@/js/WorkWithDTime';
       },
       mounted() {
         this.DataPrevrap()
+        console.log(this.summary)
       }
     }
   </script>

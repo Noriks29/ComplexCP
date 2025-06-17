@@ -223,7 +223,6 @@ export default {
         },
         DeleteRoad(data, index){
           this.RoadKaList.splice(index, 1)
-          console.log(this.RoadKaList)
           this.map.removeLayer(data.road)
           this.map.removeLayer(data.point)
         },
@@ -258,7 +257,6 @@ export default {
   position: relative;
   flex: 1;
 }
-
 .AddPointDiv{
     position: absolute;
     top: 0px;

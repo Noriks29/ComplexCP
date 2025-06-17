@@ -1,20 +1,19 @@
 <template>
   <div class="main_contain">
-    <DefaultTable v-if="ShowDefaultTable" :dataLableName="dataLableName" :dataTable="dataTable" @closetable="ShowDefaultTable = false" :prevrap="false"/>
     <PlanPavlov v-if="modellingSettings.showTable == 'Plan'" :dataTable="modellingRezult.eventData" @closetable="modellingSettings.showTable = null"/>
-    <NodeLoad v-if="modellingSettings.showTable == 'NodeLoad'" :dataTable="modellingRezult.eventData" @closetable="modellingSettings.showTable = null"/>
+    <NodeLoad v-if="modellingSettings.showTable == 'NodeLoad'" :dataTable="modellingRezult.eventData" :summary="summary" @closetable="modellingSettings.showTable = null"/>
     <div class="ContentDiv">
         <div class="FlexRow Panel">
           <div class="ButtonModelling">
-            <div><input type="checkbox"  v-model="interSatellite"/><label>Межспутниковая связь</label></div>
-            <div><input type="checkbox"  v-model="scProcess"/><label>Обработка на борту</label></div>
+            <div><label><input type="checkbox" class="checkbox-input" v-model="interSatellite"/>Межспутниковая связь</label></div>
+            <div><label><input type="checkbox" class="checkbox-input" v-model="scProcess"/>Обработка на борту</label></div>
             <button  @click="StartModelling" class="ButtonCommand rightPadding"><img src="../../assets/start.png" alt="" class="iconButton">Старт планирования</button>
           </div>
         <div class="PanelWork">
           <table class="colum">
             <tbody>
               <tr>
-              <td style="text-align: end;">Важность моделлирования:</td>
+              <td style="text-align: end;">Важность планирования:</td>
               <td class="SliderModelling"><div>
                 <div class="labelDiv">
                   <label id="volumeM">MAX Объём</label>
@@ -23,7 +22,9 @@
                 </div>
                 <input @change="console.log($event.target.value)" type="range"  min="0" max="1" step="0.01" v-model="sliderPriority"/>
               </div></td>
-            </tr>
+            </tr></tbody></table>
+          <table class="colum">
+            <tbody>
             <tr>
               <td><button class="ButtonCommand" @click="ShowPlan" :class="(modellingRezult.eventData.length < 1) ? 'disable' : ''">План</button></td>
               <td><button class="ButtonCommand" @click="ShowNodeLoad" :class="(modellingRezult.eventData.length < 1) ? 'disable' : ''">Нагрузка узлов</button></td>
@@ -38,7 +39,6 @@
 
 <script>
 
-import DefaultTable from '../DefaultTable.vue';
 import { UnixToDtime } from '@/js/WorkWithDTime';
 import { KaSettings } from './KaSettings';
 import PlanPavlov from './Pavlov/PlanPavlov.vue';
@@ -55,16 +55,13 @@ export default {
         modellingSettings:{
           showTable: null
         },
+      summary: {},
       interSatellite: true,
       scProcess: false,
       sliderPriority: 0.1,
-      dataTable: [],
-      dataLableName: [],
-      ShowDefaultTable: false
     }
   },
   components:{
-    DefaultTable,
     PlanPavlov,
     NodeLoad
   },
@@ -83,8 +80,8 @@ export default {
     },
     async ParceRezult(){
       console.log(this.modellingRezult, "Обработка результатов")
-      this.modellingRezult.JsonData = JSON.stringify(this.modellingRezult,null,2)
       this.modellingRezult.eventData = []
+      this.summary = this.modellingRezult.report.summary
       let time = (await this.$SystemObject()).modelingBegin
       let plan = this.modellingRezult.report.plan
       plan.time.sort(function(a, b) { // Обработка времени интервалов
@@ -199,13 +196,6 @@ export default {
       }
       await this.ParceRezult()
     },
-    ShowRezult(){
-      this.dataTable = []
-      this.dataLableName = [{label: "data", nameParam: "data"}]
-      this.dataTable.push({data: this.modellingRezult.JsonData}) 
-      this.ShowDefaultTable = true
-
-    },
     async ReLoadComponent(){
       this.GetRezultPavlov()
     }
@@ -219,15 +209,48 @@ export default {
 
 
 <style lang="scss" scoped>
+
+.checkbox-input {
+    appearance: none;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid var(--color-border1);
+    border-radius: 0.25rem;
+    background-color: var(--color-bg-panel);
+    cursor: pointer;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    margin: 0 5px 0 0;
+
+}
+.checkbox-input:checked {
+    background-color: var(--color-border1);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+}
+.ButtonModelling{
+    display: flex;
+    align-items: flex-start;
+    height: 100%;
+    justify-content: space-around;
+    div{
+      display: flex;
+    }
+}
+
 .SliderModelling{
   width: 70%;
   div{
     .labelDiv{
       display: flex;
       justify-content: space-between;
+      align-items: flex-end;
     }
     input{
       padding: 0px !important;
+      width: 75px;
+      flex: 1;
+      margin: 0px 10px;
+      height: 30px;
+      text-align: center;
     }
   }
 }

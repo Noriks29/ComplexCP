@@ -21,8 +21,8 @@
         </div>
         <div class="FlexMenuSection">
         <div class="ButtonSection second" v-if="system.typeWorkplace in {3:null}">
-          <h1>Получение ИД</h1>
-          <div class="ButtonList">
+          <div class="ButtonList PanelMenu">
+            <h1>Получение ИД</h1>
             <button class="ButtonCommand GetData"  @click="GetDataToModule(1)"><span>План без НКУ</span></button>
             <button class="ButtonCommand GetData"  @click="GetDataToModule(2)"><span>План с НКУ</span></button>
           </div>
@@ -129,10 +129,18 @@ export default {
 
 </script>
 
-<style lang="scss">
-.GetData{
-  margin-right: 5px !important;
+<style lang="scss" scoped>
+.PanelMenu{
+  margin-left: 0px !important;
+  .GetData{
+    margin-right: 5px !important;
+  }
 }
+
+</style>
+
+<style lang="scss">
+
 
 .ModellingTitle{
       font-size: 20px;
@@ -150,6 +158,7 @@ export default {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     
     .PanelWork{
       flex:1;
@@ -164,7 +173,7 @@ export default {
         align-items: stretch !important;
         .FlexRow{
           width: auto !important;
-          padding: 5px !important;
+          padding: 2px !important;
         }
       }
     }
@@ -234,6 +243,10 @@ export default {
         display: flex;
         justify-content: space-evenly;
         flex-direction: column;
+        &.PanelMenu{
+          margin: 0px 10px 0px 0px;
+          padding: 5px;
+        }
       }
 
       button{
