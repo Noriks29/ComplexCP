@@ -377,6 +377,9 @@ export default {
       display: none;
     }
   }
+  .leaflet-attribution-flag{
+    width: 0 !important;
+  }
 }
 .LatLng{
     display: flex;

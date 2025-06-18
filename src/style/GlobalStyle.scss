@@ -1,6 +1,23 @@
+@keyframes slideInFromBottom {
+  0% {
+    transform: translateY(120%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
+}
+@keyframes slideInFromTop {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
+}
+
+
 :root {
   --font-size: 16px;
-
   --background-Table1: #00000054;
   --background-Main: black;
   --background-Panel: rgba(151, 151, 151, 0.15);
@@ -56,57 +73,17 @@
     --border-button2: #31313173;
     --border-Panel2: #DCDCDC;
     --border-bottom-input: #bfbfbf;
-
-
-    .headerSelectMode{
-      background: none;
-      padding: 5vh 0px 0px 0px;
-      height: 95vh;
-      border: none;
-      .ButtonSelectMode{
-        background-color: #f3f3f3;
-        margin: 10px 20px;
-        width: calc(100% - 40px);
-        height: calc(100% - 20px);
-        border: 1px solid var(--border-Panel2);
-        border-radius: 10px;
-      }
-    }
-    .SectionMenu .ModellingDiv{
-      height: 65vh;
-      .main_contain{
-        padding: 0px;
-        height: 100%;
-        .ContentDiv{
-          overflow: none; // посмотри как тут убрать все недочёты по скролу 
-        }
-      }
-    }
-    img{
-      filter: invert(1);
-    }
-    #map img{
-      filter: none;
-    }
-    .TableDefault tr {
-      background-color: rgb(255 255 255 / 76%);
-    }
-    .RowSection th {
-      border: none;
-      border-bottom: 2px solid #909090;
-    }
-    .SystemInfo {
-      color: black;
-    }
-    .half-width input {
-      color: black;
-    }
   }
 }
 
 
 body{
   background-color: #18181b;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  margin: 0px;
+  height: 100vh;
+  position: relative;
   --scroll-size: 5px;
   --scroll-radius: 10px;
   --scroll-track: rgb(255 255 255 / 10%);
@@ -126,34 +103,15 @@ body{
   }
 }
 
-
-
-
-body{
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  margin: 0px;
-  height: 100vh;
-  position: relative;
-}
-
-
-
-
-
-
-
 .FlexRow{
+  width: auto;
+  padding: 2px;
   display: flex;
-    align-items: center;
-    width: 95vw;
-    max-width: 95vw;
-    overflow-x: auto;
-    justify-content: space-evenly;
-    padding: 10px;
-
+  align-items: center;
+  max-width: 95vw;
+  overflow-x: auto;
+  justify-content: space-evenly;
     div{
-      
       margin: 0px 5px;
       &.ButtonModelling{
         flex: 0 1 auto;
@@ -169,16 +127,13 @@ body{
         border: 1px solid var(--border-Table1);
       }
     }
-    
-    
 }
 
 .main_contain {
   position: relative;
   font-size: var(--font-size);
-  padding-top: 15px;
-  height: calc(100% - 25px);
-
+  padding: 0px 0px 0px ;
+  height: fit-content;
     .ToMenuButtonDiv {
         position: fixed;
         top: 20px;
@@ -190,41 +145,18 @@ body{
             width: 30px;
         }
     }
-    .TitleText{
-      font-size: 25px;
-      margin: 5px;
-    }
-
     .ContentDiv{
-        display: inline-flex;
         flex-direction: column;
-        align-items: center;
         overflow-y: auto;
         overflow-x: hidden;
         min-width: 60%;
-        
+        display: flex;
+        height: 100%;
+        align-items: stretch;
         .Panel{
 
             table{
-                text-align: center;
-                font-size: var(--font-size);
-                border-spacing: 0px;
-                min-width: 100%;
-                .Title{
-                    border-bottom: 1px solid;
-                    padding-bottom: 5px;
-                    text-align: center;
-                }
-
-                .addRowButton button{
-                    background: none;
-                    border: none;
-                    width: 100%;
-                    height: 100%;
-                    padding: 10px 0px;
-                    font-size: var(--font-size);
-                    color: var(--color-Main);
-                  }
+                
                 tr{
                     td{
                         input{
@@ -232,101 +164,7 @@ body{
                         }
                     
                     }
-
-                    &.disable{
-                      input{
-                        pointer-events: none;
-                      }
-                    }
                 }   
-            }
-
-            &.MaxWidth{
-                min-width: 100%;
-            }
-            progress{
-                width: 90%;
-                height: 20px;
-            }
-
-            &.TableInfo{
-                display: inline-flex;
-                flex-wrap: nowrap;
-                align-items: center;
-                justify-content: space-evenly;
-                position: sticky;
-                bottom: 10px;
-                padding: 10px;
-                  div{
-                    &.Yes{
-                      margin: 5px;
-                      border-bottom: 2px solid green;
-                    }
-                    &.No{
-                      margin: 5px;
-                      border-bottom: 2px solid red;
-                    }
-                  }
-                  .ButtonApproved
-                   {
-                    height: 100%;
-                    position: relative;
-                    button{
-                      padding: 7px;
-                      width: 100%;
-                      color: var(--color-Main);
-                      display: flex;
-                      flex-direction: row;
-                      img{
-                        width: 30px;
-                        margin-right: 5px;
-                      }
-                      &.disabled{
-                        pointer-events:none;
-                      }
-                      &.ButtonDefault{
-                        clip-path: polygon(calc(100% - 10px) 0%, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px), 0 0);
-                        background: linear-gradient(90deg, rgba(53,0,245,1) 0%, rgba(172,0,245,1) 100%);
-                        border: none;
-                        font-size: var(--font-size);
-                        align-items: center;
-                        transition: all 1s;
-                        &.Empty{
-                          border: 2px solid white;
-                          background: none;
-                        }
-                        &:before{
-                            content: "";
-                            position: absolute;
-                            top: 0;
-                            left: -100%;
-                            width: 100%;
-                            height: 100%;
-                            background: linear-gradient(
-                                120deg,
-                                transparent,
-                                rgba(146, 148, 248, 0.4),
-                                transparent
-                                );
-                            transition: all 650ms;
-                        }
-                        &:hover{
-                            &:before{left: 100%;}
-                        }
-                      }
-                      &.ButtonDefaultShadow{
-                        clip-path: polygon(calc(100% - 10px) 0%, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px), 0 0);
-                        background: linear-gradient(90deg, rgba(53,0,245,0.5) 0%, rgba(172,0,245,0.5) 100%);
-                        position: absolute;
-                        z-index: -1;
-                        content: "";
-                        width: 100%;
-                        height: 100%;
-                        left: 5px;
-                        top: 3px;
-                        }
-                    } 
-                } 
             }
         }
     }   
@@ -378,21 +216,6 @@ body{
               }
             }
           }
-          .ButtonApprovedDiv button{
-            display: flex;
-            width: 94%;
-            justify-content: space-between;
-            margin: 3%;
-            align-items: center;
-            transition: box-shadow 1s ;
-          
-            &.red{
-              box-shadow: inset -2px -2px 1px 0px red;
-            }
-            &.green{
-              box-shadow: inset 2px 2px 1px 0px green;
-            }
-          }
         }
       }
       td{
@@ -406,36 +229,6 @@ body{
 
 .iconDelete img{ //в ог 
   width: 30px;
-}
-
-
-.scroll-table-body {
-	height: 100%;
-	overflow-x: auto;
-	margin-top: 0px;
-	margin-bottom: 20px;
-}
-.scroll-table{
-  table {
-    width:100%;
-    table-layout: fixed;
-  }
-  thead th {
-    font-weight: bold;
-    text-align: left;
-    padding: 10px 15px;
-    font-size: var(--font-size);
-  }
-  tbody td {
-    text-align: left;
-    padding: 10px 15px;
-    font-size: var(--font-size);
-  }
-  
-}
-
-.leaflet-attribution-flag{
-  width: 0 !important;
 }
 .addButtonIcon{
   width: 25px;
@@ -460,9 +253,6 @@ input{
   background: none;
   font-size: var(--font-size);
   color: var(--color-Main);
-
-  
-
   &.disable{
       pointer-events: none;
   }
@@ -471,8 +261,7 @@ input{
   }
 }
 
-
-.input-file {
+.input-file{
 	background: var(--background-Button1);
   color: var(--color-Main);
   border: 1px solid var(---border-button);
@@ -501,7 +290,6 @@ input{
     align-items: center;
     flex-direction: row;
   }
-
   input[type=file] {
     position: absolute;
     z-index: -1;
@@ -513,254 +301,21 @@ input{
 }
 
 .ModellingDiv{ //для моделирования 
-  .Divfieldset{
-    width: fit-content;
-    flex: none;
-    fieldset{
-      text-align: left;
-      width: fit-content;
-  
-      div{
-        width: fit-content;
-      }
-    }
-  }
-  
   .PanelWork{
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-  
     .colum{
       flex: 1;
       button{
         width: 99%;
       }
-  
     }
-  
-    .FlexColum{
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      padding: 10px;
-  
-      button{
-        margin: 5px;
-      }
-    }
-  }
-  .PanelSettings{
-    display: flex;
-    justify-content: space-around;
-    height: 100%;
-    text-align: left;
-    fieldset{
-      flex: 1;
-    }
-  }
-
-  .SelectMode{
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px;
-    height: 45px;
-    font-size: 18px;
-    div{
-      img{
-        width: 40px;
-        &:active{
-          width: 30px;
-        }
-        &.disable{
-          pointer-events: none;
-        }
-      }
-    }
-    
   }
 }
 
 
-
-.TableDefault{
-  border-collapse: collapse;
-  border-spacing: 4px !important;
-  padding: 0px !important;
-
-  tr{
-
-    .addButtonIcon{
-      left: 0px;
-      top: 0px;
-      width: 20px;
-      margin: 0px 2px;
-    }
-
-    input{
-      width: calc(100% - 20px) !important;
-    }
-
-    td, th{
-      &.delete{
-        width: 50px; text-align: center;
-        .iconDelete{
-          width: 25px;
-          height: 25px;
-        }
-      }
-    }
-    
-  }
-
-}
-
-
-
-.headerSelectMode{
-  width: 35%;
-  margin-left: 65%;
-  display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    position: fixed;
-    z-index: 1;
-    flex-direction: column;
-    height: 90vh;
-    padding: 5vh 0px;
-
-
-  background: var(--background-Panel2);
-  border-left: 2px solid var(--border-Panel2);
-  box-shadow: 8px 0px 15px 1px var(--box-shadow-Pabel2);
-  transform: translate(100%, 0px);
-  transition: all 0.5s ease-in-out;
-
-  &.show{
-    transform: translate(0%, 0px);
-  }
-
-  .SelectMode{
-    flex: 1;
-    width: 100%;
-    .ButtonSelectMode{
-      overflow: hidden;
-      position: relative;
-      font-size: 20px;
-      width: 100%;
-      height: 100%;
-      border: none;
-      background: none;
-      color: var(--color-Main);
-      pointer-events: all;
-      background-color: var(--background-Button1);
-      padding: 20px;
-      transition: all 0.2s;
-      border-bottom: 2px solid var(--background-Button1);
-        &:hover{
-          background-color: var(--background-Button2);
-          border: 2px solid var(--border-button);
-          transform: translate(4px, -4px);
-          box-shadow: -4px 4px 2px var(--box-shadow-button);
-        }
-        &:active{
-            background-color: var(--background-Button3);
-            border: 2px solid var(--border-button2);
-            transform: translate(0px, 1px);
-            box-shadow: 0px 0px 11px 2px var(--box-shadow-button);
-       }
-
-  }
-  }
-  
-}
-
-
-
-    
-@keyframes slideInFromBottom {
-  0% {
-    transform: translateY(120%);
-  }
-  100% {
-    transform: translateY(0%);
-  }
-}
-@keyframes slideInFromTop {
-  0% {
-    transform: translateY(-100%);
-  }
-  100% {
-    transform: translateY(0%);
-  }
-}
-
-.SectionMenu{
-    width: 99%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    margin: 0% 0% 0% 1%;
-    flex-wrap: nowrap;
-    align-items: center;
-    overflow: auto;
-    position: absolute;
-    top: 0px;
-
-    .ContainerSystem{
-      height: 8%;
-      overflow: hidden;
-    }
-
-    &.hide{
-      .ButtonSection{
-        transform: translateY(150%);
-        animation: 0.5s ease-out reverse 0s 1 slideInFromBottom;
-      }
-      .PanelSystemData{
-        transform: translateY(120%);
-        animation: 1.3s ease-out reverse 0s 1 slideInFromBottom;
-      }
-    }
-    &.show{
-      .ModellingDiv{
-        animation: 1s ease-out 0s 1 slideInFromTop;
-      }
-      .ButtonSection{
-        animation: 0.5s ease-out 0s 1 slideInFromBottom;
-        &.hide{
-          position: relative;
-          top: 150%;
-        }
-      }
-      .PanelSystemData {
-        animation: 1.3s ease-out  0s 1 slideInFromBottom;
-      }
-    }
-      .ModellingDiv{
-      width: 100%;
-      height: 65%;
-    }
-
-
-    
-  }
-
-  .ComponentSelect{
-    position: absolute;
-    top: 0px;
-    height: 100vh;
-    background-color: var(--background-Main);
-    z-index: 5;
-    overflow-x: hidden;
-  }
-
-
-
-
-  .DataTable{
+.DataTable{ //всплывающее окно информации
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     position: fixed;
@@ -787,7 +342,6 @@ input{
         }
       }
     }
-
     .DataBody{
       margin: 20px 10px 10px 10px;
       display: flex;
@@ -806,64 +360,3 @@ input{
 }
 
 
-div.TableDiv{
-          background-color: var(--background-Main);
-          border: 1px solid gray;
-          padding: 0px 10px;
-          border-radius: 15px;
-          max-height: 98%;
-          overflow: auto;
-          margin: 0px 5px;
-        table{
-          width: 100%;
-          
-          thead,tfoot{
-            position: sticky;
-          }
-          thead{
-            top: 0px;
-            box-shadow: 0px 1px 0px white;
-          }
-          tfoot{
-            box-shadow: 0px -1px 0px white;
-            bottom: 0px;
-          }
-          tbody{
-            tr{
-              &:nth-child(even){
-                background-color: rgb(5, 5, 5);
-              }
-            }
-          }
-          tr{
-            background-color: black;
-            td, th{
-              padding: 2px;
-              &.disable{
-                pointer-events: none;
-              }
-              &.delete{
-                width: 50px; text-align: center;
-                .iconDelete{
-                  width: 25px;
-                  height: 25px;
-                  &.hide{
-                    opacity: 0;
-                  }
-                }
-              }
-            }
-          }
-
-          &.SelectModeTable{
-            tbody tr{
-              &:hover{
-                box-shadow: inset 0px 0px 3px 0px white;
-              }
-              &.select{
-                box-shadow: inset 0px 0px 2px 1px white, inset 5px 0px 1px 0px red;
-              }
-            }
-          }
-        }
-      }

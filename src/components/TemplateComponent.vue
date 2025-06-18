@@ -4,7 +4,7 @@
     <div class="SectionMenu" :class="system.typeWorkplace == -1 ? 'hide' : 'show'">
       <div class="HeadersSction">
         <div class="PanelMenu"><SystemWindow :modellingStatus="false" @updateParentComponent="ChangeComponents" :systemStatus="system" /></div>
-        <transition name="ComponentModelling" mode="out-in">
+        <transition mode="out-in">
           <div class="ModellingDiv PanelMenu">
             <component :is="ComponentModellingList[system.typeWorkplace]" :systemStatus="system" :ExperimentStatus="false"></component>  
           </div>
@@ -140,84 +140,71 @@ export default {
 </style>
 
 <style lang="scss">
-
-
-.ModellingTitle{
-      font-size: 20px;
-      margin: 10px;
-      font-weight: bold;
-      text-align: left;
-    }
 .SectionMenu{
-  align-items: normal !important;
-  top: 40px !important;
-  height: calc(100% - 40px) !important;
-  .ModellingDiv{
-    height: calc(100% - 46px) !important;
-    flex: 1;
-    overflow-y: auto;
+    width: 99%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    
-    .PanelWork{
-      flex:1;
+    margin: 0% 0% 0% 1%;
+    flex-wrap: nowrap;
+    overflow: auto;
+    position: absolute;
+    align-items: normal;
+    top: 40px;
+    height: calc(100% - 40px);
+
+    .ContainerSystem{
+      height: 8%;
+      overflow: hidden;
     }
-    .main_contain{
-      padding: 0px 0px 0px !important;
-      /*height: calc(100% - 85px) !important;*/
-      height: fit-content !important;
-      .ContentDiv{
-        display: flex !important;
-        height: 100% !important;
-        align-items: stretch !important;
-        .FlexRow{
-          width: auto !important;
-          padding: 2px !important;
-        }
-      }
-    }
-  }
-  .ComponentSelect{
-    position: relative !important;
-    flex: 1;
-    z-index: 1 !important;
-    height: auto !important;
-    background: none !important;
-    .ContentDiv{
-      flex-direction: column !important;
-      .LeftPanel{
-        flex: none !important;
-        margin-left: 60px;
-        .FlexColumn{
-          display: flex;
-          flex-wrap: wrap;
-          flex-direction: row !important;
-          div{
-            width: auto;
-            flex: 1;
-            &.ButtonApprovedDiv button{
-              width: 160px !important;
-              margin: 0px !important;
-              padding: 5px;
-            }
-            .ButtonCommand{
-              white-space: nowrap;
-            }
-          }
-        }
-        .OGList{
-          max-height: 20vh;
-          overflow-y: auto;
-        }
-        
-      }
+    .HeadersSction{
+      display: flex;
     }
 
-    .ToMenuButtonDiv{
-      position: absolute !important;
+    &.hide{
+      .ButtonSection{
+        transform: translateY(150%);
+        animation: 0.5s ease-out reverse 0s 1 slideInFromBottom;
+      }
+      .PanelSystemData{
+        transform: translateY(120%);
+        animation: 1.3s ease-out reverse 0s 1 slideInFromBottom;
+      }
     }
+    &.show{
+      .ModellingDiv{
+        animation: 1s ease-out 0s 1 slideInFromTop;
+      }
+      .ButtonSection{
+        animation: 0.5s ease-out 0s 1 slideInFromBottom;
+        &.hide{
+          position: relative;
+          top: 150%;
+        }
+      }
+      .PanelSystemData {
+        animation: 1.3s ease-out  0s 1 slideInFromBottom;
+      }
+    }
+    .ModellingDiv{
+      width: 100%;
+      height: calc(100% - 46px);
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      .PanelWork{
+        flex:1;
+      }
+    }
+    
   }
+
+
+
+
+.SectionMenu{
+  
   .FlexMenuSection{
     flex-direction: column;
     height: auto ;
@@ -248,7 +235,6 @@ export default {
           padding: 5px;
         }
       }
-
       button{
         flex: 1;
         margin: 3px 0px 3px 0px;
@@ -260,31 +246,13 @@ export default {
         span{
           padding-left: 8px;
         }
-        div{
-          position: absolute;
-          width: 10px;
-          height: 10px;
-          border-radius: 20px;
-          &.approved{
-            background-color: rgb(0, 139, 0);
-            box-shadow: inset 0px 0px 6px rgb(0 239 0);
-          }
-          &.Notapproved{
-            background-color: red;
-            box-shadow: inset 0px 0px 6px #fe1a1a;
-          }
-        }
       }
     }
   }
 }
-.PanelMenu{
-  animation: 1s ease-out 0s 1 slideInFromTop;
-}
 
-.HeadersSction{
-  display: flex;
-}
+
+
 .FooterSection{
     display: flex;
     flex: 1;
@@ -299,6 +267,47 @@ export default {
       border-top-left-radius: 10px;
       border-bottom: none;
       border-right: none;
+      .ComponentSelect{
+        overflow-x: hidden;
+        position: relative;
+        flex: 1;
+        z-index: 1;
+        height: auto;
+        background: none;
+        .ContentDiv{
+          flex-direction: column !important;
+          .LeftPanel{
+            flex: none !important;
+            margin-left: 60px;
+            .FlexColumn{
+              display: flex;
+              flex-wrap: wrap;
+              flex-direction: row !important;
+              div{
+                width: auto;
+                flex: 1;
+                &.ButtonApprovedDiv button{
+                  width: 160px !important;
+                  margin: 0px !important;
+                  padding: 5px;
+                }
+                .ButtonCommand{
+                  white-space: nowrap;
+                }
+              }
+            }
+            .OGList{
+              max-height: 20vh;
+              overflow-y: auto;
+            }
+            
+          }
+        }
+
+        .ToMenuButtonDiv{
+          position: absolute !important;
+        }
+      }
     }
 }
 

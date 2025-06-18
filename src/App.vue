@@ -17,7 +17,7 @@
         </div>
       </div>
     
-    <div :class="login == undefined ? 'show' : ''" class="ModalLoginBack">
+    <div :class="login == undefined ? 'show' : ''" class="ModalLoginBack PanelMenu2">
       <div class="ModalLoginPanel">
         <h1>Вход в систему</h1>
         <div class="ModalLoginForm">
@@ -202,7 +202,6 @@ export default {
     width: 100vw;
     height: 100vh;
     z-index: 0;
-    
 }
 
   .ModalLoginBack{
@@ -211,12 +210,10 @@ export default {
     height: 100vh;
     min-width: 500px;
     max-width: 30vw;
-    background: var(--background-Panel2);
-    border-right: 2px solid var(--border-Panel2);
-    box-shadow: -8px 0px 15px 1px var(--box-shadow-Pabel2);
     transform: translate(-100%, 0px);
     transition: all 0.5s ease-in-out;
-
+    border-bottom: none;
+    border-top: none;
     &.show{
       transform: translate(0%, 0px);
     }
@@ -280,48 +277,48 @@ export default {
   align-items: stretch;
   overflow: hidden;
   z-index: 2;
-    &.show{
-      transform: translate(0px, 0%);
+  &.show{
+    transform: translate(0px, 0%);
+  }
+  &.WokspaceSelect{
+    .flexdiv{
+      justify-content: flex-end;
     }
-    &.WokspaceSelect{
-      
-      .flexdiv{
-        justify-content: flex-end;
-      }
-      .ModuleTitle{
-        transform: translate(0px, 0px);
-        box-shadow: 0px 3px 4px -4px var(--box-shadow-Pabel2);
-      }
+    .ModuleTitle{
+      transform: translate(0px, 0px);
+      box-shadow: 0px 3px 4px -4px var(--box-shadow-Pabel2);
     }
+  }
+  .ModuleTitle{
+    flex: 1;
+    text-align: left;
+    border-bottom: 2px solid;
+    transform: translate(150%, 0px);
+    transition: all 1s ease-out;
+    font-size: larger;
+    font-weight: bold;
+  }
     .flexdiv{
       display: flex;
       align-items: center;
       box-shadow: 0px 3px 4px -4px var(--box-shadow-Pabel2);
       border-bottom: 2px solid;
-    }
-    svg{
-      fill: var(--color-Main);
-      *{
-        stroke: var(--color-Main);
+      .Menubutton{
+        background: none;
+        border: none;
+        position: relative;
+        margin: 0px 10px;
+        transform: translate(0%, -150%);
+        transition: all 0.5s ease-in-out;
+        &.show{
+          transform: translate(0%, 0px);
+        }
+        svg{
+          width: 30px;
+        }
       }
-    }
-    .Menubutton{
-      background: none;
-      border: none;
-      position: relative;
-      margin: 0px 10px;
-      transform: translate(0%, -150%);
-      transition: all 0.5s ease-in-out;
-      &.show{
-        transform: translate(0%, 0px);
-      }
-      svg{
-        width: 30px;
-      }
-    }
-
-    .logoutbutton{
-      position: relative;
+      .logoutbutton{
+        position: relative;
         background: none;
         color: var(--color-Main);
         border: none;
@@ -332,20 +329,65 @@ export default {
           right: -25px;
           top: -3px;
         }
+      }
+    }
+    svg{
+      fill: var(--color-Main);
+      *{
+        stroke: var(--color-Main);
+      }
     }
 }
 
-.ModuleTitle{
-  flex: 1;
-  text-align: left;
-  border-bottom: 2px solid;
-  transform: translate(150%, 0px);
-  transition: all 1s ease-out;
-  font-size: larger;
-  font-weight: bold;
-}
+.headerSelectMode{
+    width: 35%;
+    margin-left: 65%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    position: fixed;
+    z-index: 1;
+    flex-direction: column;
+    height: 95vh;
+    padding: 5vh 0px 0px;
+    transform: translate(100%, 0px);
+    transition: all 0.5s ease-in-out;
+    &.show{
+      transform: translate(0%, 0px);
+    }
 
+    .SelectMode{
+    flex: 1;
+    width: 100%;
+    .ButtonSelectMode{
+      overflow: hidden;
+      position: relative;
+      font-size: 20px;
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: none;
+      color: var(--color-Main);
+      pointer-events: all;
+      background-color: var(--background-Button1);
+      padding: 20px;
+      transition: all 0.2s;
+      border-bottom: 2px solid var(--background-Button1);
+        &:hover{
+          background-color: var(--background-Button2);
+          border: 2px solid var(--border-button);
+          transform: translate(4px, -4px);
+          box-shadow: -4px 4px 2px var(--box-shadow-button);
+        }
+        &:active{
+            background-color: var(--background-Button3);
+            border: 2px solid var(--border-button2);
+            transform: translate(0px, 1px);
+            box-shadow: 0px 0px 11px 2px var(--box-shadow-button);
+       }
 
-
+  }
+  }
+} 
 </style>
 
