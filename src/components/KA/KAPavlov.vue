@@ -3,7 +3,7 @@
     <PlanPavlov v-if="modellingSettings.showTable == 'Plan'" :dataTable="modellingRezult.eventData" @closetable="modellingSettings.showTable = null"/>
     <NodeLoad v-if="modellingSettings.showTable == 'NodeLoad'" :dataTable="modellingRezult.eventData" :summary="summary" @closetable="modellingSettings.showTable = null"/>
     <div class="ContentDiv">
-        <div class="FlexRow Panel">
+        <div class="FlexRow">
           <div class="ButtonModelling">
             <div><label><input type="checkbox" class="checkbox-input" v-model="interSatellite"/>Межспутниковая связь</label></div>
             <div><label><input type="checkbox" class="checkbox-input" v-model="scProcess"/>Обработка на борту</label></div>

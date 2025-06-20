@@ -180,6 +180,12 @@ div.TableDiv{ // базовая таблица
               &:nth-child(even){
                 background-color: rgb(5, 5, 5);
               }
+              input{
+                width: 90%;
+              }
+              td{
+                text-align: left;
+              }
             }
           }
           tr{

@@ -129,7 +129,7 @@ body{
     }
 }
 
-.main_contain {
+.main_contain { //все вкладки
   position: relative;
   font-size: var(--font-size);
   padding: 0px 0px 0px ;
@@ -153,24 +153,11 @@ body{
         display: flex;
         height: 100%;
         align-items: stretch;
-        .Panel{
-
-            table{
-                
-                tr{
-                    td{
-                        input{
-                          width: 90%;
-                        }
-                    
-                    }
-                }   
-            }
-        }
     }   
 
     &.RowSection{
       display: flex;
+      flex: 1;
       flex-direction: column;
       flex-wrap: nowrap;
       align-items: center;
@@ -190,19 +177,6 @@ body{
           }
           &.LeftPanel{
             flex: 1;
-            .SystemInfo{
-                display: flex;
-                flex-wrap: wrap;
-                align-content: center;
-                align-items: center;
-                color: white;
-                text-align: left;
-                padding: 10px;
-                justify-content: space-around;
-                .paddl{
-                    padding-left: 15px;
-                }
-            }
             .FlexColumn{
               display: flex;
               flex-direction: column;
@@ -217,12 +191,6 @@ body{
             }
           }
         }
-      }
-      td{
-        text-align: left;
-      }
-      th{
-        border-bottom: 2px solid white;
       }
     }
 }
@@ -246,7 +214,7 @@ body{
 
 
 
-input{
+input{ //Что-это? общий инпут?
   padding: 10px;
   text-align: center;
   border: none;
@@ -261,7 +229,7 @@ input{
   }
 }
 
-.input-file{
+.input-file{ //чтение файла
 	background: var(--background-Button1);
   color: var(--color-Main);
   border: 1px solid var(---border-button);
@@ -300,11 +268,13 @@ input{
   }
 }
 
+
 .ModellingDiv{ //для моделирования 
   .PanelWork{
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
+    flex:1;
     .colum{
       flex: 1;
       button{
@@ -358,5 +328,41 @@ input{
       }
     }
 }
+
+.ComponentSelect{ // выбранный компонент
+        .ContentDiv{
+          flex-direction: column !important;
+          .LeftPanel{
+            flex: none !important;
+            margin-left: 60px;
+            .FlexColumn{
+              display: flex;
+              flex-wrap: wrap;
+              flex-direction: row !important;
+              div{
+                width: auto;
+                flex: 1;
+                &.ButtonApprovedDiv button{
+                  width: 160px !important;
+                  margin: 0px !important;
+                  padding: 5px;
+                }
+                .ButtonCommand{
+                  white-space: nowrap;
+                }
+              }
+            }
+            .OGList{
+              max-height: 20vh;
+              overflow-y: auto;
+            }
+            
+          }
+        }
+
+        .ToMenuButtonDiv{
+          position: absolute !important;
+        }
+      }
 
 
