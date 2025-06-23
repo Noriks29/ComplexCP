@@ -1,13 +1,13 @@
 <template>
   <table class="TableDefault"><tbody>
-    <tr><td>Интервал расчёта группировки:</td><td>
+    <tr><td>Интервал расчёта группировки:</td><td colspan="2">
             {{ (dataSystem.minTleTime ? CreateDateTime(dataSystem.minTleTime) : 'Не указан' ) + " -- "}}
             
             {{ dataSystem.maxTleTime ? CreateDateTime(dataSystem.maxTleTime) : 'Не указан'}}
-          </td><td rowspan="4"><button class="ButtonCommand ButtonUpload" :class="!systemChange ? 'disable': ''" @click="SaveSystem"><img src="@/assets/save.svg" alt=""></button></td></tr>
+          </td></tr>
           <tr><td colspan="1">Начало горизонта планирования:</td><td>
             <DateTime :valueUnix="dataSystem.modelingBegin" :id="'modelingBegin'"  @valueSelect="ChangeTime"/>
-          </td></tr>
+          </td><td rowspan="4"><button class="ButtonCommand ButtonUpload" :class="!systemChange ? 'disable': ''" @click="SaveSystem"><img src="@/assets/save.svg" alt=""></button></td></tr>
           <tr><td  colspan="1">Окончание горизонта планирования:</td><td>
             <DateTime :valueUnix="dataSystem.modelingEnd" :id="'modelingEnd'" @valueSelect="ChangeTime"/>
           </td></tr>
@@ -69,6 +69,10 @@ import { CreateDateTime } from '@/js/WorkWithDTime';
   filter: none;
   tr{
     background: none;
+  }
+  #step{
+    width: calc(100% - 10px);
+    padding: 5px;
   }
 }
 .ButtonUpload{

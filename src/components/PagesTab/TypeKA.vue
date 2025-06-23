@@ -5,7 +5,7 @@
             <img src="../../assets/exit.svg">
           </button>
         </div>
-      <div class="ContentDiv">
+      <div class="ContentDiv" style="margin-top: 30px;">
           <div class="Panel Select LeftPanel" >
               <div style="display: flex; align-items: center;">
                 <label for="">Выбор КА</label>

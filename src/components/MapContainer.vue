@@ -252,7 +252,8 @@ export default {
 
 </script>
 
-<style lang="scss" scoped>
+
+<style lang="scss">
 .MapContain{
   position: relative;
   flex: 1;
@@ -380,7 +381,11 @@ export default {
   .leaflet-attribution-flag{
     width: 0 !important;
   }
+  
 }
+.leaflet-bottom{
+    display: none !important;
+  }
 .LatLng{
     display: flex;
     align-items: center;

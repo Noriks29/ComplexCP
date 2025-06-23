@@ -246,7 +246,7 @@ export default {
     }
     input{
       padding: 0px !important;
-      width: 75px;
+      width: calc(100% - 20px);
       flex: 1;
       margin: 0px 10px;
       height: 30px;

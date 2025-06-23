@@ -87,6 +87,9 @@ import { UnixToDtime } from '@/js/WorkWithDTime';
                 document.getElementById("plotlydiv").innerHTML=''
                 document.getElementById("plotlydivAll").innerHTML=''
                 if(this.dataPrevrap.length < 1 ) return
+            try {
+              
+            
             let dataPlotly = [
                       {
                         type: 'bar',name: "Обработка",y: [],x: [],text:[],
@@ -227,6 +230,11 @@ import { UnixToDtime } from '@/js/WorkWithDTime';
                 };
 
             Plotly.newPlot('plotlydiv', data, layout); 
+            } catch (error) {
+              console.error(error)
+              this.dataPrevrap= []
+              this.$showToast('Некорректная отрисовка графика, прерываю...','error', 'Ошибка графика');
+            }
           },
           TimeFormat(time){
             let data = UnixToDtime(time,true)
