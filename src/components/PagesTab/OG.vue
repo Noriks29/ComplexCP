@@ -50,7 +50,6 @@
 </template>
   
   <script>
-import { FetchPostFile} from '@/js/LoadDisplayMetod'
 import { PagesSettings } from './PagesSettings.js';
 import { CreateDateTime } from '@/js/WorkWithDTime';
 import DefaultTable2 from '../DefaultTable2.vue';
@@ -157,7 +156,7 @@ import DefaultTable2 from '../DefaultTable2.vue';
                 formData.append('file', file); // Добавляем файл
                 formData.append('constellationName', this.OG_Param.constellationName); // Добавляем имя
                 formData.append('inputType', 3);
-                responce = await FetchPostFile("/api/v1/constellation/upload/tle", formData)
+                responce = await this.$FetchPostFile("/api/v1/constellation/upload/tle", formData)
               }
               if(responce.type == "SUCCESS"){
                 this.dataJson = await this.$GetOGList()

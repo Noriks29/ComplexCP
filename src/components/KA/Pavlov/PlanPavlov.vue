@@ -106,50 +106,69 @@ import XLSX from 'xlsx-js-style';
                 if(this.dataPrevrap.length < 1 ) return
                 let dataPlotly = [
                       {
-                        type: 'bar',name: "Съёмка",y: [],x: [],
-                        orientation: 'h',base: [],text:[],
-                        marker: {
-                          opacity: 0.5,color: "#086375",line: {width: 1}
-                        }
-                      },
-                      {
                         type: 'bar',name: "Хранение",y: [],x: [],
                         orientation: 'h',base: [],text:[],
                         marker: {
-                          opacity: 0.3,color: "green",line: {width: 1}
-                        }
-                      },
-                      {
-                        type: 'bar',name: "Обработка",y: [],x: [],
-                        orientation: 'h',base: [],text:[],
-                        marker: {
-                          opacity: 0.6,color: "orange",line: {width: 1}
-                        }
-                      },
-                      {
-                        type: 'bar',name: "Передача",y: [],x: [],
-                        orientation: 'h',base: [],text:[],
-                        marker: {
-                          opacity: 0.6,color: "purple",line: {width: 1}
+                          opacity: 0.1,color: "green",line: {width: 1}
                         }
                       },
                       {
                         type: 'bar',name: "Потери",y: [],x: [],
                         orientation: 'h',base: [],text:[],
                         marker: {
-                          opacity: 0.6,color: "red",line: {width: 1}
+                          opacity: 0.5,color: "red",line: {width: 1}
                         }
                       },
+                      {
+                        type: 'bar',name: "Съёмка",y: [],x: [],
+                        orientation: 'h',base: [],text:[],
+                        marker: {
+                          opacity: 0.9,color: "#086375",line: {width: 1}
+                        }
+                      },
+                      {
+                        type: 'bar',name: "Обработка",y: [],x: [],
+                        orientation: 'h',base: [],text:[],
+                        marker: {
+                          opacity: 0.9,color: "orange",line: {width: 1}
+                        }
+                      },
+                      {
+                        type: 'bar',name: "Передача",y: [],x: [],
+                        orientation: 'h',base: [],text:[],
+                        marker: {
+                          opacity: 0.8,color: "purple",line: {width: 1}
+                        }
+                      }
                     ]
-                this.dataPrevrap.forEach(event => {
+                let interval = 0;
+                let objectName = '';
+                let timeLast = 0;
+                let dataToPlot = this.dataPrevrap.slice(0)
+                dataToPlot.sort((a,b) => {
+                  if(a.interval == b.interval){
+                    if(a.object == b.object) return 0
+                    if(a.object < b.object) return -1
+                    if(a.object > b.object) return 1
+                  }
+                  return a.interval - b.interval
+                })
+                console.log(this.dataPrevrap, dataToPlot, "sort")
+                dataToPlot.forEach(event => {
+                  if(event.interval != interval || event.object!= objectName){
+                    timeLast = event.intervalTime.timeStart; objectName = event.object; interval = event.interval
+                  }
+                  console.log("event", event, interval, objectName, timeLast)
                   try {
-                  console.log(event)
                     for (let i = 0; i < dataPlotly.length; i++) {
                       const plot = dataPlotly[i];
                       if(plot.name == event.typeEl){
-                        if(event.time != undefined){plot.x.push(CreateDateTime(event.time, 2))}
-                        else{plot.x.push(CreateDateTime(event.intervalTime.text, 2))}
-                        plot.base.push(CreateDateTime(event.intervalTime.timeStart, 1))
+                        if(event.time != undefined){
+                          plot.x.push(CreateDateTime(event.time, 2))
+                          timeLast += event.time
+                        }
+                        else{plot.x.push(CreateDateTime((event.intervalTime.text - (timeLast - event.intervalTime.timeStart)) || 1, 2))}
+                        plot.base.push(CreateDateTime(timeLast, 1))
                         plot.y.push(event.objectName.name)
                         plot.text.push(event.volume)
                       }
@@ -159,11 +178,12 @@ import XLSX from 'xlsx-js-style';
                     }
                 })
                 let annotations = []
-                Plotly.newPlot("plotlydiv", dataPlotly, {annotations:annotations, showlegend: true,height:150+(500), margin:{l:100,t:40,b:40,r:40}})
+                Plotly.newPlot("plotlydiv", dataPlotly, {annotations:annotations,barmode: 'stack', showlegend: true,height:150+(500), margin:{l:100,t:40,b:40,r:40}})
           },
       },
       mounted() {
         this.dataPrevrap = this.dataTable
+        console.log(this.dataTable, "dewfe")
         this.CreatePlot()
       }
     }

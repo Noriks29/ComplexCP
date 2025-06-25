@@ -107,22 +107,16 @@ export default {
               objectList[SAT.tleId] = {id: SAT.tleId, name: SAT.name, type: 'SAT'}
           })
       })
-      try {
-        dataToPrevrap.transport.forEach(el => {
-         el.typeEl='Передача'; 
-         el.time = el.text
-         for (let i = 0; i < dataToPrevrap.to_transport.length; i++) {
-              const element = dataToPrevrap.to_transport[i];
-              if(el.interval == element.interval && element.object == el.object){
-                  el.volume = element.text
-                  break
-              }
-          }
-         dataPrevrap.push(el);
-        })
+      try{
+      dataToPrevrap.inputflow.forEach(el => {
+          el.typeEl = "Съёмка";
+          el.volume = el.text
+          el.time = 1 // тестово 1 секунда 
+          dataPrevrap.push(el)
+      })
       } catch (error) {
-        if(dataToPrevrap.transport==undefined) dataPrevrap.transport = []
-        this.$showToast('Проблемы с операциями передачи','warning', 'Обработка');
+        if(dataToPrevrap.inputflow==undefined) dataPrevrap.inputflow = []
+        this.$showToast('Проблемы с входными потоками','warning', 'Съёмка');
       }
       try{
       dataToPrevrap.process.forEach(el => {
@@ -141,24 +135,22 @@ export default {
         if(dataToPrevrap.process==undefined) dataPrevrap.process = []
         this.$showToast('Проблемы с операциями обработки','warning', 'Обработка');
       }
-      try{
-      dataToPrevrap.inputflow.forEach(el => {
-          el.typeEl = "Съёмка";
-          el.volume = el.text
-          el.time = 1 // тестово 1 секунда 
-          dataPrevrap.push(el)
-      })
-      } catch (error) {
-        if(dataToPrevrap.inputflow==undefined) dataPrevrap.inputflow = []
-        this.$showToast('Проблемы с входными потоками','warning', 'Съёмка');
-      }
       try {
-          dataToPrevrap.lost.forEach(el => {
-              el.typeEl='Потери';el.volume=el.text; dataPrevrap.push(el);
-          })
+        dataToPrevrap.transport.forEach(el => {
+         el.typeEl='Передача'; 
+         el.time = el.text
+         for (let i = 0; i < dataToPrevrap.to_transport.length; i++) {
+              const element = dataToPrevrap.to_transport[i];
+              if(el.interval == element.interval && element.object == el.object){
+                  el.volume = element.text
+                  break
+              }
+          }
+         dataPrevrap.push(el);
+        })
       } catch (error) {
-          console.log("Потерь нет")//Переделать это под не возможность потерь и отображение
-          if(dataToPrevrap.lost==undefined) dataPrevrap.lost = []
+        if(dataToPrevrap.transport==undefined) dataPrevrap.transport = []
+        this.$showToast('Проблемы с операциями передачи','warning', 'Обработка');
       }
       try{
         dataToPrevrap.storage.forEach(el => {
@@ -169,8 +161,18 @@ export default {
           if(dataToPrevrap.storage==undefined) dataPrevrap.storage = []
           this.$showToast('Проблемы с операциями Хранения','warning', 'Обработка');
       }
+      try {
+          dataToPrevrap.lost.forEach(el => {
+              el.typeEl='Потери';el.volume=el.text; dataPrevrap.push(el);
+          })
+      } catch (error) {
+          console.log("Потерь нет")//Переделать это под не возможность потерь и отображение
+          if(dataToPrevrap.lost==undefined) dataPrevrap.lost = []
+      }
       
-      dataPrevrap.sort((a,b) => {return a.interval - b.interval})
+      dataPrevrap.sort((a,b) => {
+        return a.interval - b.interval
+      })
       dataPrevrap.forEach(event => {
         event.intervalTime = dataToPrevrap.time[event.interval-1]
         event.objectName = objectList[event.object]

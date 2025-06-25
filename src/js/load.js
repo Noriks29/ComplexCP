@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 import LoadProcess from '@/components/LoadProcess.vue';
-import { adress } from './config_server';
+import {adress} from "@/js/config_server";
 const LoadProcessPlugin = {
   install(app) {
     const LoadComponent = ref(null);
@@ -14,9 +14,9 @@ const LoadProcessPlugin = {
       }
     };
     app.config.globalProperties.$FetchGet = async function (http, AlertError = true, massage=null){
-        let AcsessKey = localStorage.data
+        let key = await this.$GetAccess()
         try {
-            const response = await fetch('http://'+adress+http+'?accessKey='+AcsessKey);
+            const response = await fetch('http://'+adress+http+'?accessKey='+key);
             if (!response.ok) { // для мэссэджей ильяса
                 let rezult = await response.json()
                 throw new Error(rezult.MESSAGE);
@@ -33,12 +33,13 @@ const LoadProcessPlugin = {
         }
     }
     app.config.globalProperties.$FetchPost = async function (http,datapost,dopparamhttp, AlertError = true, massage=null){
-        let AcsessKey = localStorage.data
+        
+        let key = await this.$GetAccess()
         if(dopparamhttp != undefined){
-            AcsessKey = AcsessKey +"&"+dopparamhttp
+            key = key +"&"+dopparamhttp
         }
         try {
-            const response = await fetch('http://'+adress+http+'?accessKey='+AcsessKey,{
+            const response = await fetch('http://'+adress+http+'?accessKey='+key,{
               method:  'POST',
               headers: {
                 'Content-Type': 'application/json'
@@ -59,6 +60,31 @@ const LoadProcessPlugin = {
                 if(AlertError) this.$showToast(error,'error',"Запрос не выполнен");
                 return undefined;
             }
+    }
+      app.config.globalProperties.$FetchPostFile = async function (http,formData){
+            let key = await this.$GetAccess()
+            let add = adress
+            
+            try {
+                const response = await fetch('http://'+add+http+'?accessKey='+key,{
+                  method:  'POST',
+                  mode: 'cors',
+                  body: formData
+                })
+                if (!response.ok) {
+                    let rezult = await response.json()
+                    throw new Error(rezult.MESSAGE);
+                }
+                else{
+                    let rezult = await response.json()
+                    //DisplayLoad(false)
+                    return rezult;
+                }
+                } catch (error) {
+                    console.log('Error save:', error);
+                    //DisplayLoad(false)
+                    return undefined;
+                }
     }
 
     app.mixin({

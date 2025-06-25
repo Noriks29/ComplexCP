@@ -85,6 +85,7 @@ export default {
         if(result == undefined){
           this.errorLogin = true
           this.$showToast('Неудачная попытка входа','warning', 'Login');
+          this.$InitAccess(null)
         }
         else if(result.length > 0){
           this.$showToast('Добро пожаловать '+data.nameUser,'success', 'Login');
@@ -100,7 +101,7 @@ export default {
       },
       Log_out(){
         localStorage.removeItem('nameUser')
-        localStorage.removeItem('data')
+        this.$InitAccess(null)
         localStorage.removeItem('email')
         localStorage.removeItem('password')
         this.workplaceList = []
@@ -111,7 +112,7 @@ export default {
       async StartSystem(data){
         this.$ClearGlobalData()
         this.$showLoad(true);
-        await localStorage.setItem('data', data.accessKey)
+        await this.$InitAccess(data.accessKey)
         this.titleModule = data.name
         await this.$InitGlobalData()
         this.systemStatus = this.$SystemObject()

@@ -6,6 +6,14 @@ const GlobalDataPlugin = {
     let SystemObject = ref({typeWorkplace: -1});
     let NPList = ref([]);
     let OGList = ref([]);
+    let AccessKey = null
+    app.config.globalProperties.$InitAccess = async function (key) {
+        AccessKey = key
+    };
+    app.config.globalProperties.$GetAccess = async function () {
+        console.log("key", AccessKey)
+        return AccessKey
+    };
     app.config.globalProperties.$ChangeSystemObject = async function (param, value, dataS=null) {
         if(dataS == null)SystemObject[param] = value
         else{
