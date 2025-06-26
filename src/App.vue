@@ -7,6 +7,12 @@
         class="SelectMode"
       ><button class="ButtonSelectMode" :class="systemStatus.typeWorkplace == data.type ? 'active' : ''" @click="ChangetypeWorkplace(data.type)">{{ data.name }}</button></div>
     </div>
+    <div class="TitleComplex" :class="login !== undefined && systemStatus.typeWorkplace == -1 ? 'show' : ''">
+      <div class="">
+        <h1>ЭКСПЕРИМЕНТАЛЬНЫЙ ОБРАЗЕЦ ПРОГРАММНОГО КОМПЛЕКСА ПЛАНИРОВАНИЯ КОМПЛЕКСНОГО ПРИМЕНЕНИЯ МНОГОСПУТНИКОВОЙ ОРБИТАЛЬНОЙ ГРУППИРОВКИ КА НАБЛЮДЕНИЯ РАЗЛИЧНОГО ЦЕЛЕВОГО НАЗНАЧЕНИЯ</h1>
+        <p>("Комплекс-СГ-3.2.3.1")</p>
+      </div>
+    </div>
     <div class="idSesion" :class="login !== undefined ? systemStatus.typeWorkplace !== -1?'show WokspaceSelect':'show':''">
         <div class="ModuleTitle" :class="titleModule==''?'hide':''">{{ titleModule }}</div>
         <div class="flexdiv" >login: {{ login }} {{ SystemObject }}
@@ -203,6 +209,32 @@ export default {
     width: 100vw;
     height: 100vh;
     z-index: 0;
+}
+.TitleComplex{
+    position: absolute;
+    width: 58vw;
+    display: flex;
+    height: 100vh;
+    align-items: center;
+    margin-left: 5vw;
+    overflow: hidden;
+    div{
+      display: none;
+      background-color: #000000cc;
+      padding: 15px;
+      animation: 1s ease-out 0s 1 slideInFromRight;
+    }
+    &.show{
+      div{
+        display: block;
+      }
+    }
+    h1{
+      text-align: left;
+    }
+    p{
+      text-align: left;
+    }
 }
 
   .ModalLoginBack{

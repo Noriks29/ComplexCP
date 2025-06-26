@@ -97,8 +97,9 @@ import XLSX from 'xlsx-js-style';
             XLSX.writeFile(workbook, 'PlanPavlov.xlsx');
           },
           TimeFormat(time){
-            console.log(time)
+            
             let data = UnixToDtime(time,true)
+            console.log(time, "Время", data)
             return data.time
           },
           CreatePlot(){
@@ -166,8 +167,10 @@ import XLSX from 'xlsx-js-style';
                         if(event.time != undefined){
                           plot.x.push(CreateDateTime(event.time, 2))
                           timeLast += event.time
+                          console.log('PLOT ', event.time, CreateDateTime(event.time, 2))
                         }
                         else{plot.x.push(CreateDateTime((event.intervalTime.text - (timeLast - event.intervalTime.timeStart)) || 1, 2))}
+                        
                         plot.base.push(CreateDateTime(timeLast, 1))
                         plot.y.push(event.objectName.name)
                         plot.text.push(event.volume)
