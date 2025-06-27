@@ -154,12 +154,10 @@ import XLSX from 'xlsx-js-style';
                   }
                   return a.interval - b.interval
                 })
-                console.log(this.dataPrevrap, dataToPlot, "sort")
                 dataToPlot.forEach(event => {
                   if(event.interval != interval || event.object!= objectName){
                     timeLast = event.intervalTime.timeStart; objectName = event.object; interval = event.interval
                   }
-                  console.log("event", event, interval, objectName, timeLast)
                   try {
                     for (let i = 0; i < dataPlotly.length; i++) {
                       const plot = dataPlotly[i];
@@ -167,7 +165,6 @@ import XLSX from 'xlsx-js-style';
                         if(event.time != undefined){
                           plot.x.push(CreateDateTime(event.time, 2))
                           timeLast += event.time
-                          console.log('PLOT ', event.time, CreateDateTime(event.time, 2))
                         }
                         else{plot.x.push(CreateDateTime((event.intervalTime.text - (timeLast - event.intervalTime.timeStart)) || 1, 2))}
                         
@@ -194,5 +191,9 @@ import XLSX from 'xlsx-js-style';
   
   
   <style lang="scss" scoped>
-
+table{
+      td{
+        text-align: center !important;
+      }
+    }
   </style>

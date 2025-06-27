@@ -346,4 +346,9 @@ import { UnixToDtime } from '@/js/WorkWithDTime';
     .DataTable .DataBody {
         max-height: none;
     }
+    table{
+      td{
+        text-align: center !important;
+      }
+    }
   </style>

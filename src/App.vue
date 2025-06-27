@@ -5,7 +5,7 @@
     <div class="headerSelectMode" :class="login !== undefined && systemStatus.typeWorkplace == -1 ? 'show' : ''">
       <div v-for="data, index in workplaceList" :key="index"
         class="SelectMode"
-      ><button class="ButtonSelectMode" :class="systemStatus.typeWorkplace == data.type ? 'active' : ''" @click="ChangetypeWorkplace(data.type)">{{ data.name }}</button></div>
+      ><button class="ButtonSelectMode PanelMenu" :class="systemStatus.typeWorkplace == data.type ? 'active' : ''" @click="ChangetypeWorkplace(data.type)">{{ data.name }}</button></div>
     </div>
     <div class="TitleComplex" :class="login !== undefined && systemStatus.typeWorkplace == -1 ? 'show' : ''">
       <div class="">
@@ -396,29 +396,21 @@ export default {
       overflow: hidden;
       position: relative;
       font-size: 20px;
-      width: 100%;
-      height: 100%;
-      border: none;
-      background: none;
+      width: calc(100% - 20px);
+      height: calc(100% - 20px);
       color: var(--color-Main);
       pointer-events: all;
-      background-color: var(--background-Button1);
-      padding: 20px;
       transition: all 0.2s;
-      border-bottom: 2px solid var(--background-Button1);
         &:hover{
           background-color: var(--background-Button2);
           border: 2px solid var(--border-button);
           transform: translate(4px, -4px);
-          box-shadow: -4px 4px 2px var(--box-shadow-button);
         }
         &:active{
             background-color: var(--background-Button3);
             border: 2px solid var(--border-button2);
             transform: translate(0px, 1px);
-            box-shadow: 0px 0px 11px 2px var(--box-shadow-button);
        }
-
   }
   }
 } 
