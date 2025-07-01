@@ -1,10 +1,10 @@
 <template>
     <div class="main_contain RowSection">
-          <div>
-            <button class="ToMenuButtonDiv" @click="SelectComponent('TemplateComponent')">
-              <img src="@/assets/exit.svg"><span>&#8203;</span>
-            </button>
-          </div>
+    <div>
+      <button class="ToMenuButtonDiv" @click="SelectComponent('TemplateComponent')">
+        <img src="@/assets/exit.svg"><span>&#8203;</span>
+      </button>
+    </div>
     <div class="ContentDiv">
     <div class="Panel LeftPanel">
         <div class="FlexColumn">
@@ -42,7 +42,6 @@
                 <button @click="AddOG" class="ButtonCommand">Создать</button> 
               </div>
             </div>
-            
           </div>
     </div>
 </div>
@@ -195,7 +194,6 @@ import DefaultTable2 from '../DefaultTable2.vue';
   </script>
 
 <style lang="scss" scoped>
-
 .ElementCol{
   display: grid;
   grid-template-columns: 4fr 3fr 1fr;
@@ -219,7 +217,6 @@ import DefaultTable2 from '../DefaultTable2.vue';
   }
 }
 
-
 .OGList{
   display: flex;
   .ButtonCommand{
@@ -233,8 +230,5 @@ import DefaultTable2 from '../DefaultTable2.vue';
     }
   }
 }
-
-
-
 </style>
   

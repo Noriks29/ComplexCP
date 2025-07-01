@@ -1,4 +1,11 @@
 <template>
+  <!--rgb(0 34 108)
+            <span @click="this.$showToast('This is a global success message!','info', 'TestTitle');">-1-</span>
+            <span @click="this.$showToast('This is a global success message!','warning', 'TestTitle');">-1-</span>
+            <span @click="this.$showToast('This is a global success message!','error', 'TestTitle');">-1-</span>
+            <span @click="this.$showToast('This is a global success message!','success', 'TestTitle');">-1-</span>
+            <span @click="this.$showToast('This is a global success message!','process', 'TestTitle');">-1-</span>
+            <span @click="this.$showToast('This is a global success message!','test', 'TestTitle');">-1-</span>-->
   <div class="notification-container">
     <div class="notification" :class="data.type+' '+data.delete" v-for="data, index in dataAlert" :key="index">
         <div>

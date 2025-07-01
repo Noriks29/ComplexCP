@@ -196,6 +196,12 @@ body{
                   text-align: start;
                 }
               }
+              &.stretch{
+                align-items: stretch;
+              }
+              &.center{
+                align-items: center;
+              }
             }
           }
         }

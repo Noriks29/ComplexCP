@@ -1,6 +1,4 @@
 <template>
-    
-    
     <div class="SectionMenu">
       <div class="HeadersSction">
         <div class="PanelMenu">
@@ -29,13 +27,6 @@
           </div>
         </div>
         <div class="ButtonSection">
-            <!--rgb(0 34 108)
-            <span @click="this.$showToast('This is a global success message!','info', 'TestTitle');">-1-</span>
-            <span @click="this.$showToast('This is a global success message!','warning', 'TestTitle');">-1-</span>
-            <span @click="this.$showToast('This is a global success message!','error', 'TestTitle');">-1-</span>
-            <span @click="this.$showToast('This is a global success message!','success', 'TestTitle');">-1-</span>
-            <span @click="this.$showToast('This is a global success message!','process', 'TestTitle');">-1-</span>
-            <span @click="this.$showToast('This is a global success message!','test', 'TestTitle');">-1-</span>-->
             <div class="ButtonList">
               <h1>КС</h1>
               <button class="buttonType1" :class="activeComponent=='NP'? 'select':''" @click="SelectComponent('NP')"><span>НП</span></button>
@@ -58,7 +49,6 @@
           </div>        
         </div>
       </div>
-      
     </div>
 </template>
 
@@ -231,20 +221,6 @@ export default {
           }
         }
       }
+  } 
   }
-
-
-
-
-    
-  }
-
-
-
-
-
-
-
-
-
 </style>

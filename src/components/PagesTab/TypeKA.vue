@@ -126,16 +126,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .Panel{
-      .ButtonCommand{
-        &.SelectPage{
-            background-color: #80808053;
-        }
-      }
-      &.Select{
-        text-align: left;
-      }
-  }
 #TableChargeKA{
   .null{
     background-color: #ff000063;
