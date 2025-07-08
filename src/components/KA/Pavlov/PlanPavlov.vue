@@ -13,7 +13,7 @@
         <div class="TableDiv" style="max-height: 50vh;">
           <table class="TableDefault">
           <thead>
-            <tr><th>Тип события</th><th>№ Интервала</th><th>Интервал</th><th>Тип узла</th><th>Узел</th><th>Узел получатель</th><th>Обьём</th><th>Длительность</th><th>Поток</th><th>Технология</th></tr>
+            <tr><th>Тип события</th><th>№ Интервала</th><th>Интервал</th><th>Тип узла</th><th>Узел</th><th>Узел получатель</th><th>Обьём</th><th>Длительность</th><th>Поток</th><th>Технология</th><th>Эноргозатраты</th></tr>
           </thead>
           <tbody>
             <tr v-for="data, index in dataPrevrap" :key="index">
@@ -23,7 +23,7 @@
                 <td>{{ data.objectName != undefined ? data.objectName.name : "Error" }}</td>
                 <td>{{ data.to_objectName.name}}</td>
                 <td>{{ data.volume }}</td><td>{{ (data.time != undefined ? this.TimeFormat(data.time) : '')}}</td>
-                <td>{{ data.flow }}</td><td>{{ data.tech }}</td>
+                <td>{{ data.flow }}</td><td>{{ data.tech }}</td><td>{{ data.Consumption }}</td>
             </tr>
           </tbody>
           </table>

@@ -87,7 +87,8 @@ export default {
           this.map = {}
           console.log(await document.getElementById("map"))
           this.map = L.map('map', {zoomAnimation: true}).setView(new L.LatLng(55, 60), 3);
-          L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', 
+          //L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', 
+          L.tileLayer('http://82.179.36.248:8081/api/v1/map/{z}/{s}/{x}/{y}.png', 
           {
             minZoom: 1, 
             maxZoom: 5,

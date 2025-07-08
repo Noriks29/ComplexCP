@@ -59,6 +59,8 @@ export default {
       interSatellite: true,
       scProcess: false,
       sliderPriority: 0.1,
+      processConsumption: 25.11,
+      transportConsumption: 30.71,
     }
   },
   components:{
@@ -99,12 +101,12 @@ export default {
       let objectList = {}
       let NPList = await this.$NPList()
       NPList.forEach(GS => {
-          objectList[GS.id] = {id: GS.id, name: GS.nameEarthPoint, type: 'GS'}
+          objectList[GS.id] = {id: GS.id, name: GS.nameEarthPoint, type: 'НП'}
       })
       let OGList = await this.$OGList()
       OGList.forEach(OG => {
           OG.satellites.forEach(SAT => {
-              objectList[SAT.tleId] = {id: SAT.tleId, name: SAT.name, type: 'SAT'}
+              objectList[SAT.tleId] = {id: SAT.tleId, name: SAT.name, type: 'КА'}
           })
       })
       try{
@@ -122,6 +124,7 @@ export default {
       dataToPrevrap.process.forEach(el => {
           el.typeEl = "Обработка";
           el.time = el.text
+          el.Consumption = el.text/60/60 * this.processConsumption
           for (let i = 0; i < dataToPrevrap.to_process.length; i++) {
               const element = dataToPrevrap.to_process[i];
               if(el.interval == element.interval && element.object == el.object){
@@ -139,6 +142,7 @@ export default {
         dataToPrevrap.transport.forEach(el => {
          el.typeEl='Передача'; 
          el.time = el.text
+         el.Consumption = el.text/60/60 * this.transportConsumption
          for (let i = 0; i < dataToPrevrap.to_transport.length; i++) {
               const element = dataToPrevrap.to_transport[i];
               if(el.interval == element.interval && element.object == el.object){
@@ -177,6 +181,14 @@ export default {
         event.intervalTime = dataToPrevrap.time[event.interval-1]
         event.objectName = objectList[event.object]
         event.to_objectName = objectList[event.to_object] || {name : ''}
+        try {
+          if(event.objectName.type == 'НП'){
+            event.Consumption=null
+          }
+        } catch {
+          event.Consumption=null
+        }
+        
       })
       this.modellingRezult.eventData=dataPrevrap
       console.log(this.modellingRezult, "Обработка результатов финал")

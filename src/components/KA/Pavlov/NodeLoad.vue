@@ -13,7 +13,7 @@
           <table class="TableDefault">
           <thead>
             <tr><th colspan="2">Показатели качества</th><th colspan="2">Значимость показателей</th></tr>
-            <tr><th>Доставленные данные</th><th>Потерянные данные</th><th>Доставленные данные</th><th>Потерянные данные</th></tr>
+            <tr><th>Доставленные данные</th><th>Потерянные данные</th><th>Доставленные данные</th><th>Потерянные данные</th><th>Затраты энергии</th></tr>
           </thead>
           <tbody>
             <tr>
@@ -37,7 +37,7 @@
                 <td>{{ data.process.sumVolume }}</td><td>{{ TimeFormat(data.process.sumTime) }}</td>
                 <td>{{ data.transport.sumVolume }}</td><td>{{ TimeFormat(data.transport.sumTime) }}</td>
                 <td>{{ data.transportNP.sumVolume }}</td><td>{{ TimeFormat(data.transportNP.sumTime) }}</td>
-                <td>{{ data.lost.sumVolume}}</td>
+                <td>{{ data.lost.sumVolume}}</td><td>{{ data.Consumption}}</td>
             </tr>
           </tbody>
           <tfoot><tr><td colspan="2">Сумма</td><td v-for="data,index in dataSum" :key="index">{{ data }}</td></tr></tfoot>
@@ -75,7 +75,7 @@ import { UnixToDtime } from '@/js/WorkWithDTime';
       data() {
         return {
             dataPrevrap: [],
-            dataSum: {OsumVolume:0,OsumTime:0,TsumVolume:0,TsumTime:0,TNpsumVolume:0,TNpsumTime:0,lost:0},
+            dataSum: {OsumVolume:0,OsumTime:0,TsumVolume:0,TsumTime:0,TNpsumVolume:0,TNpsumTime:0,lost:0,Consumption:0},
         }
       },
       methods:
@@ -293,12 +293,13 @@ import { UnixToDtime } from '@/js/WorkWithDTime';
                         transport: {sumVolume: 0, sumTime: 0, data: []},
                         transportNP: {sumVolume: 0, sumTime: 0, data: []},
                         lost: {sumVolume: 0, data: []},
+                        Consumption: 0
                     })
                     id = this.dataPrevrap.length-1
                 }
                 switch (event.typeEl) {
                     case 'Передача':
-                        if(event.to_objectName.type == "GS"){
+                        if(event.to_objectName.type == "НП"){
                             this.dataPrevrap[id].transportNP.sumVolume += event.volume
                             this.dataPrevrap[id].transportNP.sumTime += event.time
                         }
@@ -306,10 +307,12 @@ import { UnixToDtime } from '@/js/WorkWithDTime';
                             this.dataPrevrap[id].transport.sumVolume += event.volume
                             this.dataPrevrap[id].transport.sumTime += event.time
                         }
+                        this.dataPrevrap[id].Consumption += event.Consumption
                         break;
                     case 'Обработка':
                         this.dataPrevrap[id].process.sumVolume += event.volume
                         this.dataPrevrap[id].process.sumTime += event.time
+                        this.dataPrevrap[id].Consumption += event.Consumption
                         break;
                     case 'Потери':
                         this.dataPrevrap[id].lost.sumVolume += event.volume
@@ -328,6 +331,7 @@ import { UnixToDtime } from '@/js/WorkWithDTime';
                 this.dataSum.TNpsumTime+=event.transportNP.sumTime
                 this.dataSum.TNpsumVolume+=event.transportNP.sumVolume
                 this.dataSum.lost+=event.lost.sumVolume
+                this.dataSum.Consumption+=event.Consumption
             })
             this.dataSum.TNpsumTime = this.TimeFormat(this.dataSum.TNpsumTime)
             this.dataSum.TsumTime = this.TimeFormat(this.dataSum.TsumTime)
