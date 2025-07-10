@@ -33,7 +33,7 @@
 
 import { PagesSettings } from './PagesSettings';
 import Plotly from 'plotly.js-dist'
-
+import { CreateDateTime } from '@/js/WorkWithDTime.js';
   export default {
     name: 'TargetDZZ',
     mixins: [PagesSettings],
@@ -84,11 +84,11 @@ import Plotly from 'plotly.js-dist'
               }*/
               response.forEach(element => {
                 /*
-                console.log(this.CreateDateTime(element.end - element.begin, 2))
+                console.log(CreateDateTime(element.end - element.begin, 2))
                 dataGrapf.y.push(element.earthName)
                 dataGrapf.text.push(element.satelliteName)
-                dataGrapf.x.push(this.CreateDateTime(element.end - element.begin, 2))
-                dataGrapf.base.push(this.CreateDateTime(element.begin, 1))*/
+                dataGrapf.x.push(CreateDateTime(element.end - element.begin, 2))
+                dataGrapf.base.push(CreateDateTime(element.begin, 1))*/
 
 
                 let flagadd = false
@@ -96,8 +96,8 @@ import Plotly from 'plotly.js-dist'
                     if(plot.name == element.earthName){
                       plot.y.push(element.earthName)
                       plot.text.push(element.satelliteName)
-                      plot.x.push(this.CreateDateTime(element.end - element.begin, 2))
-                      plot.base.push(this.CreateDateTime(element.begin, 1))
+                      plot.x.push(CreateDateTime(element.end - element.begin, 2))
+                      plot.base.push(CreateDateTime(element.begin, 1))
                       flagadd = true
                     }
                   })
@@ -106,10 +106,10 @@ import Plotly from 'plotly.js-dist'
                       type: 'bar',
                       name: element.earthName,
                       y: [element.earthName],
-                      x: [this.CreateDateTime(element.end - element.begin, 2)],
+                      x: [CreateDateTime(element.end - element.begin, 2)],
                       text: [element.satelliteName],
                       orientation: 'h',
-                      base: [this.CreateDateTime(element.begin, 1)],
+                      base: [CreateDateTime(element.begin, 1)],
                       textfont: {
                         size: 16,
                         color: '#000000'
@@ -141,8 +141,8 @@ import Plotly from 'plotly.js-dist'
           this.PageSettings.SatNp = this.PageSettings.SatNp.sort((a, b) => parseFloat(a.begin) - parseFloat(b.begin))
               for (let index = 0; index < this.PageSettings.SatNp.length; index++) {
                 const element = this.PageSettings.SatNp[index]
-                element.begin = this.CreateDateTime(element.begin)
-                element.end = this.CreateDateTime(element.end)
+                element.begin = CreateDateTime(element.begin)
+                element.end = CreateDateTime(element.end)
               }
           this.CommandWork(6)
         }

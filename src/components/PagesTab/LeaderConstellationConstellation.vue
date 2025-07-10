@@ -33,6 +33,7 @@
 
 import { PagesSettings } from './PagesSettings.js';
 import Plotly from 'plotly.js-dist'
+import { CreateDateTime } from '@/js/WorkWithDTime.js';
 
   export default {
     name: 'LeaderConstellationConstellation',
@@ -73,8 +74,8 @@ import Plotly from 'plotly.js-dist'
                   dataPlotly.forEach(plot => {
                     if(plot.name == element.satellite2){
                       plot.y.push(element.satellite1+"-"+element.satellite2)
-                      plot.x.push(this.CreateDateTime(element.end - element.begin, 2))
-                      plot.base.push(this.CreateDateTime(element.begin, 1))
+                      plot.x.push(CreateDateTime(element.end - element.begin, 2))
+                      plot.base.push(CreateDateTime(element.begin, 1))
                       flagadd = true
                     }
                   })
@@ -83,9 +84,9 @@ import Plotly from 'plotly.js-dist'
                       type: 'bar',
                       name: element.satellite2,
                       y: [element.satellite1+"-"+element.satellite2],
-                      x: [this.CreateDateTime(element.end - element.begin, 2)],
+                      x: [CreateDateTime(element.end - element.begin, 2)],
                       orientation: 'h',
-                      base: [this.CreateDateTime(element.begin, 1)],
+                      base: [CreateDateTime(element.begin, 1)],
                       textfont: {
                         size: 16,
                         color: '#000000'
@@ -114,8 +115,8 @@ import Plotly from 'plotly.js-dist'
             }
             response = response.sort((a, b) => parseFloat(a.begin) - parseFloat(b.begin))
             for (let index = 0; index < response.length; index++) {
-              response[index].beginUnix = this.CreateDateTime(response[index].begin)
-              response[index].endUnix = this.CreateDateTime(response[index].end)
+              response[index].beginUnix = CreateDateTime(response[index].begin)
+              response[index].endUnix = CreateDateTime(response[index].end)
             }
           this.PageSettings.SatSat = response
           this.CommandWork(4)
