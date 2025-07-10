@@ -84,11 +84,17 @@ import { CreateDateTime } from '@/js/WorkWithDTime'
           element.roll = Math.floor(element.roll*1000)/1000
           element.pitch = Math.floor(element.pitch*1000)/1000
           element.transition = element.unixTimeEnd - element.unixTimeStart
-          element.tsUnix = element.timeEnd;element.ts = element.unixTimeEnd
+          element.weUnix = CreateDateTime(element.we)
+          element.wsUnix = CreateDateTime(element.ws)
+          element.tsUnix = CreateDateTime(element.unixTimeEnd);element.ts = element.unixTimeEnd
           let timeEndTarget = element.unixTimeEnd + element.durationShooting
           element.teUnix = CreateDateTime(timeEndTarget);element.te = timeEndTarget
           this.dataTable.push({data:element}) 
         }
+        this.dataTable.sort((a,b) => {
+          return a.data.ws - b.data.ws
+        })
+        console.log(this.dataTable)
         this.ShowTable='ShootingPlan'
       }
     },
