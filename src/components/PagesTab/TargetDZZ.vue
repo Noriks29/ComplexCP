@@ -18,8 +18,8 @@
             <table class="TableDefault">
               <thead><tr><th>Цель</th><th>Широта</th><th>Долгота</th><th>Высота</th><th>НП</th><th>Приоритет</th><th>Время появления</th><th>Срок выполнения</th><th></th></tr></thead>
               <tbody><tr
-              v-for="data, index in requestJson"
-                :key="index"
+                v-for="data, index in requestJson"
+                  :key="index"
               >
               <td><SelectDiv  :dataOption="arr" :valueS="{value:data.catalog, lable:data.catalog.goalName}" :id="String(index)" @valueSelect="SelectChange($event, 'catalog')"/></td>
               <td>{{ data.catalog.lat }}</td>
